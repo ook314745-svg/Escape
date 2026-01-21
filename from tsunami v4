@@ -1,4 +1,5 @@
 
+
 local BLUE_ACCENT = Color3.fromRGB(25, 85, 160)
 local DARK_GLASS = Color3.fromRGB(10, 15, 30)
 local FIELD_BG = Color3.fromRGB(18, 25, 45)
@@ -811,7 +812,6 @@ FaresTab:CreateButton({
 
 
 
-
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
@@ -823,61 +823,29 @@ if PlayerGui:FindFirstChild("AutoCollectGUI_Fares") then
 end
 
 
-local ScreenGui = Instance.new("ScreenGui", PlayerGui)
-ScreenGui.Name = "AutoCollectGUI_Fares"
-ScreenGui.ResetOnSpawn = false 
-ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-
-local MainFrame = Instance.new("Frame", ScreenGui)
-MainFrame.BackgroundColor3 = Color3.fromRGB(30, 32, 38)
-MainFrame.Size = UDim2.new(0, 240, 0, 130)
-MainFrame.Position = UDim2.new(0.5, -120, 0.5, -65)
-MainFrame.Active = true
-MainFrame.Draggable = true
-Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 8)
-Instance.new("UIStroke", MainFrame).Color = Color3.fromRGB(80, 82, 90)
-Instance.new("UIStroke", MainFrame).Thickness = 1.5
-
-local Header = Instance.new("Frame", MainFrame)
-Header.BackgroundColor3 = Color3.fromRGB(40, 42, 48)
-Header.Size = UDim2.new(1, 0, 0, 32)
-Instance.new("UICorner", Header).CornerRadius = UDim.new(0, 8)
-local UIGradient_Header = Instance.new("UIGradient", Header)
-UIGradient_Header.Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.fromRGB(55, 58, 64)), ColorSequenceKeypoint.new(1, Color3.fromRGB(40, 42, 48))})
-UIGradient_Header.Rotation = 90
-
-local TitleLabel = Instance.new("TextLabel", Header)
-TitleLabel.BackgroundTransparency = 1
-TitleLabel.Size = UDim2.new(1, 0, 1, 0)
-TitleLabel.Font = Enum.Font.GothamBold
-TitleLabel.Text = "Script autocollect by Fares"
-TitleLabel.TextColor3 = Color3.fromRGB(220, 221, 222)
-TitleLabel.TextSize = 16
-
-local ToggleButton = Instance.new("TextButton", MainFrame)
-ToggleButton.BackgroundColor3 = Color3.fromRGB(231, 76, 60)
-ToggleButton.Position = UDim2.new(0.5, -50, 0, 42)
-ToggleButton.Size = UDim2.new(0, 100, 0, 28)
-ToggleButton.Font = Enum.Font.GothamBold
-ToggleButton.Text = "OFF"
-ToggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-ToggleButton.TextSize = 18
-Instance.new("UICorner", ToggleButton).CornerRadius = UDim.new(0, 6)
-
-local NoteLabel = Instance.new("TextLabel", MainFrame)
-NoteLabel.BackgroundTransparency = 1
-NoteLabel.Position = UDim2.new(0.05, 0, 0, 78)
-NoteLabel.Size = UDim2.new(0.9, 0, 0, 48)
-NoteLabel.Font = Enum.Font.SourceSans
+local ScreenGui = Instance.new("ScreenGui", PlayerGui); ScreenGui.Name = "AutoCollectGUI_Fares"; ScreenGui.ResetOnSpawn = false; ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+local MainFrame = Instance.new("Frame", ScreenGui); MainFrame.BackgroundColor3 = Color3.fromRGB(30, 32, 38); MainFrame.Size = UDim2.new(0, 240, 0, 155); MainFrame.Position = UDim2.new(0.5, -120, 0.5, -77); MainFrame.Active = true; MainFrame.Draggable = true; Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 8); local stroke = Instance.new("UIStroke", MainFrame); stroke.Color = Color3.fromRGB(80, 82, 90); stroke.Thickness = 1.5
+local Header = Instance.new("Frame", MainFrame); Header.BackgroundColor3 = Color3.fromRGB(40, 42, 48); Header.Size = UDim2.new(1, 0, 0, 32); Instance.new("UICorner", Header).CornerRadius = UDim.new(0, 8); local grad = Instance.new("UIGradient", Header); grad.Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.fromRGB(55, 58, 64)), ColorSequenceKeypoint.new(1, Color3.fromRGB(40, 42, 48))}); grad.Rotation = 90
+local TitleLabel = Instance.new("TextLabel", Header); TitleLabel.BackgroundTransparency = 1; TitleLabel.Size = UDim2.new(1, 0, 1, 0); TitleLabel.Font = Enum.Font.GothamBold; TitleLabel.Text = "Script autocollect by Fares"; TitleLabel.TextColor3 = Color3.fromRGB(220, 221, 222); TitleLabel.TextSize = 16
+local ToggleButton = Instance.new("TextButton", MainFrame); ToggleButton.BackgroundColor3 = Color3.fromRGB(231, 76, 60); ToggleButton.Position = UDim2.new(0.5, -50, 0, 42); ToggleButton.Size = UDim2.new(0, 100, 0, 28); ToggleButton.Font = Enum.Font.GothamBold; ToggleButton.Text = "OFF"; ToggleButton.TextColor3 = Color3.fromRGB(255, 255, 255); ToggleButton.TextSize = 18; Instance.new("UICorner", ToggleButton).CornerRadius = UDim.new(0, 6)
+local NoteLabel = Instance.new("TextLabel", MainFrame); NoteLabel.BackgroundTransparency = 1; NoteLabel.Position = UDim2.new(0.05, 0, 0, 78); NoteLabel.Size = UDim2.new(0.9, 0, 0, 48); NoteLabel.Font = Enum.Font.SourceSans; NoteLabel.Text = 'ملاحظة: لازم بيتك يكون كامل ومصمم من 3 أدوار وفي كل دور brainrot، إلا ممكن تحتاج تعمل كتير  (OFF/ON) او هتفضل AFK بس لازم تشغل سكربت antiafk ( حاجه مهمة لازم تكون داخل بيتك عشان يشتغل  بكفاءه و يجمع الفلوس).'; NoteLabel.TextColor3 = Color3.fromRGB(255, 193, 7); NoteLabel.TextSize = 12; NoteLabel.TextWrapped = true; NoteLabel.TextXAlignment = Enum.TextXAlignment.Center
 
 
-NoteLabel.Text = 'ملاحظة: لازم بيتك يكون كامل ومصمم من 3 أدوار وفي كل دور brainrot، إلا ممكن تحتاج تعمل كتير  (OFF/ON) او هتفضل AFK بس لازم تشغل سكربت antiafk ( حاجه مهمة لازم تكون داخل بيتك عشان يشتغل  بكفاءه و يجمع الفلوس).' 
+local StatusBar = Instance.new("TextLabel", MainFrame)
+StatusBar.Size = UDim2.new(1, 0, 0, 20)
+StatusBar.Position = UDim2.new(0, 0, 1, -20) -- Positioned at the very bottom
+StatusBar.BackgroundColor3 = Color3.fromRGB(80, 82, 90) -- Neutral color
+StatusBar.Font = Enum.Font.Gotham
+StatusBar.TextColor3 = Color3.fromRGB(255, 255, 255)
+StatusBar.Text = "الحالة: جاهز"
+StatusBar.TextSize = 12
+local statusCorner = Instance.new("UICorner", StatusBar); statusCorner.CornerRadius = UDim.new(0, 8)
 
 
-NoteLabel.TextColor3 = Color3.fromRGB(255, 193, 7)
-NoteLabel.TextSize = 12
-NoteLabel.TextWrapped = true
-NoteLabel.TextXAlignment = Enum.TextXAlignment.Center
+local function updateStatus(text, color)
+    StatusBar.Text = "الحالة: " .. text
+    StatusBar.BackgroundColor3 = color
+end
 
 
 local COLLECT_ENABLED = false
@@ -885,20 +853,15 @@ local TargetBase = nil
 local originalJumpPower = 50
 local jumpPowerConnection = nil
 local JUMP_THREAD_ACTIVE = false
-local originalCollisions = {} -- The NEW table to store original states
-
-
+local originalCollisions = {}
 local FlySpeed = 100
 local LandingSpeed = 20
 local BodyGyro, BodyVelocity
 
-
 local function setNoclip(state)
     local character = LocalPlayer.Character
     if not character then return end
-    
     if state then
-        
         originalCollisions = {}
         for _, part in ipairs(character:GetDescendants()) do
             if part:IsA("BasePart") then
@@ -907,163 +870,80 @@ local function setNoclip(state)
             end
         end
     else
-        
         for part, canCollide in pairs(originalCollisions) do
-            if part and part.Parent then
-                part.CanCollide = canCollide
-            end
+            if part and part.Parent then part.CanCollide = canCollide end
         end
-        originalCollisions = {} -- Clear the table
+        originalCollisions = {}
     end
 end
 
-local function identifyClosestBase()
-    if not LocalPlayer.Character or not LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then return nil end
-    local playerPosition = LocalPlayer.Character.HumanoidRootPart.Position
-    local minDistance = math.huge
-    local foundBase = nil
-    local basesFolder = Workspace:FindFirstChild("Bases_NEW")
-    if not basesFolder then return nil end
+local function findBasePlayerIsInside()
+    updateStatus("...جاري البحث عن بيتك", Color3.fromRGB(80, 82, 90))
+    local character = LocalPlayer.Character
+    local hrp = character and character:FindFirstChild("HumanoidRootPart")
+    if not hrp then updateStatus("خطأ: لم يتم العثور على شخصيتك", Color3.fromRGB(231, 76, 60)); return nil end
+
+    local basesFolder = Workspace:WaitForChild("Bases", 10)
+    if not basesFolder then updateStatus("خطأ: لم يتم العثور على مجلد البيوت", Color3.fromRGB(231, 76, 60)); return nil end
+
     for _, base in ipairs(basesFolder:GetChildren()) do
-        if base:IsA("Model") and base:FindFirstChild("Slots") and base.PrimaryPart then
-            local distance = (playerPosition - base.PrimaryPart.Position).Magnitude
-            if distance < minDistance then
-                minDistance = distance
-                foundBase = base
+        if base:IsA("Model") and #base:GetChildren() > 0 then
+            local cframe, size = base:GetBoundingBox()
+            local relativePos = cframe:PointToObjectSpace(hrp.Position)
+            if (math.abs(relativePos.X) <= size.X / 2) and (math.abs(relativePos.Y) <= size.Y / 2) and (math.abs(relativePos.Z) <= size.Z / 2) then
+                updateStatus("تم العثور على بيتك! جاري التجميع...", Color3.fromRGB(46, 204, 113))
+                return base
             end
         end
     end
-    return foundBase
+
+    updateStatus("اذهب إلى بيتك ثم اضغط ON", Color3.fromRGB(255, 193, 7))
+    return nil
 end
 
 local function flyToTarget(targetPart)
     local character = LocalPlayer.Character
     local rootPart = character and character:FindFirstChild("HumanoidRootPart")
     if not rootPart or not targetPart then return end
-
-    if not BodyGyro or not BodyGyro.Parent then
-        BodyGyro = Instance.new("BodyGyro", rootPart)
-        BodyGyro.P = 20000
-        BodyGyro.MaxTorque = Vector3.new(math.huge, math.huge, math.huge)
-    end
-    if not BodyVelocity or not BodyVelocity.Parent then
-        BodyVelocity = Instance.new("BodyVelocity", rootPart)
-        BodyVelocity.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
-    end
-
+    if not BodyGyro or not BodyGyro.Parent then BodyGyro = Instance.new("BodyGyro", rootPart); BodyGyro.P = 20000; BodyGyro.MaxTorque = Vector3.new(math.huge, math.huge, math.huge) end
+    if not BodyVelocity or not BodyVelocity.Parent then BodyVelocity = Instance.new("BodyVelocity", rootPart); BodyVelocity.MaxForce = Vector3.new(math.huge, math.huge, math.huge) end
     local approachPosition = targetPart.Position + Vector3.new(0, 8, 0)
     while COLLECT_ENABLED and targetPart and targetPart.Parent and (rootPart.Position - approachPosition).Magnitude > 5 do
-        local direction = (approachPosition - rootPart.Position).Unit
-        BodyGyro.CFrame = CFrame.new(rootPart.Position, approachPosition)
-        BodyVelocity.Velocity = direction * FlySpeed
-        RunService.Heartbeat:Wait()
+        updateStatus("... يتم التجميع الان", Color3.fromRGB(52, 152, 219))
+        local direction = (approachPosition - rootPart.Position).Unit; BodyGyro.CFrame = CFrame.new(rootPart.Position, approachPosition); BodyVelocity.Velocity = direction * FlySpeed; RunService.Heartbeat:Wait()
     end
     if not COLLECT_ENABLED then return end
-
     local targetPosition = targetPart.Position
     while COLLECT_ENABLED and targetPart and targetPart.Parent and (rootPart.Position - targetPosition).Magnitude > 0.5 do
-        local direction = (targetPosition - rootPart.Position).Unit
-        BodyGyro.CFrame = CFrame.new(rootPart.Position, targetPosition)
-        BodyVelocity.Velocity = direction * LandingSpeed
-        RunService.Heartbeat:Wait()
+        local direction = (targetPosition - rootPart.Position).Unit; BodyGyro.CFrame = CFrame.new(rootPart.Position, targetPosition); BodyVelocity.Velocity = direction * LandingSpeed; RunService.Heartbeat:Wait()
     end
-
-    if BodyVelocity then
-        BodyVelocity.Velocity = Vector3.new(0, 0, 0)
-    end
+    if BodyVelocity then BodyVelocity.Velocity = Vector3.new(0, 0, 0) end
 end
-
 
 ToggleButton.MouseButton1Click:Connect(function()
     COLLECT_ENABLED = not COLLECT_ENABLED
     JUMP_THREAD_ACTIVE = COLLECT_ENABLED
-    
-    local onColor = Color3.fromRGB(46, 204, 113)
-    local offColor = Color3.fromRGB(231, 76, 60)
-    ToggleButton.BackgroundColor3 = COLLECT_ENABLED and onColor or offColor
+    ToggleButton.BackgroundColor3 = COLLECT_ENABLED and Color3.fromRGB(46, 204, 113) or Color3.fromRGB(231, 76, 60)
     ToggleButton.Text = COLLECT_ENABLED and "ON" or "OFF"
-
     local humanoid = LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
     if not humanoid then return end
-
     setNoclip(COLLECT_ENABLED)
-
     if COLLECT_ENABLED then
-        TargetBase = identifyClosestBase()
-        originalJumpPower = humanoid.JumpPower
-        humanoid.UseJumpPower = true
-        humanoid.JumpPower = 1
-        jumpPowerConnection = humanoid:GetPropertyChangedSignal("JumpPower"):Connect(function()
-            if humanoid.JumpPower ~= 1 then humanoid.JumpPower = 1 end
-        end)
+        TargetBase = findBasePlayerIsInside()
+        if not TargetBase then
+            COLLECT_ENABLED = false; JUMP_THREAD_ACTIVE = false; ToggleButton.BackgroundColor3 = Color3.fromRGB(231, 76, 60); ToggleButton.Text = "OFF"; setNoclip(false); return
+        end
+        originalJumpPower = humanoid.JumpPower; humanoid.UseJumpPower = true; humanoid.JumpPower = 1
+        jumpPowerConnection = humanoid:GetPropertyChangedSignal("JumpPower"):Connect(function() if humanoid.JumpPower ~= 1 then humanoid.JumpPower = 1 end end)
     else
-        TargetBase = nil
-        if jumpPowerConnection then jumpPowerConnection:Disconnect() end
-        if BodyGyro then BodyGyro:Destroy() end
-        if BodyVelocity then BodyVelocity:Destroy() end
-        humanoid.JumpPower = originalJumpPower
+        updateStatus("متوقف", Color3.fromRGB(80, 82, 90))
+        TargetBase = nil; if jumpPowerConnection then jumpPowerConnection:Disconnect() end; if BodyGyro then BodyGyro:Destroy() end; if BodyVelocity then BodyVelocity:Destroy() end; humanoid.JumpPower = originalJumpPower
     end
 end)
 
 
-coroutine.wrap(function()
-    while true do
-        if JUMP_THREAD_ACTIVE then
-            local humanoid = LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
-            if humanoid then
-                RunService.Heartbeat:Wait()
-                humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
-            else
-                task.wait()
-            end
-        else
-            task.wait(0.1)
-        end
-    end
-end)()
-
-
-coroutine.wrap(function()
-    local cps = 7
-    local interval = 1 / cps
-    while true do
-        if JUMP_THREAD_ACTIVE then
-            local humanoid = LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
-            if humanoid then
-                humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
-            end
-        end
-        task.wait(interval)
-    end
-end)()
-
-
-coroutine.wrap(function()
-    while true do
-        if COLLECT_ENABLED and TargetBase and TargetBase.Parent then
-            local slotsFolder = TargetBase:FindFirstChild("Slots")
-            if slotsFolder then
-                local slotsTable = slotsFolder:GetChildren()
-                table.sort(slotsTable, function(a, b)
-                    local numA, numB = tonumber(a.Name), tonumber(b.Name)
-                    if numA and numB then return numA < numB end
-                    return a.Name < b.Name
-                end)
-                
-                for _, slot in ipairs(slotsTable) do
-                    if not COLLECT_ENABLED then break end
-                    local targetPart = slot:FindFirstChild("Collect")
-                    if targetPart and targetPart:IsA("BasePart") then
-                        flyToTarget(targetPart)
-                        task.wait(0.2)
-                    end
-                end
-            end
-        end
-        task.wait(0.5)
-    end
-end)()
-
+coroutine.wrap(function() local cps = 7; local interval = 1 / cps; while true do if JUMP_THREAD_ACTIVE then local humanoid = LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid"); if humanoid then humanoid:ChangeState(Enum.HumanoidStateType.Jumping) end end; task.wait(interval) end end)()
+coroutine.wrap(function() while true do if COLLECT_ENABLED and TargetBase and TargetBase.Parent then local slotsFolder = TargetBase:FindFirstChild("Slots"); if slotsFolder then local slotsTable = slotsFolder:GetChildren(); table.sort(slotsTable, function(a, b) local numA, numB = tonumber(a.Name), tonumber(b.Name); if numA and numB then return numA < numB end; return a.Name < b.Name end); for _, slot in ipairs(slotsTable) do if not COLLECT_ENABLED then break end; local targetPart = slot:FindFirstChild("Collect"); if targetPart and targetPart:IsA("BasePart") then flyToTarget(targetPart); task.wait(0.2) end end end end; task.wait(0.5) end end)()
 
 
     end
