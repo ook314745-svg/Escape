@@ -1,5 +1,4 @@
 
-
 local BLUE_ACCENT = Color3.fromRGB(25, 85, 160)
 local DARK_GLASS = Color3.fromRGB(10, 15, 30)
 local FIELD_BG = Color3.fromRGB(18, 25, 45)
@@ -306,23 +305,17 @@ local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local PlayerGui = player:WaitForChild("PlayerGui")
 
-
 local originalTextLabel =
-    workspace.Model:GetChildren()[16]
+    workspace.Model:GetChildren()[7]
     .SurfaceGui.Frame.TextLabel
-
-
-
 
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "RespawnTextTranslator"
 screenGui.ResetOnSpawn = false
 screenGui.Parent = PlayerGui
 
-
 local frame = Instance.new("Frame")
--- INCREASED THE HEIGHT SCALE FROM 0.1 to 0.15
-frame.Size = UDim2.new(0.8, 0, 0.15, 0) -- 80% width, 15% height
+frame.Size = UDim2.new(0.8, 0, 0.15, 0)
 frame.Position = UDim2.new(0.5, 0, 0.2, 0)
 frame.AnchorPoint = Vector2.new(0.5, 0)
 frame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
@@ -331,17 +324,14 @@ frame.Active = true
 frame.Draggable = true
 frame.Parent = screenGui
 
-
---  adjust it slightly to better fit the new height. Original was ~380/80=4.75. New is ~380/120=3.1
 local aspectRatio = Instance.new("UIAspectRatioConstraint")
-aspectRatio.AspectRatio = 3.5 -- Adjusted ratio for the new height
+aspectRatio.AspectRatio = 3.5
 aspectRatio.DominantAxis = Enum.DominantAxis.Width
 aspectRatio.Parent = frame
 
 local sizeConstraint = Instance.new("UISizeConstraint")
-sizeConstraint.MaxSize = Vector2.new(450, math.huge) -- Slightly increased max size as well
+sizeConstraint.MaxSize = Vector2.new(450, math.huge)
 sizeConstraint.Parent = frame
-
 
 local textLabel = Instance.new("TextLabel")
 textLabel.Size = UDim2.new(1, -10, 0.5, -5)
@@ -350,9 +340,8 @@ textLabel.BackgroundTransparency = 1
 textLabel.TextWrapped = true
 textLabel.TextScaled = true
 textLabel.Font = Enum.Font.GothamBold
-textLabel.TextColor3 = Color3.fromRGB(255, 105, 180) -- Pink
+textLabel.TextColor3 = Color3.fromRGB(255, 105, 180)
 textLabel.Parent = frame
-
 
 local translationLabel = Instance.new("TextLabel")
 translationLabel.Size = UDim2.new(1, -10, 0.5, -5)
@@ -361,10 +350,8 @@ translationLabel.BackgroundTransparency = 1
 translationLabel.TextWrapped = true
 translationLabel.TextScaled = true
 translationLabel.Font = Enum.Font.GothamBold
-translationLabel.TextColor3 = Color3.fromRGB(0, 255, 255) -- Cyan
+translationLabel.TextColor3 = Color3.fromRGB(0, 255, 255)
 translationLabel.Parent = frame
-
-
 
 local function translateTimer(text)
     local time = text:match("(%d%d:%d%d)")
