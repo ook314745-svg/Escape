@@ -172,7 +172,7 @@ local function ExecuteHub()
     repeat task.wait() until game:IsLoaded()
 
     local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
-    local Window = Rayfield:CreateWindow({Name = "Escape  Tsunami for brainrot | سكربت فارس V4.2", LoadingTitle = "سكربت فارس", LoadingSubtitle = "Fares Script", ConfigurationSaving = { Enabled = false }, KeySystem = false})
+    local Window = Rayfield:CreateWindow({Name = "Escape  Tsunami for brainrot | سكربت فارس V4.5", LoadingTitle = "سكربت فارس", LoadingSubtitle = "Fares Script", ConfigurationSaving = { Enabled = false }, KeySystem = false})
 
     local MainTab = Window:CreateTab("القائمة الرئيسية", 4483362458)
 
@@ -628,6 +628,179 @@ end)
 
 OtherScriptsTab:CreateSection("© Copyright by FARES")
 
+
+local HiTab = Window:CreateTab("مميزات حصرية! ", 4483362458)
+
+HiTab:CreateButton({
+Name =  " ينقلك للامام دون جهد منك ",
+Callback = function()
+-- سكربت التحريك
+
+
+local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+local player = Players.LocalPlayer
+
+local gui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
+gui.Name = "SafeGapNavigator_Fares_Final"
+gui.ResetOnSpawn = false
+
+
+local INNER_CHILD_INDEX = 2
+local TWEEN_TIME = 3.1 
+local Y_OFFSET = 3
+
+
+local State = {
+    safePoints = {},
+    currentIndex = 1,
+    isTeleporting = false,
+    GAP_BASE_PATH = nil,
+}
+
+
+local function getHRP()
+    local char = player.Character or player.CharacterAdded:Wait()
+    return char:WaitForChild("HumanoidRootPart")
+end
+
+local function initializeAndLoadPoints()
+    local mapVariants = workspace:WaitForChild("MapVariants", 60)
+    if not mapVariants then return end
+    local defaultMap = mapVariants:WaitForChild("DefaultMap", 60)
+    if not defaultMap then return end
+    State.GAP_BASE_PATH = defaultMap:WaitForChild("Gaps", 10)
+    if not State.GAP_BASE_PATH then return end
+    table.clear(State.safePoints)
+    for i = 1, 9 do
+        local gap = State.GAP_BASE_PATH:FindFirstChild("Gap" .. i)
+        if gap and gap:GetChildren()[INNER_CHILD_INDEX] and gap:GetChildren()[INNER_CHILD_INDEX]:IsA("BasePart") then
+            table.insert(State.safePoints, gap:GetChildren()[INNER_CHILD_INDEX])
+        end
+    end
+end
+
+local function teleportToIndex(index)
+    if State.isTeleporting or not State.safePoints[index] then return end
+    State.isTeleporting = true
+    local hrp = getHRP()
+    local targetPart = State.safePoints[index]
+    local targetCFrame = targetPart.CFrame + Vector3.new(0, Y_OFFSET, 0)
+    local tweenInfo = TweenInfo.new(TWEEN_TIME, Enum.EasingStyle.Sine, Enum.EasingDirection.Out)
+    local tween = TweenService:Create(hrp, tweenInfo, { CFrame = targetCFrame })
+    tween.Completed:Connect(function() State.isTeleporting = false end)
+    tween:Play()
+end
+
+
+local frame = Instance.new("Frame", gui)
+frame.Size = UDim2.new(0, 180, 0, 125) 
+frame.Position = UDim2.new(0.5, -90, 0.75, 0)
+frame.BackgroundColor3 = Color3.fromRGB(18, 18, 18)
+frame.Active = true
+frame.Draggable = true
+Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 10)
+
+
+local title = Instance.new("TextLabel", frame)
+title.Size = UDim2.new(1, -20, 0, 20)
+title.Position = UDim2.new(0, 10, 0, 5)
+title.Text = "Made By Fares"
+title.Font = Enum.Font.GothamBold
+title.TextColor3 = Color3.new(1, 1, 1)
+title.TextSize = 16
+title.TextXAlignment = Enum.TextXAlignment.Left
+title.BackgroundColor3 = Color3.fromRGB(18, 18, 18)
+title.BackgroundTransparency = 1
+
+
+local up = Instance.new("TextButton", frame)
+up.Size = UDim2.new(1, -20, 0, 32)
+up.Position = UDim2.new(0, 10, 0, 30) 
+up.Text = "▲ يلا قدام"
+up.BackgroundColor3 = Color3.fromRGB(39, 174, 96)
+up.TextColor3 = Color3.new(1, 1, 1)
+up.Font = Enum.Font.GothamBold
+up.TextSize = 14
+Instance.new("UICorner", up)
+
+
+local down = Instance.new("TextButton", frame)
+down.Size = UDim2.new(1, -20, 0, 32)
+down.Position = UDim2.new(0, 10, 0, 70) -- Moved down
+down.Text = "▼ ارجع ورا"
+down.BackgroundColor3 = Color3.fromRGB(192, 57, 43)
+down.TextColor3 = Color3.new(1, 1, 1)
+down.Font = Enum.Font.GothamBold
+up.TextSize = 14
+Instance.new("UICorner", down)
+
+
+local note = Instance.new("TextLabel", frame)
+note.Size = UDim2.new(1, -20, 0, 15)
+note.Position = UDim2.new(0, 10, 0, 105) 
+note.Text = "استعمله بذكاء!"
+note.Font = Enum.Font.Gotham
+note.TextColor3 = Color3.fromRGB(150, 150, 150) -- Gray color
+note.TextSize = 12
+note.TextXAlignment = Enum.TextXAlignment.Center
+note.BackgroundColor3 = Color3.fromRGB(18, 18, 18)
+note.BackgroundTransparency = 1
+
+
+task.spawn(initializeAndLoadPoints)
+
+player.CharacterAdded:Connect(function(character)
+    State.currentIndex = 1
+    task.wait(1)
+    local hrp = character:WaitForChild("HumanoidRootPart")
+    if State.safePoints[State.currentIndex] then
+        hrp.CFrame = State.safePoints[State.currentIndex].CFrame + Vector3.new(0, Y_OFFSET, 0)
+    end
+end)
+
+
+up.MouseButton1Click:Connect(function()
+    if #State.safePoints == 0 or State.isTeleporting then return end
+    State.currentIndex = math.clamp(State.currentIndex + 1, 1, #State.safePoints)
+    teleportToIndex(State.currentIndex)
+end)
+
+down.MouseButton1Click:Connect(function()
+    if #State.safePoints == 0 or State.isTeleporting then return end
+    State.currentIndex = math.clamp(State.currentIndex - 1, 1, #State.safePoints)
+    teleportToIndex(State.currentIndex)
+end)
+end})
+
+
+
+HiTab:CreateToggle({
+    Name = "كسر الزوم ", 
+    CurrentValue = false,       
+    Flag = "MaxZoomToggle",
+    Callback = function(Value)
+        if Value then
+            
+            game.Players.LocalPlayer.CameraMaxZoomDistance = math.huge
+        else
+            
+            game.Players.LocalPlayer.CameraMaxZoomDistance = 10
+        end
+    end
+})
+
+
+task.spawn(function()
+    while task.wait(0.5) do
+        if Rayfield.Flags["MaxZoomToggle"] then
+            game.Players.LocalPlayer.CameraMaxZoomDistance = math.huge
+        end
+    end
+end)
+
+HiTab:CreateSection("© Copyright by FARES")
+
     local FaresTab = Window:CreateTab("AutoCollect_ByFares", 4483362458)
     
 FaresTab:CreateButton({
@@ -924,13 +1097,13 @@ FaresTab:CreateSection("© Copyright by FARES")
 
     
     InfoTab:CreateSection("معلومات السكربت")
-    InfoTab:CreateParagraph({Title = "نسخة السكربت", Content = "هذا الاصدار 4.2 .\n تم تحسين بعض المشاكلوويعمل بكفاءه اقوي و تمت اضافه مميزات  و اضافة سكربتات جديدة و قوية و اضافة auto collect و العديد من المميزات اكتشفها بنفسك (اذا اكتشفت اي مشاكل في السكربت تواصل معي في التيك توك علي الخاص  ._.f.o_  ) وواضافه misc.\nالسكربت هذا تم تطويره من FARES."})
+    InfoTab:CreateParagraph({Title = "نسخة السكربت", Content = "هذا الاصدار 4.5v .\n تم تحسين بعض المشاكلوويعمل بكفاءه اقوي و تمت اضافه مميزات  و اضافة سكربتات جديدة و قوية و اضافة auto collect و العديد من المميزات اكتشفها بنفسك (اذا اكتشفت اي مشاكل في السكربت تواصل معي في التيك توك علي الخاص  ._.f.o_  ) و تمت اضافة مميزات حصرية و سكربتات رائعه و تم تحسين بعض المشاكل في الاداء  وواضافه misc.\nالسكربت هذا تم تطويره من FARES."})
     
-    InfoTab:CreateParagraph({Title = "Script Version", Content = "This is the release V4.2 .\n Problems have been improved, new features have been added, Misc has been added,auto collect has been added, if you had any problems dm me in tiktok (._.f.o_)  and added more taps more scripts take a LOOK by yourself, and the script  works more efficiently on phones.\nThis script has been developed by FARES."})
+    InfoTab:CreateParagraph({Title = "Script Version", Content = "This is the release V4.5 .\n Problems have been improved, new features have been added, Misc has been added,auto collect has been added,and exclusive features has been added and fixed some glitchs and problems  if you had any problems dm me in tiktok (._.f.o_)  and added more taps more scripts take a LOOK by yourself, and the script  works more efficiently on phones.\nThis script has been developed by FARES."})
     
     InfoTab:CreateParagraph({Title = "المطور / Developer", Content = "FARES (egyptiandeveloper)"})
 
-    InfoTab:CreateParagraph({Title = "ملاحظات / Notes", Content = "السكربت هذا تم تطويره من FARES.\nBESTCHEAT Like and Follow."})
+    InfoTab:CreateParagraph({Title = "ملاحظات / Notes", Content = "السكربت هذا تم تطويره من FARES.\nBESTCHEAT Like and Follow للعلم السكربت لا يعمل جيدا علي PC يرجى استخدام هاتف."})
     InfoTab:CreateSection("© Copyright by FARES")
     MainTab:CreateSection(" المميزات")
     MainTab:CreateToggle({Name = "تطوير السرعة تلقائي", CurrentValue = false, Callback = function(v) getgenv().Aus = v end})
