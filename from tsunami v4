@@ -172,7 +172,7 @@ local function ExecuteHub()
     repeat task.wait() until game:IsLoaded()
 
     local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
-    local Window = Rayfield:CreateWindow({Name = "Escape  Tsunami for brainrot | سكربت فارس V4.5", LoadingTitle = "سكربت فارس", LoadingSubtitle = "Fares Script", ConfigurationSaving = { Enabled = false }, KeySystem = false})
+    local Window = Rayfield:CreateWindow({Name = "Escape  Tsunami for brainrot | سكربت فارس V4.6.1", LoadingTitle = "سكربت فارس", LoadingSubtitle = "Fares Script", ConfigurationSaving = { Enabled = false }, KeySystem = false})
 
     local MainTab = Window:CreateTab("القائمة الرئيسية", 4483362458)
 
@@ -785,9 +785,11 @@ HiTab:CreateButton({
 Name =  "  (نسخة محسنة/Online) ينقلك للامام دون جهد منك ",
 Callback = function()
 
+
 local Players = game:GetService("Players")
 local Workspace = game:GetService("Workspace")
 local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
 local LocalPlayer = Players.LocalPlayer
 
 
@@ -801,105 +803,332 @@ antiVoidPart.Transparency = 1
 antiVoidPart.Parent = Workspace
 
 
+local ScreenGui = Instance.new("ScreenGui", LocalPlayer:WaitForChild("PlayerGui"))
+ScreenGui.Name = "GapNavigatorUI"
+ScreenGui.ResetOnSpawn = false
+
+local Main = Instance.new("Frame", ScreenGui)
+Main.Size = UDim2.new(0,200,0,140)
+Main.Position = UDim2.new(0.5,-100,0.8,0)
+Main.BackgroundColor3 = Color3.fromRGB(40,40,40)
+Main.BorderSizePixel = 1
+Main.Active = true
+Main.Draggable = true
+
+local Title = Instance.new("TextLabel", Main)
+Title.Size = UDim2.new(1,0,0,25)
+Title.Text = "Made by Fares"
+Title.BackgroundColor3 = Color3.fromRGB(30,30,30)
+Title.TextColor3 = Color3.new(1,1,1)
+Title.Font = Enum.Font.SourceSansBold
+Title.TextSize = 16
+
+local Prev = Instance.new("TextButton", Main)
+Prev.Text = "للوراء"
+Prev.Size = UDim2.new(0.4,0,0,40)
+Prev.Position = UDim2.new(0.05,0,0.25,0)
+Prev.BackgroundColor3 = Color3.fromRGB(190,40,40)
+Prev.TextColor3 = Color3.new(1,1,1)
+
+local Next = Instance.new("TextButton", Main)
+Next.Text = "للأمام"
+Next.Size = UDim2.new(0.4,0,0,40)
+Next.Position = UDim2.new(0.55,0,0.25,0)
+Next.BackgroundColor3 = Color3.fromRGB(40,160,70)
+Next.TextColor3 = Color3.new(1,1,1)
+
+local Status = Instance.new("TextLabel", Main)
+Status.Size = UDim2.new(1,0,0,25)
+Status.Position = UDim2.new(0,0,1,-55)
+Status.BackgroundTransparency = 1
+Status.TextColor3 = Color3.fromRGB(200,200,200)
+Status.Font = Enum.Font.SourceSansItalic
+Status.TextXAlignment = Enum.TextXAlignment.Center
+
+local PopperButton = Instance.new("TextButton", Main)
+PopperButton.Name = "PopperButton"
+PopperButton.Text = "رؤية واضحة: OFF"
+PopperButton.Size = UDim2.new(0.8, 0, 0, 20)
+PopperButton.Position = UDim2.new(0.1, 0, 1, -25)
+PopperButton.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+PopperButton.TextColor3 = Color3.new(1,1,1)
+PopperButton.Font = Enum.Font.SourceSans
+PopperButton.TextSize = 12
+Instance.new("UICorner", PopperButton).CornerRadius = UDim.new(0, 4)
+
+
+local isPopperActive = false
+local noclipActive = false
+local noclipConnection = nil
+local popperConnection = nil
+local lastOccludedParts = {}
+
+
+local function setNoclip(state)
+    if state == noclipActive then return end
+    noclipActive = state
+    if noclipActive then
+        noclipConnection = RunService.Stepped:Connect(function()
+            local char = LocalPlayer.Character
+            if char then
+                for _, part in pairs(char:GetDescendants()) do
+                    if part:IsA("BasePart") and part.CanCollide then
+                        part.CanCollide = false
+                    end
+                end
+            end
+        end)
+    elseif noclipConnection then
+        noclipConnection:Disconnect()
+        noclipConnection = nil
+    end
+end
+
+
+local function setPopper(state)
+    isPopperActive = state
+    if isPopperActive then
+        popperConnection = RunService.RenderStepped:Connect(function()
+            local camera = Workspace.CurrentCamera
+            local character = LocalPlayer.Character
+            local head = character and character:FindFirstChild("Head")
+            if not (camera and head) then return end
+
+            
+            for part, _ in pairs(lastOccludedParts) do
+                if part and part.Parent then
+                    part.LocalTransparencyModifier = 0
+                end
+            end
+            table.clear(lastOccludedParts)
+
+            
+            local ignoreList = {character}
+            local origin = head.Position
+            local camPos = camera.CFrame.Position
+            local direction = (camPos - origin).Unit
+            local distance = (camPos - origin).Magnitude
+            
+            local currentOrigin = origin
+            for _ = 1, 15 do -- Limit iterations
+                local remainingDistance = (camPos - currentOrigin).Magnitude
+                if remainingDistance < 1 then break end
+
+                local ray = Ray.new(currentOrigin, direction * remainingDistance)
+                local hitPart, hitPosition = Workspace:FindPartOnRayWithIgnoreList(ray, ignoreList)
+
+                if hitPart and hitPart:IsA("BasePart") and hitPart.Transparency < 1 then
+                    hitPart.LocalTransparencyModifier = 0.75
+                    lastOccludedParts[hitPart] = true
+                    table.insert(ignoreList, hitPart)
+                    currentOrigin = hitPosition
+                else
+                    break 
+                end
+            end
+        end)
+        PopperButton.BackgroundColor3 = Color3.fromRGB(25, 85, 160)
+        PopperButton.Text = "رؤية واضحة: ON"
+    elseif popperConnection then
+        popperConnection:Disconnect()
+        popperConnection = nil
+        
+        for part, _ in pairs(lastOccludedParts) do
+            if part and part.Parent then
+                part.LocalTransparencyModifier = 0
+            end
+        end
+        table.clear(lastOccludedParts)
+        PopperButton.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+        PopperButton.Text = "رؤية واضحة: OFF"
+    end
+end
+
+PopperButton.MouseButton1Click:Connect(function()
+    setPopper(not isPopperActive)
+end)
+
+
+local totalGaps = 9
+local currentGapIndex = 0
+local function getTargetForIndex(index)
+    local map = Workspace:WaitForChild("MapVariants"):WaitForChild("DefaultMap")
+    local gaps = map:WaitForChild("Gaps")
+    local gap = gaps:WaitForChild("Gap"..index)
+    local needed = (index == 7 or index == 9) and 3 or 2
+    while #gap:GetChildren() < needed do task.wait(0.1) end
+    if index == 1 or index == 4 or index == 6 then return gap:WaitForChild("Mud")
+    elseif index == 7 or index == 9 then return gap:GetChildren()[3]
+    else return gap:GetChildren()[2] end
+end
+local function updateStatus() Status.Text = "سيف بوينت: "..currentGapIndex.." / "..totalGaps end
+
+
+local movementId = 0
+local function microStepMove(targetPart, myId)
+    setNoclip(true)
+    local char = LocalPlayer.Character
+    local root = char and char:FindFirstChild("HumanoidRootPart")
+    if not (root and targetPart) then setNoclip(false); return end
+    local startPos = root.Position
+    local endPos = targetPart.Position + Vector3.new(0,4.5,0)
+    local delta = endPos - startPos
+    local stepSize = 4.8
+    local direction = delta.Unit
+    local steps = math.max(math.floor(delta.Magnitude / stepSize), 1)
+    for i = 1, steps do
+        if myId ~= movementId then setNoclip(false); return end
+        root.CFrame = CFrame.new(startPos + direction * (stepSize * i))
+        RunService.Heartbeat:Wait()
+    end
+    if myId == movementId then root.CFrame = CFrame.new(endPos) end
+    setNoclip(false)
+end
+
+
+local function moveForward()
+    if currentGapIndex < totalGaps then
+        movementId += 1; local myId = movementId; currentGapIndex += 1
+        local target = getTargetForIndex(currentGapIndex)
+        if target then task.spawn(microStepMove, target, myId); updateStatus() end
+    end
+end
+local function moveBackward()
+    if currentGapIndex > 1 then
+        movementId += 1; local myId = movementId; currentGapIndex -= 1
+        local target = getTargetForIndex(currentGapIndex)
+        if target then task.spawn(microStepMove, target, myId); updateStatus() end
+    end
+end
+Next.MouseButton1Click:Connect(moveForward)
+Prev.MouseButton1Click:Connect(moveBackward)
+LocalPlayer.CharacterAdded:Connect(function() movementId += 1; currentGapIndex = 0; updateStatus() end)
+updateStatus()
+
+end})
+
+HiTab:CreateSection("© Copyright by FARES")
+
+local SixTab = Window:CreateTab("التنقل الى اخر الماب", 4483362458)
+
+SixTab:CreateButton({
+    Name = "سكربت ينقلك لاخر الماب من صنع فارس", 
+    Callback = function()
+
+
+
+local Players = game:GetService("Players")
+local Workspace = game:GetService("Workspace")
+local TweenService = game:GetService("TweenService")
+local LocalPlayer = Players.LocalPlayer
+
+
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Name = "GapNavigatorUI"
 ScreenGui.Parent = LocalPlayer:WaitForChild("PlayerGui")
 ScreenGui.ResetOnSpawn = false
 
-local MainFrame = Instance.new("Frame", ScreenGui)
-MainFrame.Size = UDim2.new(0,200,0,110)
-MainFrame.Position = UDim2.new(0.5,-100,0.8,0)
-MainFrame.BackgroundColor3 = Color3.fromRGB(40,40,40)
-MainFrame.BorderColor3 = Color3.fromRGB(255,255,255)
+local MainFrame = Instance.new("Frame")
+MainFrame.Parent = ScreenGui
+MainFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+MainFrame.BorderColor3 = Color3.fromRGB(255, 255, 255)
 MainFrame.BorderSizePixel = 1
+MainFrame.Position = UDim2.new(0.5, -100, 0.8, 0)
+MainFrame.Size = UDim2.new(0, 200, 0, 110)
 MainFrame.Active = true
 MainFrame.Draggable = true
 
-local Title = Instance.new("TextLabel", MainFrame)
-Title.Size = UDim2.new(1,0,0,25)
-Title.BackgroundColor3 = Color3.fromRGB(30,30,30)
-Title.Text = "Made by Fares"
-Title.TextColor3 = Color3.new(1,1,1)
-Title.Font = Enum.Font.SourceSansBold
-Title.TextSize = 16
+local TitleLabel = Instance.new("TextLabel")
+TitleLabel.Parent = MainFrame
+TitleLabel.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+TitleLabel.Size = UDim2.new(1, 0, 0, 25)
+TitleLabel.Font = Enum.Font.SourceSansBold
+TitleLabel.Text = "Teleport by Fares"
+TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+TitleLabel.TextSize = 16
 
-local PrevButton = Instance.new("TextButton", MainFrame)
-PrevButton.Text = "للوراء"
-PrevButton.Size = UDim2.new(0.4,0,0,40)
-PrevButton.Position = UDim2.new(0.05,0,0.3,0)
-PrevButton.BackgroundColor3 = Color3.fromRGB(190,40,40)
-PrevButton.TextColor3 = Color3.new(1,1,1)
+local PrevButton = Instance.new("TextButton")
+PrevButton.Parent = MainFrame
+PrevButton.BackgroundColor3 = Color3.fromRGB(190, 40, 40) -- Red
+PrevButton.Position = UDim2.new(0.05, 0, 0.25, 0)
+PrevButton.Size = UDim2.new(0.4, 0, 0, 40)
+PrevButton.Font = Enum.Font.SourceSansBold
+PrevButton.Text = " للوراء (اظن مو مهم) "
+PrevButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+PrevButton.TextSize = 14
 
-local NextButton = Instance.new("TextButton", MainFrame)
-NextButton.Text = "للأمام"
-NextButton.Size = UDim2.new(0.4,0,0,40)
-NextButton.Position = UDim2.new(0.55,0,0.3,0)
-NextButton.BackgroundColor3 = Color3.fromRGB(40,160,70)
-NextButton.TextColor3 = Color3.new(1,1,1)
+local NextButton = Instance.new("TextButton")
+NextButton.Parent = MainFrame
+NextButton.BackgroundColor3 = Color3.fromRGB(40, 160, 70) -- Green
+NextButton.Position = UDim2.new(0.55, 0, 0.25, 0)
+NextButton.Size = UDim2.new(0.4, 0, 0, 40)
+NextButton.Font = Enum.Font.SourceSansBold
+NextButton.Text = "انتقال (اضغط كتير لين تصير 9)"
+NextButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+NextButton.TextSize = 14
 
-local StatusLabel = Instance.new("TextLabel", MainFrame)
-StatusLabel.Size = UDim2.new(1,0,0,25)
-StatusLabel.Position = UDim2.new(0,0,1,-25)
-StatusLabel.BackgroundTransparency = 1
-StatusLabel.TextColor3 = Color3.fromRGB(200,200,200)
+local StatusLabel = Instance.new("TextLabel")
+StatusLabel.Parent = MainFrame
+StatusLabel.Position = UDim2.new(0, 0, 1, -30)
+StatusLabel.Size = UDim2.new(1, 0, 0, 25)
 StatusLabel.Font = Enum.Font.SourceSansItalic
+StatusLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+StatusLabel.BackgroundTransparency = 1
 StatusLabel.TextXAlignment = Enum.TextXAlignment.Center
 
 
 local totalGaps = 9
 local currentGapIndex = 0
 
+
 local function getTargetForIndex(index)
-    local map = Workspace:WaitForChild("MapVariants"):WaitForChild("DefaultMap")
-    local gaps = map:WaitForChild("Gaps")
-    local gap = gaps:WaitForChild("Gap"..index)
+    local mapVariants = Workspace:WaitForChild("MapVariants")
+    local map = mapVariants:WaitForChild("DefaultMap")
+    local gapsFolder = map:WaitForChild("Gaps")
+    
+    local gapName = "Gap" .. index
+    local specificGap = gapsFolder:WaitForChild(gapName)
 
-    local requiredChildren = (index == 7 or index == 9) and 3 or 2
-    while #gap:GetChildren() < requiredChildren do task.wait(0.1) end
-
-    if index == 1 or index == 4 or index == 6 then
-        return gap:WaitForChild("Mud")
-    elseif index == 7 or index == 9 then
-        return gap:GetChildren()[3]
-    else
-        return gap:GetChildren()[2]
+    
+    while #specificGap:GetChildren() < 3 do 
+        wait(0.1)
     end
+    
+    if index == 1 then return specificGap:WaitForChild("Mud")
+    elseif index == 2 then return specificGap:GetChildren()[2]
+    elseif index == 3 then return specificGap:GetChildren()[2]
+    elseif index == 4 then return specificGap:WaitForChild("Mud")
+    elseif index == 5 then return specificGap:GetChildren()[2]
+    elseif index == 6 then return specificGap:WaitForChild("Mud")
+    elseif index == 7 then return specificGap:GetChildren()[3]
+    elseif index == 8 then return specificGap:GetChildren()[2]
+    elseif index == 9 then return specificGap:GetChildren()[3]
+    end
+    return nil
 end
 
 local function updateStatus()
-    StatusLabel.Text = "سيف بوينت: "..currentGapIndex.." / "..totalGaps
+    StatusLabel.Text = "سيف بوينت: " .. currentGapIndex .. " / " .. totalGaps
 end
 
-
-local function microStepMove(targetPart)
-    local char = LocalPlayer.Character
-    if not char then return end
-    local root = char:FindFirstChild("HumanoidRootPart")
-    if not root or not targetPart then return end
-
-    local startPos = root.Position
-    local endPos = targetPart.Position + Vector3.new(0, 4.5, 0)
-    local delta = endPos - startPos
-    local totalDistance = delta.Magnitude
-    local stepSize = 4 * 1.2 -- زيادة 20%
-    local direction = delta.Unit
-    local steps = math.max(math.floor(totalDistance / stepSize),1)
-
-    for i = 1, steps do
-        root.CFrame = CFrame.new(startPos + direction * (stepSize * i))
-        RunService.Heartbeat:Wait()
-    end
-
-    root.CFrame = CFrame.new(endPos)
+local function smoothTeleportTo(targetPart)
+    local character = LocalPlayer.Character
+    local rootPart = character and character:FindFirstChild("HumanoidRootPart")
+    if not (rootPart and targetPart) then return end
+    local targetPosition = targetPart.Position + Vector3.new(0, 5, 0)
+    local tweenInfo = TweenInfo.new(0.1, Enum.EasingStyle.Linear, Enum.EasingDirection.Out)
+    local properties = {CFrame = CFrame.new(targetPosition)}
+    local tween = TweenService:Create(rootPart, tweenInfo, properties)
+    tween:Play()
 end
-
 
 local function moveForward()
     if currentGapIndex < totalGaps then
-        currentGapIndex += 1
-        local target = getTargetForIndex(currentGapIndex)
+        local nextIndex = currentGapIndex + 1
+        local target = getTargetForIndex(nextIndex)
         if target then
-            microStepMove(target)
+            currentGapIndex = nextIndex
+            smoothTeleportTo(target)
             updateStatus()
         end
     end
@@ -907,52 +1136,44 @@ end
 
 local function moveBackward()
     if currentGapIndex > 1 then
-        currentGapIndex -= 1
-        local target = getTargetForIndex(currentGapIndex)
+        local prevIndex = currentGapIndex - 1
+        local target = getTargetForIndex(prevIndex)
         if target then
-            microStepMove(target)
+            currentGapIndex = prevIndex
+            smoothTeleportTo(target)
             updateStatus()
         end
     end
 end
 
+local function resetOnDeath()
+    currentGapIndex = 0
+    updateStatus()
+end
+
 NextButton.MouseButton1Click:Connect(moveForward)
 PrevButton.MouseButton1Click:Connect(moveBackward)
 
-LocalPlayer.CharacterAdded:Connect(function()
-    currentGapIndex = 0
-    updateStatus()
+LocalPlayer.CharacterAdded:Connect(function(character)
+    character:WaitForChild("Humanoid").Died:Connect(resetOnDeath)
 end)
+
+if LocalPlayer.Character then
+    pcall(function()
+        LocalPlayer.Character:WaitForChild("Humanoid").Died:Connect(resetOnDeath)
+    end)
+end
+
 
 updateStatus()
-
 end})
 
-HiTab:CreateToggle({
-    Name = "كسر الزوم ", 
-    CurrentValue = false,       
-    Flag = "MaxZoomToggle",
-    Callback = function(Value)
-        if Value then
-            
-            game.Players.LocalPlayer.CameraMaxZoomDistance = math.huge
-        else
-            
-            game.Players.LocalPlayer.CameraMaxZoomDistance = 10
-        end
-    end
-})
+SixTab:CreateParagraph({
+        Title = " ملاحظة مهمة بخصوص الانتقال لاخر الماب! ",
+        Content =" لازم تضغط علي زر الانتقال كتيرر اضغط مليون مرة لين ينقلك لاخر الماب لو سويت كذا و ما ظبطت روح شوف الشرح في تيك توك."
+    })
 
-
-task.spawn(function()
-    while task.wait(0.5) do
-        if Rayfield.Flags["MaxZoomToggle"] then
-            game.Players.LocalPlayer.CameraMaxZoomDistance = math.huge
-        end
-    end
-end)
-
-HiTab:CreateSection("© Copyright by FARES")
+SixTab:CreateSection("© Copyright by FARES")
 
     local FaresTab = Window:CreateTab("AutoCollect_ByFares", 4483362458)
     
@@ -1129,9 +1350,9 @@ FaresTab:CreateSection("© Copyright by FARES")
 
     
     InfoTab:CreateSection("معلومات السكربت")
-    InfoTab:CreateParagraph({Title = "نسخة السكربت", Content = "هذا الاصدار 4.5v .\n تم تحسين بعض المشاكلوويعمل بكفاءه اقوي و تمت اضافه مميزات  و اضافة سكربتات جديدة و قوية و اضافة auto collect و العديد من المميزات اكتشفها بنفسك (اذا اكتشفت اي مشاكل في السكربت تواصل معي في التيك توك علي الخاص  ._.f.o_  ) و تمت اضافة مميزات حصرية و سكربتات رائعه و تم تحسين بعض المشاكل في الاداء  وواضافه misc.\nالسكربت هذا تم تطويره من FARES."})
+    InfoTab:CreateParagraph({Title = "نسخة السكربت", Content = "هذا الاصدار 4.6.1v .\n تم تحسين بعض المشاكلوويعمل  بكفاءه اقوي و تمت اضافة الانتقال الى اخر الماب مع شرح و تم اصلاح و اضافة الانتقالبدون جهد منك و تمت اضافه مميزات  و اضافة سكربتات جديدة و قوية و اضافة auto collect و العديد من المميزات اكتشفها بنفسك (اذا اكتشفت اي مشاكل في السكربت تواصل معي في التيك توك علي الخاص  ._.f.o_  ) و تمت اضافة مميزات حصرية و سكربتات رائعه و تم تحسين بعض المشاكل في الاداء  وواضافه misc.\nالسكربت هذا تم تطويره من FARES."})
     
-    InfoTab:CreateParagraph({Title = "Script Version", Content = "This is the release V4.5 .\n Problems have been improved, new features have been added, Misc has been added,auto collect has been added,and exclusive features has been added and fixed some glitchs and problems  if you had any problems dm me in tiktok (._.f.o_)  and added more taps more scripts take a LOOK by yourself, and the script  works more efficiently on phones.\nThis script has been developed by FARES."})
+    InfoTab:CreateParagraph({Title = "Script Version", Content = "This is the release V4.6.1 .\n Problems have been improved, new features have been added, Misc has been added,auto collect has been added, and teleport to end of map has been added and script exclusive features has been added and fixed and exclusive features has been added and fixed some glitchs and problems  if you had any problems dm me in tiktok (._.f.o_)  and added more taps more scripts take a LOOK by yourself, and the script  works more efficiently on phones.\nThis script has been developed by FARES."})
     
     InfoTab:CreateParagraph({Title = "المطور / Developer", Content = "FARES (egyptiandeveloper)"})
 
