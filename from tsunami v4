@@ -640,7 +640,7 @@ OtherScriptsTab:CreateSection("© Copyright by FARES")
 local HiTab = Window:CreateTab("مميزات حصرية! ", 4483362458)
 
 HiTab:CreateButton({
-Name =  " ينقلك للامام دون جهد منك ",
+Name =  "  (متوقف/offline) ينقلك للامام دون جهد منك ",
 Callback = function()
 -- سكربت التحريك
 
@@ -735,7 +735,7 @@ Instance.new("UICorner", up)
 
 local down = Instance.new("TextButton", frame)
 down.Size = UDim2.new(1, -20, 0, 32)
-down.Position = UDim2.new(0, 10, 0, 70) -- Moved down
+down.Position = UDim2.new(0, 10, 0, 70) 
 down.Text = "▼ ارجع ورا"
 down.BackgroundColor3 = Color3.fromRGB(192, 57, 43)
 down.TextColor3 = Color3.new(1, 1, 1)
@@ -781,7 +781,152 @@ down.MouseButton1Click:Connect(function()
 end)
 end})
 
+HiTab:CreateButton({
+Name =  "  (نسخة محسنة/Online) ينقلك للامام دون جهد منك ",
+Callback = function()
 
+local Players = game:GetService("Players")
+local Workspace = game:GetService("Workspace")
+local RunService = game:GetService("RunService")
+local LocalPlayer = Players.LocalPlayer
+
+
+local antiVoidPart = Instance.new("Part")
+antiVoidPart.Name = "Fares_SafetyNet"
+antiVoidPart.Size = Vector3.new(20000, 10, 20000)
+antiVoidPart.Position = Vector3.new(0, -300, 0)
+antiVoidPart.Anchored = true
+antiVoidPart.CanCollide = true
+antiVoidPart.Transparency = 1
+antiVoidPart.Parent = Workspace
+
+
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "GapNavigatorUI"
+ScreenGui.Parent = LocalPlayer:WaitForChild("PlayerGui")
+ScreenGui.ResetOnSpawn = false
+
+local MainFrame = Instance.new("Frame", ScreenGui)
+MainFrame.Size = UDim2.new(0,200,0,110)
+MainFrame.Position = UDim2.new(0.5,-100,0.8,0)
+MainFrame.BackgroundColor3 = Color3.fromRGB(40,40,40)
+MainFrame.BorderColor3 = Color3.fromRGB(255,255,255)
+MainFrame.BorderSizePixel = 1
+MainFrame.Active = true
+MainFrame.Draggable = true
+
+local Title = Instance.new("TextLabel", MainFrame)
+Title.Size = UDim2.new(1,0,0,25)
+Title.BackgroundColor3 = Color3.fromRGB(30,30,30)
+Title.Text = "Made by Fares"
+Title.TextColor3 = Color3.new(1,1,1)
+Title.Font = Enum.Font.SourceSansBold
+Title.TextSize = 16
+
+local PrevButton = Instance.new("TextButton", MainFrame)
+PrevButton.Text = "للوراء"
+PrevButton.Size = UDim2.new(0.4,0,0,40)
+PrevButton.Position = UDim2.new(0.05,0,0.3,0)
+PrevButton.BackgroundColor3 = Color3.fromRGB(190,40,40)
+PrevButton.TextColor3 = Color3.new(1,1,1)
+
+local NextButton = Instance.new("TextButton", MainFrame)
+NextButton.Text = "للأمام"
+NextButton.Size = UDim2.new(0.4,0,0,40)
+NextButton.Position = UDim2.new(0.55,0,0.3,0)
+NextButton.BackgroundColor3 = Color3.fromRGB(40,160,70)
+NextButton.TextColor3 = Color3.new(1,1,1)
+
+local StatusLabel = Instance.new("TextLabel", MainFrame)
+StatusLabel.Size = UDim2.new(1,0,0,25)
+StatusLabel.Position = UDim2.new(0,0,1,-25)
+StatusLabel.BackgroundTransparency = 1
+StatusLabel.TextColor3 = Color3.fromRGB(200,200,200)
+StatusLabel.Font = Enum.Font.SourceSansItalic
+StatusLabel.TextXAlignment = Enum.TextXAlignment.Center
+
+
+local totalGaps = 9
+local currentGapIndex = 0
+
+local function getTargetForIndex(index)
+    local map = Workspace:WaitForChild("MapVariants"):WaitForChild("DefaultMap")
+    local gaps = map:WaitForChild("Gaps")
+    local gap = gaps:WaitForChild("Gap"..index)
+
+    local requiredChildren = (index == 7 or index == 9) and 3 or 2
+    while #gap:GetChildren() < requiredChildren do task.wait(0.1) end
+
+    if index == 1 or index == 4 or index == 6 then
+        return gap:WaitForChild("Mud")
+    elseif index == 7 or index == 9 then
+        return gap:GetChildren()[3]
+    else
+        return gap:GetChildren()[2]
+    end
+end
+
+local function updateStatus()
+    StatusLabel.Text = "سيف بوينت: "..currentGapIndex.." / "..totalGaps
+end
+
+
+local function microStepMove(targetPart)
+    local char = LocalPlayer.Character
+    if not char then return end
+    local root = char:FindFirstChild("HumanoidRootPart")
+    if not root or not targetPart then return end
+
+    local startPos = root.Position
+    local endPos = targetPart.Position + Vector3.new(0, 4.5, 0)
+    local delta = endPos - startPos
+    local totalDistance = delta.Magnitude
+    local stepSize = 4 * 1.2 -- زيادة 20%
+    local direction = delta.Unit
+    local steps = math.max(math.floor(totalDistance / stepSize),1)
+
+    for i = 1, steps do
+        root.CFrame = CFrame.new(startPos + direction * (stepSize * i))
+        RunService.Heartbeat:Wait()
+    end
+
+    root.CFrame = CFrame.new(endPos)
+end
+
+
+local function moveForward()
+    if currentGapIndex < totalGaps then
+        currentGapIndex += 1
+        local target = getTargetForIndex(currentGapIndex)
+        if target then
+            microStepMove(target)
+            updateStatus()
+        end
+    end
+end
+
+local function moveBackward()
+    if currentGapIndex > 1 then
+        currentGapIndex -= 1
+        local target = getTargetForIndex(currentGapIndex)
+        if target then
+            microStepMove(target)
+            updateStatus()
+        end
+    end
+end
+
+NextButton.MouseButton1Click:Connect(moveForward)
+PrevButton.MouseButton1Click:Connect(moveBackward)
+
+LocalPlayer.CharacterAdded:Connect(function()
+    currentGapIndex = 0
+    updateStatus()
+end)
+
+updateStatus()
+
+end})
 
 HiTab:CreateToggle({
     Name = "كسر الزوم ", 
