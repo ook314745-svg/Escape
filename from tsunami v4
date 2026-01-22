@@ -1,4 +1,5 @@
 
+
 local BLUE_ACCENT = Color3.fromRGB(25, 85, 160)
 local DARK_GLASS = Color3.fromRGB(10, 15, 30)
 local FIELD_BG = Color3.fromRGB(18, 25, 45)
@@ -172,7 +173,7 @@ local function ExecuteHub()
     repeat task.wait() until game:IsLoaded()
 
     local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
-    local Window = Rayfield:CreateWindow({Name = "Escape  Tsunami for brainrot | سكربت فارس V4.6.1", LoadingTitle = "سكربت فارس", LoadingSubtitle = "Fares Script", ConfigurationSaving = { Enabled = false }, KeySystem = false})
+    local Window = Rayfield:CreateWindow({Name = "Escape  Tsunami for brainrot | سكربت فارس V4.6.2", LoadingTitle = "سكربت فارس", LoadingSubtitle = "Fares Script", ConfigurationSaving = { Enabled = false }, KeySystem = false})
 
     local MainTab = Window:CreateTab("القائمة الرئيسية", 4483362458)
 
@@ -1348,6 +1349,164 @@ coroutine.wrap(function() while true do if COLLECT_ENABLED and TargetBase and Ta
     end
 })
 
+
+FaresTab:CreateButton({
+    Name = "تجميع الفلوس تلقاءي من صنع فارس (نسخة اسرع) ",
+    Callback = function()
+
+
+
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
+local Workspace = game:GetService("Workspace")
+
+if PlayerGui:FindFirstChild("AutoCollectGUI_Fares") then
+    PlayerGui.AutoCollectGUI_Fares:Destroy()
+end
+
+local ScreenGui = Instance.new("ScreenGui", PlayerGui)
+ScreenGui.Name = "AutoCollectGUI_Fares"
+ScreenGui.ResetOnSpawn = false 
+ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+local MainFrame = Instance.new("Frame", ScreenGui)
+MainFrame.BackgroundColor3 = Color3.fromRGB(30, 32, 38)
+MainFrame.Size = UDim2.new(0, 240, 0, 130)
+MainFrame.Position = UDim2.new(0.5, -120, 0.5, -65)
+MainFrame.Active = true
+MainFrame.Draggable = true
+Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 8)
+Instance.new("UIStroke", MainFrame).Color = Color3.fromRGB(80, 82, 90)
+Instance.new("UIStroke", MainFrame).Thickness = 1.5
+
+local Header = Instance.new("Frame", MainFrame)
+Header.BackgroundColor3 = Color3.fromRGB(40, 42, 48)
+Header.Size = UDim2.new(1, 0, 0, 32)
+Instance.new("UICorner", Header).CornerRadius = UDim.new(0, 8)
+local UIGradient_Header = Instance.new("UIGradient", Header)
+UIGradient_Header.Color = ColorSequence.new({ColorSequenceKeypoint.new(0, Color3.fromRGB(55, 58, 64)), ColorSequenceKeypoint.new(1, Color3.fromRGB(40, 42, 48))})
+UIGradient_Header.Rotation = 90
+
+local TitleLabel = Instance.new("TextLabel", Header)
+TitleLabel.BackgroundTransparency = 1
+TitleLabel.Size = UDim2.new(1, 0, 1, 0)
+TitleLabel.Font = Enum.Font.GothamBold
+TitleLabel.Text = "Script autocollect by Fares"
+TitleLabel.TextColor3 = Color3.fromRGB(220, 221, 222)
+TitleLabel.TextSize = 16
+
+local ToggleButton = Instance.new("TextButton", MainFrame)
+ToggleButton.BackgroundColor3 = Color3.fromRGB(231, 76, 60)
+ToggleButton.Position = UDim2.new(0.5, -50, 0, 42)
+ToggleButton.Size = UDim2.new(0, 100, 0, 28)
+ToggleButton.Font = Enum.Font.GothamBold
+ToggleButton.Text = "OFF"
+ToggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+ToggleButton.TextSize = 18
+Instance.new("UICorner", ToggleButton).CornerRadius = UDim.new(0, 6)
+local UIStroke_Button = Instance.new("UIStroke", ToggleButton)
+UIStroke_Button.Color = Color3.fromRGB(255, 255, 255)
+UIStroke_Button.Thickness = 1
+UIStroke_Button.Transparency = 0.5
+
+local NoteLabel = Instance.new("TextLabel", MainFrame)
+NoteLabel.BackgroundTransparency = 1
+NoteLabel.Position = UDim2.new(0.05, 0, 0, 78)
+NoteLabel.Size = UDim2.new(0.9, 0, 0, 48)
+NoteLabel.Font = Enum.Font.SourceSans
+
+NoteLabel.Text = 'ملاحظة: لازم بيتك يكون كامل ومصمم من 3 أدوار وفي كل دور brainrot، إلا ممكن تحتاج تعمل كتير  (OFF/ON) او هتفضل AFK بس لازم تشغل سكربت antiafk ( حاجه مهمة لازم تكون داخل بيتك عشان يشتغل  بكفاءه و يجمع الفلوس).' 
+
+
+NoteLabel.TextColor3 = Color3.fromRGB(255, 193, 7)
+NoteLabel.TextSize = 12
+NoteLabel.TextWrapped = true
+NoteLabel.TextXAlignment = Enum.TextXAlignment.Center
+
+local SCRIPT_ENABLED = false
+local TargetBase = nil 
+
+local function identifyClosestBase()
+    if not LocalPlayer.Character or not LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then return nil end
+    local playerPosition = LocalPlayer.Character.HumanoidRootPart.Position
+    local minDistance = math.huge
+    local foundBase = nil
+    local basesFolder = Workspace:FindFirstChild("Bases")
+    if not basesFolder then return nil end
+    for _, base in ipairs(basesFolder:GetChildren()) do
+        if base:IsA("Model") and base:FindFirstChild("Slots") and base.PrimaryPart then
+            local distance = (playerPosition - base.PrimaryPart.Position).Magnitude
+            if distance < minDistance then
+                minDistance = distance
+                foundBase = base
+            end
+        end
+    end
+    return foundBase
+end
+
+local function teleportToTarget(targetPart)
+    local character = LocalPlayer.Character
+    local rootPart = character and character:FindFirstChild("HumanoidRootPart")
+    if not rootPart or not targetPart or not targetPart.Parent then return end
+    rootPart.CFrame = CFrame.new(targetPart.Position) * CFrame.new(0, 3, 0)
+end
+
+ToggleButton.MouseButton1Click:Connect(function()
+    SCRIPT_ENABLED = not SCRIPT_ENABLED
+    local onColor = Color3.fromRGB(46, 204, 113)
+    local offColor = Color3.fromRGB(231, 76, 60)
+    ToggleButton.BackgroundColor3 = SCRIPT_ENABLED and onColor or offColor
+    ToggleButton.Text = SCRIPT_ENABLED and "ON" or "OFF"
+
+    if SCRIPT_ENABLED then
+        TargetBase = identifyClosestBase()
+        if not TargetBase then
+            warn(" بتشوف الكونسول لية؟ ") 
+        end
+    else
+        TargetBase = nil
+    end
+end)
+
+coroutine.wrap(function()
+    while true do
+        if SCRIPT_ENABLED and TargetBase and TargetBase.Parent then
+            local slotsFolder = TargetBase:FindFirstChild("Slots")
+            if slotsFolder then
+                local slotsTable = slotsFolder:GetChildren()
+                table.sort(slotsTable, function(a, b)
+                    local numA, numB = tonumber(a.Name), tonumber(b.Name)
+                    if numA and numB then return numA < numB end
+                    return a.Name < b.Name
+                end)
+                
+                for _, slot in ipairs(slotsTable) do
+                    if not SCRIPT_ENABLED then break end
+                    local targetPart = slot:FindFirstChild("Collect")
+                    if targetPart and targetPart:IsA("BasePart") then
+                        
+                        
+                        teleportToTarget(targetPart)
+                        
+                        
+                        task.wait(0.1) 
+                        
+                        
+                        
+                        
+                        
+                        task.wait(0.1)
+                    end
+                end
+            end
+        end
+        task.wait(0.1)
+    end
+end)()
+end})
+
 FaresTab:CreateParagraph({
         Title = "  ملاحظة مهمة بخصوص الاوتو كوليكت /التجميع التلقاءي",
         Content = "لازم تكون داخل بيتك و الا راح يصير لك قلتشات ولو رايح تنام و تترك الجهاز يجمع شغل سكربت Antiafk."
@@ -1376,9 +1535,9 @@ FaresTab:CreateSection("© Copyright by FARES")
 
     
     InfoTab:CreateSection("معلومات السكربت")
-    InfoTab:CreateParagraph({Title = "نسخة السكربت", Content = "هذا الاصدار 4.6.1v .\n تم تحسين بعض المشاكلوويعمل  بكفاءه اقوي و تمت اضافة الانتقال الى اخر الماب مع شرح و تم اصلاح و اضافة الانتقالبدون جهد منك و تمت اضافه مميزات  و اضافة سكربتات جديدة و قوية و اضافة auto collect و العديد من المميزات اكتشفها بنفسك (اذا اكتشفت اي مشاكل في السكربت تواصل معي في التيك توك علي الخاص  ._.f.o_  ) و تمت اضافة مميزات حصرية و سكربتات رائعه و تم تحسين بعض المشاكل في الاداء  وواضافه misc.\nالسكربت هذا تم تطويره من FARES."})
+    InfoTab:CreateParagraph({Title = "نسخة السكربت", Content = "هذا الاصدار 4.6.2v .\n تم تحسين بعض المشاكلوويعمل  بكفاءه اقوي و تمت اضافة الانتقال الى اخر الماب مع شرح و تم اصلاح و اضافة الانتقالبدون جهد منك و تمت اضافه مميزات  و اضافة سكربتات جديدة و قوية و اضافة auto collect و العديد من المميزات اكتشفها بنفسك (اذا اكتشفت اي مشاكل في السكربت تواصل معي في التيك توك علي الخاص  ._.f.o_  ) و تمت اضافة مميزات حصرية و سكربتات رائعه و تم تحسين بعض المشاكل في الاداء  وواضافه misc.\nالسكربت هذا تم تطويره من FARES."})
     
-    InfoTab:CreateParagraph({Title = "Script Version", Content = "This is the release V4.6.1 .\n Problems have been improved, new features have been added, Misc has been added,auto collect has been added, and teleport to end of map has been added and script exclusive features has been added and fixed and exclusive features has been added and fixed some glitchs and problems  if you had any problems dm me in tiktok (._.f.o_)  and added more taps more scripts take a LOOK by yourself, and the script  works more efficiently on phones.\nThis script has been developed by FARES."})
+    InfoTab:CreateParagraph({Title = "Script Version", Content = "This is the release V4.6.2 .\n Problems have been improved, new features have been added, Misc has been added,auto collect has been added, and teleport to end of map has been added and script exclusive features has been added and fixed and exclusive features has been added and fixed some glitchs and problems  if you had any problems dm me in tiktok (._.f.o_)  and added more taps more scripts take a LOOK by yourself, and the script  works more efficiently on phones.\nThis script has been developed by FARES."})
     
     InfoTab:CreateParagraph({Title = "المطور / Developer", Content = "FARES (egyptiandeveloper)"})
 
