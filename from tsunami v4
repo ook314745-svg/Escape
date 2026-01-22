@@ -1007,6 +1007,32 @@ updateStatus()
 
 end})
 
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+local BreakZoomEnabled = false
+
+HiTab:CreateToggle({
+    Name = "كسر الزوم",
+    CurrentValue = false,
+    Flag = "BreakZoom",
+    Callback = function(Value)
+        BreakZoomEnabled = Value
+        if Value then
+            player.CameraMaxZoomDistance = math.huge
+        else
+            player.CameraMaxZoomDistance = 15
+        end
+    end
+})
+
+task.spawn(function()
+    while task.wait(0.5) do
+        if BreakZoomEnabled then
+            player.CameraMaxZoomDistance = math.huge
+        end
+    end
+end)
+
 HiTab:CreateSection("© Copyright by FARES")
 
 local SixTab = Window:CreateTab("التنقل الى اخر الماب", 4483362458)
