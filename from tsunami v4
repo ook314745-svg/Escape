@@ -173,7 +173,7 @@ local function ExecuteHub()
     repeat task.wait() until game:IsLoaded()
 
     local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
-    local Window = Rayfield:CreateWindow({Name = "Escape  Tsunami for brainrot | سكربت فارس V4.6.5", LoadingTitle = "سكربت فارس", LoadingSubtitle = "Fares Script", ConfigurationSaving = { Enabled = false }, KeySystem = false})
+    local Window = Rayfield:CreateWindow({Name = "Escape  Tsunami for brainrot | سكربت فارس V4.7", LoadingTitle = "سكربت فارس", LoadingSubtitle = "Fares Script", ConfigurationSaving = { Enabled = false }, KeySystem = false})
 
     local MainTab = Window:CreateTab("القائمة الرئيسية", 4483362458)
 
@@ -1368,10 +1368,10 @@ end})
 
 HiTab:CreateSection("© Copyright by FARES")
 
-local SixTab = Window:CreateTab("التنقل الى اخر الماب", 4483362458)
+local SixTab = Window:CreateTab("( راعي الماب قفل ثغره) ", 4483362458)
 
 SixTab:CreateButton({
-    Name = "سكربت ينقلك لاخر الماب من صنع فارس", 
+    Name = " راعي الماب قفل الثغرة لا تشغلة-_-", 
     Callback = function()
 
 
@@ -1529,10 +1529,135 @@ end})
 
 SixTab:CreateParagraph({
         Title = " ملاحظة مهمة بخصوص الانتقال لاخر الماب! ",
-        Content =" لازم تضغط علي زر الانتقال كتيرر اضغط مليون مرة لين ينقلك لاخر الماب لو سويت كذا و ما ظبطت روح شوف الشرح في تيك توك."
+        Content =" راعي الماب قفل الثغرة):"
     })
 
 SixTab:CreateSection("© Copyright by FARES")
+
+local 3mkTab = Window:CreateTab("سكربت يمنعك من الموت ضد تسونامي", 4483362458)
+    
+3mkTab:CreateButton({
+    Name = "تشغيل سكربت الحمايه من تسونامي من صنع فارس",
+    Callback = function()
+
+
+
+local ScreenGui = Instance.new("ScreenGui", game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui"))
+ScreenGui.Name = "GodModeUI"
+ScreenGui.ResetOnSpawn = false
+
+local MainFrame = Instance.new("Frame", ScreenGui)
+MainFrame.Size = UDim2.new(0, 220, 0, 80)
+MainFrame.Position = UDim2.new(0.5, -110, 0.1, 0)
+MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+MainFrame.BorderColor3 = Color3.fromRGB(255, 215, 0)
+MainFrame.BorderSizePixel = 1
+MainFrame.Active = true
+MainFrame.Draggable = true
+
+local Title = Instance.new("TextLabel", MainFrame)
+Title.Size = UDim2.new(1, 0, 0, 20)
+Title.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
+Title.Text = "سكربت يحميك من اول تسونامي او ثاني تسونامي من صنع فارس ( لو صار مشاكل سوي off ثم on) "
+Title.TextColor3 = Color3.fromRGB(255, 215, 0)
+Title.Font = Enum.Font.SourceSansBold
+
+local ToggleButton = Instance.new("TextButton", MainFrame)
+ToggleButton.Size = UDim2.new(0.8, 0, 0, 40)
+ToggleButton.Position = UDim2.new(0.1, 0, 0.35, 0)
+ToggleButton.BackgroundColor3 = Color3.fromRGB(190, 40, 40)
+ToggleButton.TextColor3 = Color3.new(1, 1, 1)
+ToggleButton.Text = "OFF"
+ToggleButton.Font = Enum.Font.GothamBold
+
+
+local GOD_MODE_ENABLED = false
+local connections = {}
+local original_namecall
+
+local function enableGodMode(char)
+    
+    local humanoid = char:WaitForChild("Humanoid")
+
+    
+    connections.heartbeat = game:GetService("RunService").Heartbeat:Connect(function()
+        if humanoid and humanoid.Parent then
+            humanoid.MaxHealth = 100
+            humanoid.Health = 100
+        end
+    end)
+
+    
+    connections.healthChanged = humanoid.HealthChanged:Connect(function()
+        if humanoid.Health < 100 then
+            humanoid.Health = 100
+        end
+    end)
+
+    
+    pcall(function()
+        local mt = getrawmetatable(humanoid)
+        original_namecall = original_namecall or mt.__namecall
+        setreadonly(mt, false)
+        mt.__namecall = newcclosure(function(self, ...)
+            local method = getnamecallmethod()
+            if string.find(string.lower(method), "damage") or string.find(string.lower(method), "health") then
+                return
+            end
+            return original_namecall(self, ...)
+        end)
+        setreadonly(mt, true)
+    end)
+end
+
+local function disableGodMode()
+    for _, conn in pairs(connections) do
+        conn:Disconnect()
+    end
+    connections = {}
+
+    pcall(function()
+        local char = game:GetService("Players").LocalPlayer.Character
+        local humanoid = char and char:FindFirstChildOfClass("Humanoid")
+        if humanoid and original_namecall then
+            local mt = getrawmetatable(humanoid)
+            setreadonly(mt, false)
+            mt.__namecall = original_namecall
+            setreadonly(mt, true)
+        end
+    end)
+end
+
+local function onCharacter(char)
+    if GOD_MODE_ENABLED then
+        
+        enableGodMode(char)
+    end
+end
+
+ToggleButton.MouseButton1Click:Connect(function()
+    GOD_MODE_ENABLED = not GOD_MODE_ENABLED
+    
+    if GOD_MODE_ENABLED then
+        ToggleButton.Text = "ON"
+        ToggleButton.BackgroundColor3 = Color3.fromRGB(40, 160, 70)
+        local char = game:GetService("Players").LocalPlayer.Character
+        if char then enableGodMode(char) end
+    else
+        ToggleButton.Text = "OFF"
+        ToggleButton.BackgroundColor3 = Color3.fromRGB(190, 40, 40)
+        disableGodMode()
+    end
+end)
+
+
+local LocalPlayer = game:GetService("Players").LocalPlayer
+if LocalPlayer.Character then
+    onCharacter(LocalPlayer.Character)
+end
+LocalPlayer.CharacterAdded:Connect(onCharacter)
+end})
+
 
     local FaresTab = Window:CreateTab("AutoCollect_ByFares", 4483362458)
     
@@ -1867,9 +1992,9 @@ FaresTab:CreateSection("© Copyright by FARES")
 
     
     InfoTab:CreateSection("معلومات السكربت")
-    InfoTab:CreateParagraph({Title = "نسخة السكربت", Content = "هذا الاصدار 4.6.5v .\n تم تحسين بعض المشاكلوويعمل  بكفاءه اقوي و تمت اضافة الانتقال الى اخر الماب مع شرح و تم اصلاح و اضافة الانتقالبدون جهد منك و تمت اضافه مميزات  و اضافة سكربتات جديدة و قوية و اضافة auto collect و العديد من المميزات اكتشفها بنفسك (اذا اكتشفت اي مشاكل في السكربت تواصل معي في التيك توك علي الخاص  ._.f.o_  ) و تمت اضافة مميزات حصرية و سكربتات رائعه و تم تحسين بعض المشاكل في الاداء  وواضافه misc.\nالسكربت هذا تم تطويره من FARES."})
+    InfoTab:CreateParagraph({Title = "نسخة السكربت", Content = "هذا الاصدار .4.7v .\n تم تحسين بعض المشاكلوويعمل  بكفاءه اقوي و تمت اضافة الانتقال الى اخر الماب مع شرح و تم اصلاح و اضافة الانتقالبدون جهد منك و تمت اضافه مميزات  و اضافة سكربتات جديدة و قوية و اضافة auto collect و العديد من المميزات اكتشفها بنفسك (اذا اكتشفت اي مشاكل في السكربت تواصل معي في التيك توك علي الخاص  ._.f.o_  ) و تمت اضافة مميزات حصرية و تمت اضافه عدم الموت من تسونامي و سكربتات رائعه و تم تحسين بعض المشاكل في الاداء  وواضافه misc.\nالسكربت هذا تم تطويره من FARES."})
     
-    InfoTab:CreateParagraph({Title = "Script Version", Content = "This is the release V4.6.5 .\n Problems have been improved, new features have been added, Misc has been added,auto collect has been added, and teleport to end of map has been added and script exclusive features has been added and fixed and exclusive features has been added and fixed some glitchs and problems  if you had any problems dm me in tiktok (._.f.o_)  and added more taps more scripts take a LOOK by yourself, and the script  works more efficiently on phones.\nThis script has been developed by FARES."})
+    InfoTab:CreateParagraph({Title = "Script Version", Content = "This is the release V4.7 .\n Problems have been improved, new features have been added, Misc has been added,auto collect has been added, and teleport to end of map has been added and script exclusive features has been added and fixed and exclusive features has been added and protection from tsunami has been added and fixed some glitchs and problems  if you had any problems dm me in tiktok (._.f.o_)  and added more taps more scripts take a LOOK by yourself, and the script  works more efficiently on phones.\nThis script has been developed by FARES."})
     
     InfoTab:CreateParagraph({Title = "المطور / Developer", Content = "FARES (egyptiandeveloper)"})
 
