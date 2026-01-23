@@ -1534,9 +1534,9 @@ SixTab:CreateParagraph({
 
 SixTab:CreateSection("© Copyright by FARES")
 
-local 3mkTab = Window:CreateTab("سكربت يمنعك من الموت ضد تسونامي", 4483362458)
+local smkTab = Window:CreateTab("سكربت يمنعك من الموت ضد تسونامي", 4483362458)
     
-3mkTab:CreateButton({
+smkTab:CreateButton({
     Name = "تشغيل سكربت الحمايه من تسونامي من صنع فارس",
     Callback = function()
 
@@ -1657,7 +1657,7 @@ if LocalPlayer.Character then
 end
 LocalPlayer.CharacterAdded:Connect(onCharacter)
 end})
-
+smkTab:CreateSection("© Copyright by FARES")
 
     local FaresTab = Window:CreateTab("AutoCollect_ByFares", 4483362458)
     
