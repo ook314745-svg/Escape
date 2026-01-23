@@ -1,5 +1,4 @@
 
-
 local BLUE_ACCENT = Color3.fromRGB(25, 85, 160)
 local DARK_GLASS = Color3.fromRGB(10, 15, 30)
 local FIELD_BG = Color3.fromRGB(18, 25, 45)
@@ -173,7 +172,7 @@ local function ExecuteHub()
     repeat task.wait() until game:IsLoaded()
 
     local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
-    local Window = Rayfield:CreateWindow({Name = "Escape  Tsunami for brainrot | سكربت فارس V4.6.2", LoadingTitle = "سكربت فارس", LoadingSubtitle = "Fares Script", ConfigurationSaving = { Enabled = false }, KeySystem = false})
+    local Window = Rayfield:CreateWindow({Name = "Escape  Tsunami for brainrot | سكربت فارس V4.6.3", LoadingTitle = "سكربت فارس", LoadingSubtitle = "Fares Script", ConfigurationSaving = { Enabled = false }, KeySystem = false})
 
     local MainTab = Window:CreateTab("القائمة الرئيسية", 4483362458)
 
@@ -1026,13 +1025,89 @@ HiTab:CreateToggle({
     end
 })
 
-task.spawn(function()
-    while task.wait(0.5) do
-        if BreakZoomEnabled then
-            player.CameraMaxZoomDistance = math.huge
+local flingActive = false
+local bodyAngular
+local gravityForce
+
+HiTab:CreateToggle({
+    Name = "قتل اللاعبين(لازم تمسك العصا و تكون قريب منهم او تلزق فيهم) ",
+    CurrentValue = false,
+    Flag = "FlingNoclipWallFix",
+    Callback = function(Value)
+        flingActive = Value
+    end
+})
+
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local player = Players.LocalPlayer
+
+local flingPower = 1e6
+local pushRadius = 10
+
+RunService.Stepped:Connect(function()
+    local char = player.Character
+    if char and flingActive then
+        local hrp = char:FindFirstChild("HumanoidRootPart")
+        local hum = char:FindFirstChildOfClass("Humanoid")
+        if hrp and hum then
+            for _, part in ipairs(char:GetDescendants()) do
+                if part:IsA("BasePart") then
+                    part.CanCollide = false
+                    part.Massless = true
+                end
+            end
+
+            if not bodyAngular then
+                bodyAngular = Instance.new("BodyAngularVelocity")
+                bodyAngular.AngularVelocity = Vector3.new(0, flingPower, 0)
+                bodyAngular.MaxTorque = Vector3.new(math.huge, math.huge, math.huge)
+                bodyAngular.P = math.huge
+                bodyAngular.Parent = hrp
+            end
+
+            if not gravityForce then
+                gravityForce = Instance.new("VectorForce")
+                gravityForce.ApplyAtCenterOfMass = true
+                gravityForce.Force = Vector3.new(0, -workspace.Gravity * hrp.AssemblyMass, 0)
+                gravityForce.Parent = hrp
+
+                local att = Instance.new("Attachment")
+                att.Parent = hrp
+                gravityForce.Attachment0 = att
+            end
+
+            for _, other in ipairs(Players:GetPlayers()) do
+                if other ~= player and other.Character then
+                    local ohrp = other.Character:FindFirstChild("HumanoidRootPart")
+                    if ohrp and (hrp.Position - ohrp.Position).Magnitude <= pushRadius then
+                        local bv = Instance.new("BodyVelocity")
+                        bv.Velocity = (ohrp.Position - hrp.Position).Unit * flingPower
+                        bv.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
+                        bv.Parent = ohrp
+                        task.delay(0.1, function()
+                            bv:Destroy()
+                        end)
+                    end
+                end
+            end
         end
+    else
+        if bodyAngular then bodyAngular:Destroy() bodyAngular = nil end
+        if gravityForce then gravityForce:Destroy() gravityForce = nil end
     end
 end)
+
+
+HiTab:CreateButton({
+Name =  "  طلوع و دخول سريع ",
+Callback = function()
+local TeleportService = game:GetService("TeleportService")
+local Players = game:GetService("Players")
+
+local player = Players.LocalPlayer
+TeleportService:Teleport(game.PlaceId, player)
+end})
 
 HiTab:CreateSection("© Copyright by FARES")
 
@@ -1537,7 +1612,7 @@ FaresTab:CreateSection("© Copyright by FARES")
     InfoTab:CreateSection("معلومات السكربت")
     InfoTab:CreateParagraph({Title = "نسخة السكربت", Content = "هذا الاصدار 4.6.2v .\n تم تحسين بعض المشاكلوويعمل  بكفاءه اقوي و تمت اضافة الانتقال الى اخر الماب مع شرح و تم اصلاح و اضافة الانتقالبدون جهد منك و تمت اضافه مميزات  و اضافة سكربتات جديدة و قوية و اضافة auto collect و العديد من المميزات اكتشفها بنفسك (اذا اكتشفت اي مشاكل في السكربت تواصل معي في التيك توك علي الخاص  ._.f.o_  ) و تمت اضافة مميزات حصرية و سكربتات رائعه و تم تحسين بعض المشاكل في الاداء  وواضافه misc.\nالسكربت هذا تم تطويره من FARES."})
     
-    InfoTab:CreateParagraph({Title = "Script Version", Content = "This is the release V4.6.2 .\n Problems have been improved, new features have been added, Misc has been added,auto collect has been added, and teleport to end of map has been added and script exclusive features has been added and fixed and exclusive features has been added and fixed some glitchs and problems  if you had any problems dm me in tiktok (._.f.o_)  and added more taps more scripts take a LOOK by yourself, and the script  works more efficiently on phones.\nThis script has been developed by FARES."})
+    InfoTab:CreateParagraph({Title = "Script Version", Content = "This is the release V4.6.3 .\n Problems have been improved, new features have been added, Misc has been added,auto collect has been added, and teleport to end of map has been added and script exclusive features has been added and fixed and exclusive features has been added and fixed some glitchs and problems  if you had any problems dm me in tiktok (._.f.o_)  and added more taps more scripts take a LOOK by yourself, and the script  works more efficiently on phones.\nThis script has been developed by FARES."})
     
     InfoTab:CreateParagraph({Title = "المطور / Developer", Content = "FARES (egyptiandeveloper)"})
 
@@ -1641,152 +1716,3 @@ end)
 
 
  
---شيفت لوك
-
-local Players = game:GetService("Players")
-local RunService = game:GetService("RunService")
-local ContextActionService = game:GetService("ContextActionService")
-local UserInputService = game:GetService("UserInputService")
-local StarterGui = game:GetService("StarterGui")
-
-local player = Players.LocalPlayer
-local camera = workspace.CurrentCamera
-
-
-task.spawn(function()
-	StarterGui:SetCore("SendNotification", {
-		Title = "Shiftlock",
-		Text = "Shiftlock Enabled | By فارس",
-		Duration = 4
-	})
-end)
-
-local ShiftlockStarterGui
-local ImageButton
-
-local character
-local humanoid
-local rootPos = Vector3.new(0,0,0)
-
-local MAX_LENGTH = 900000
-local ENABLED_OFFSET = CFrame.new(1.5, 0.75, 0)
-local DISABLED_OFFSET = CFrame.new(-1.5, 0, 0)
-
-local active = nil
-
-local states = {
-	OFF = "rbxasset://textures/ui/mouseLock_off@2x.png",
-	ON  = "rbxasset://textures/ui/mouseLock_on@2x.png"
-}
-
-local function UpdatePos()
-	if humanoid and humanoid.RootPart then
-		rootPos = humanoid.RootPart.Position
-	end
-end
-
-local function UpdateImage(state)
-	if ImageButton then
-		ImageButton.Image = states[state]
-	end
-end
-
-local function UpdateAutoRotate(state)
-	if humanoid then
-		humanoid.AutoRotate = state
-	end
-end
-
-local function GetUpdatedCameraCFrame()
-	return CFrame.new(
-		rootPos,
-		Vector3.new(
-			camera.CFrame.LookVector.X * MAX_LENGTH,
-			rootPos.Y,
-			camera.CFrame.LookVector.Z * MAX_LENGTH
-		)
-	)
-end
-
-local function EnableShiftlock()
-	UpdatePos()
-	UpdateAutoRotate(false)
-	UpdateImage("ON")
-
-	if humanoid and humanoid.RootPart then
-		humanoid.RootPart.CFrame = GetUpdatedCameraCFrame()
-	end
-
-	camera.CFrame = camera.CFrame * ENABLED_OFFSET
-end
-
-local function DisableShiftlock()
-	UpdateAutoRotate(true)
-	UpdateImage("OFF")
-
-	camera.CFrame = camera.CFrame * DISABLED_OFFSET
-
-	if active then
-		active:Disconnect()
-		active = nil
-	end
-end
-
-local function ToggleShiftlock()
-	if not active then
-		active = RunService.RenderStepped:Connect(EnableShiftlock)
-	else
-		DisableShiftlock()
-	end
-end
-
-local function createGUI()
-	if player.PlayerGui:FindFirstChild("Shiftlock (StarterGui)") then
-		player.PlayerGui["Shiftlock (StarterGui)"]:Destroy()
-	end
-
-	ShiftlockStarterGui = Instance.new("ScreenGui")
-	ShiftlockStarterGui.Name = "Shiftlock (StarterGui)"
-	ShiftlockStarterGui.ResetOnSpawn = false
-	ShiftlockStarterGui.Parent = player.PlayerGui
-
-	ImageButton = Instance.new("ImageButton")
-	ImageButton.Parent = ShiftlockStarterGui
-	ImageButton.Active = true
-	ImageButton.Draggable = true
-	ImageButton.BackgroundTransparency = 1
-	ImageButton.Position = UDim2.new(0.921914339, 0, 0.552375436, 0)
-	ImageButton.Size = UDim2.new(0.0636147112, 0, 0.0661305636, 0)
-	ImageButton.SizeConstraint = Enum.SizeConstraint.RelativeXX
-
-	
-	ImageButton.Image = "http://www.roblox.com/asset/?id=182223762"
-	ImageButton.Visible = UserInputService.TouchEnabled
-
-	UpdateImage("OFF")
-	ImageButton.MouseButton1Click:Connect(ToggleShiftlock)
-
-	ContextActionService:BindAction(
-		"ShiftLOCK",
-		function(_, state)
-			if state == Enum.UserInputState.Begin then
-				ToggleShiftlock()
-			end
-		end,
-		false,
-		Enum.KeyCode.LeftShift
-	)
-end
-
-local function onCharacterAdded(char)
-	character = char
-	humanoid = character:WaitForChild("Humanoid")
-	task.wait(0.05)
-	createGUI()
-end
-
-if player.Character then
-	onCharacterAdded(player.Character)
-end
-
-player.CharacterAdded:Connect(onCharacterAdded)
