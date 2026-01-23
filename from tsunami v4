@@ -1100,7 +1100,8 @@ RunService.Stepped:Connect(function()
 end)
 
 HiTab:CreateButton({
-Name = "قتل اللاعبين (نسخة محسنة)" 
+Name = "قتل اللاعبين (نسخة محسنة)",
+
 Callback = function()
 
 
