@@ -173,7 +173,7 @@ local function ExecuteHub()
     repeat task.wait() until game:IsLoaded()
 
     local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
-    local Window = Rayfield:CreateWindow({Name = "Escape  Tsunami for brainrot | سكربت فارس V4.8", LoadingTitle = "سكربت فارس", LoadingSubtitle = "Fares Script", ConfigurationSaving = { Enabled = false }, KeySystem = false})
+    local Window = Rayfield:CreateWindow({Name = "Escape  Tsunami for brainrot | سكربت فارس V4.9", LoadingTitle = "سكربت فارس", LoadingSubtitle = "Fares Script", ConfigurationSaving = { Enabled = false }, KeySystem = false})
 
     local MainTab = Window:CreateTab("القائمة الرئيسية", 4483362458)
 
@@ -2111,6 +2111,148 @@ FaresTab:CreateSection("© Copyright by FARES")
         Content = "لازم تكون قريب من المكان الي تستخبي فيه عشان لو بعيد هيحصل قلتش و تموت."
     })
 
+
+
+
+
+
+
+local UFO_COLLECTOR_SPEED = 800 
+
+
+
+local function findUfoCoinHitboxes()
+    local hitboxes = {}
+    for _, part in pairs(workspace:GetDescendants()) do
+        if part.Name == "Hitbox" and part:IsA("BasePart") then
+            if part.Parent and part.Parent.Name == "UFO Coin" and part.Parent:IsA("Model") then
+                table.insert(hitboxes, part)
+            end
+        end
+    end
+    return hitboxes
+end
+
+
+
+local function findNearestUfoHitbox()
+    local char = LocalPlayer.Character
+    local hrp = char and char:FindFirstChild("HumanoidRootPart")
+    if not hrp then return nil, nil end
+    
+    local hitboxes = findUfoCoinHitboxes()
+    
+    local nearestHitbox = nil
+    local minDistance = math.huge
+    for _, hitbox in pairs(hitboxes) do
+        if hitbox and hitbox.Parent then
+            local distance = (hrp.Position - hitbox.Position).Magnitude
+            if distance < minDistance then
+                minDistance = distance
+                nearestHitbox = hitbox
+            end
+        end
+    end
+    return nearestHitbox, minDistance
+end
+
+
+
+local function ufoTweenTeleport(targetPosition)
+    local hrp = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+    if not hrp then return false end
+    local distance = (hrp.Position - targetPosition).Magnitude
+    if distance < 3 then
+        hrp.CFrame = CFrame.new(targetPosition)
+        return true
+    end
+    
+    local duration = math.max(distance / UFO_COLLECTOR_SPEED, 0.05)
+    local tweenInfo = TweenInfo.new(duration, Enum.EasingStyle.Linear)
+    local tween = TweenService:Create(hrp, tweenInfo, {CFrame = CFrame.new(targetPosition)})
+    tween:Play()
+    local startTime = tick()
+    while (hrp.Position - targetPosition).Magnitude > 2 and (tick() - startTime) < duration + 0.2 do
+        task.wait()
+    end
+    hrp.CFrame = CFrame.new(targetPosition)
+    return true
+end
+
+
+local isCollectingUfoCoins = false
+
+
+
+local function startUfoCollectorLoop()
+    task.spawn(function()
+        while isCollectingUfoCoins do
+            local success, err = pcall(function()
+                local char = LocalPlayer.Character
+                if not char then return end
+                local hrp = char:FindFirstChild("HumanoidRootPart")
+                if not hrp then return end
+                
+                local nearestHitbox, dist = findNearestUfoHitbox()
+                
+                if nearestHitbox and nearestHitbox.Parent then
+                    local teleported = ufoTweenTeleport(nearestHitbox.Position)
+                    if teleported then
+                        hrp.Velocity = Vector3.zero
+                        firetouchinterest(hrp, nearestHitbox, 0)
+                        task.wait(0.02)
+                        firetouchinterest(hrp, nearestHitbox, 1)
+                        task.wait(0.05)
+                    end
+                else
+                    if (hrp.Position - SAFE_POINT).Magnitude > 30 then
+                        ufoTweenTeleport(SAFE_POINT)
+                    end
+                    task.wait(0.5)
+                end
+            end)
+            if not success then
+                warn("بتشوف الكونسول صح")
+            end
+            task.wait(0.03)
+        end
+    end)
+end
+
+
+MiscTab:CreateParagraph({
+    Title = "ملاحظة مهمة بخصوص جمع عملات الـ  UFO او Radioactive",
+    Content = "شغل سكربت الحمايه من تسونامي لضمان تجربه افضل و اجعل سرعة 800"
+})
+
+MiscTab:CreateToggle({
+    Name = "تجميع عملات حدث الـ UFO", 
+    CurrentValue = false, 
+    Callback = function(v) 
+        isCollectingUfoCoins = v; 
+        if v then 
+            startUfoCollectorLoop(); 
+            Rayfield:Notify({Title="UFO COLLECTOR (R.E.) ON", Content="شغال!", Duration=3}) 
+        else 
+            Rayfield:Notify({Title="UFO COLLECTOR (R.E.) OFF", Content="واقف", Duration=2}) 
+        end 
+    end
+})
+
+MiscTab:CreateSlider({
+    Name = "سرعة تجميع الـ UFO", 
+    Range = {500, 4000}, 
+    Increment = 100, 
+    CurrentValue = 800, 
+    Callback = function(v) 
+        UFO_COLLECTOR_SPEED = v; 
+        Rayfield:Notify({Title="UFO Collector Speed", Content="تم ضبط السرعة على: " .. v, Duration=2}) 
+    end
+})
+
+
+
+
     MiscTab:CreateToggle({Name = "تجميع عملات حدث الراديو اكتف تلقائي", CurrentValue = false, Callback = function(v) isCollectingCoins = v; if v then startFlashCollectorLoop(); Rayfield:Notify({Title="FLASH COLLECTOR ON", Content="شغال " .. COLLECTOR_SPEED .. " studs/s!", Duration=3}) else Rayfield:Notify({Title="FLASH COLLECTOR OFF", Content="واقف", Duration=2}) end end})
     MiscTab:CreateSlider({Name = "سرعة التجميع", Range = {500, 3000}, Increment = 100, CurrentValue = 2000, Callback = function(v) COLLECTOR_SPEED = v; Rayfield:Notify({Title="Collector Speed", Content="تم ضبط السرعة على: " .. v, Duration=2}) end})
     MiscTab:CreateToggle({Name = "شيل الشخصيات ب سرعة ", CurrentValue = false, Callback = function(v) isInstaGrabActive = v; if v then Rayfield:Notify({Title="شيل الشخصيات بسرعه", Content="تم التفعيل!", Duration=3}) end end})
@@ -2118,9 +2260,9 @@ FaresTab:CreateSection("© Copyright by FARES")
 
     
     InfoTab:CreateSection("معلومات السكربت")
-    InfoTab:CreateParagraph({Title = "نسخة السكربت", Content = "هذا الاصدار .4.8v .\n تم تحسين بعض المشاكلوويعمل  بكفاءه اقوي و تمت اضافة الانتقال الى اخر الماب مع شرح و تم اصلاح و اضافة الانتقالبدون جهد منك و تمت اضافه مميزات  و اضافة سكربتات جديدة و قوية و اضافة auto collect و العديد من المميزات اكتشفها بنفسك (اذا اكتشفت اي مشاكل في السكربت تواصل معي في التيك توك علي الخاص  ._.f.o_  ) و تمت اضافة مميزات حصرية و تمت اضافه عدم الموت من تسونامي و تمت اضافة التنقل الى اخر الماب التجريبي و تم اصلاح الثغرة و سكربتات رائعه و تم تحسين بعض المشاكل في الاداء  وواضافه misc.\nالسكربت هذا تم تطويره من FARES."})
+    InfoTab:CreateParagraph({Title = "نسخة السكربت", Content = "هذا الاصدار .4.9v .\n تم تحسين بعض المشاكلوويعمل  بكفاءه اقوي و تمت اضافة الانتقال الى اخر الماب مع شرح و تم اصلاح و اضافة الانتقالبدون جهد منك و تمت اضافه مميزات  و اضافة سكربتات جديدة و قوية و اضافة auto collect و العديد من المميزات اكتشفها بنفسك (اذا اكتشفت اي مشاكل في السكربت تواصل معي في التيك توك علي الخاص  ._.f.o_  ) و تمت اضافة مميزات حصرية و تمت اضافه عدم الموت من تسونامي و تمت اضافة  جمع العملات UFO الجديدة و تم اضافة التنقل الى اخر الماب التجريبي و تم اصلاح الثغرة و سكربتات رائعه و تم تحسين بعض المشاكل في الاداء  وواضافه misc.\nالسكربت هذا تم تطويره من FARES."})
     
-    InfoTab:CreateParagraph({Title = "Script Version", Content = "This is the release V4.8 .\n Problems have been improved, new features have been added, Misc has been added,auto collect has been added, and teleport to end of map has been added and script exclusive features has been added and fixed and exclusive features has been added and protection from tsunami has been added and  fixed the teleport to end of map fixed some glitchs and problems  if you had any problems dm me in tiktok (._.f.o_)  and added more taps more scripts take a LOOK by yourself, and the script  works more efficiently on phones.\nThis script has been developed by FARES."})
+    InfoTab:CreateParagraph({Title = "Script Version", Content = "This is the release V4.9 .\n Problems have been improved, new features have been added, Misc has been added,auto collect has been added, and collect  UFO coins has been added and teleport to end of map has been added and script exclusive features has been added and fixed and exclusive features has been added and protection from tsunami has been added and  fixed the teleport to end of map fixed some glitchs and problems  if you had any problems dm me in tiktok (._.f.o_)  and added more taps more scripts take a LOOK by yourself, and the script  works more efficiently on phones.\nThis script has been developed by FARES."})
     
     InfoTab:CreateParagraph({Title = "المطور / Developer", Content = "FARES (egyptiandeveloper)"})
 
