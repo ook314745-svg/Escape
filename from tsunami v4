@@ -173,7 +173,7 @@ local function ExecuteHub()
     repeat task.wait() until game:IsLoaded()
 
     local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
-    local Window = Rayfield:CreateWindow({Name = "Escape  Tsunami for brainrot | سكربت فارس V4.7", LoadingTitle = "سكربت فارس", LoadingSubtitle = "Fares Script", ConfigurationSaving = { Enabled = false }, KeySystem = false})
+    local Window = Rayfield:CreateWindow({Name = "Escape  Tsunami for brainrot | سكربت فارس V4.8", LoadingTitle = "سكربت فارس", LoadingSubtitle = "Fares Script", ConfigurationSaving = { Enabled = false }, KeySystem = false})
 
     local MainTab = Window:CreateTab("القائمة الرئيسية", 4483362458)
 
@@ -1368,10 +1368,10 @@ end})
 
 HiTab:CreateSection("© Copyright by FARES")
 
-local SixTab = Window:CreateTab("( راعي الماب قفل ثغره) ", 4483362458)
+local SixTab = Window:CreateTab("( التنقل الى اخر الماب تم اصلاح الثغرة) ", 4483362458)
 
 SixTab:CreateButton({
-    Name = " راعي الماب قفل الثغرة لا تشغلة-_-", 
+    Name = " لا تشغلة", 
     Callback = function()
 
 
@@ -1527,9 +1527,135 @@ end
 updateStatus()
 end})
 
+SixTab:CreateButton({
+    Name = " التنقل الى اخر الماب (تجريبي-تم اصلاح الثغرة) ", 
+    Callback = function()
+
+
+
+
+local Players = game:GetService("Players")
+local Workspace = game:GetService("Workspace")
+local TweenService = game:GetService("TweenService")
+local LocalPlayer = Players.LocalPlayer
+
+
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "ExperimentalGap8UI"
+ScreenGui.Parent = LocalPlayer:WaitForChild("PlayerGui")
+ScreenGui.ResetOnSpawn = false
+
+
+local NeonBorder = Instance.new("Frame")
+NeonBorder.Parent = ScreenGui
+NeonBorder.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+NeonBorder.Position = UDim2.new(0.5, -152, 0.7, 0)
+NeonBorder.Size = UDim2.new(0, 304, 0, 154)
+NeonBorder.Active = true 
+NeonBorder.Draggable = true 
+Instance.new("UICorner", NeonBorder).CornerRadius = UDim.new(0, 8)
+
+
+local MainFrame = Instance.new("Frame")
+MainFrame.Parent = NeonBorder
+MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+MainFrame.Position = UDim2.new(0.5, -150, 0.5, -75) 
+MainFrame.Size = UDim2.new(0, 300, 0, 150)
+MainFrame.Draggable = false 
+Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 6)
+
+local TitleLabel = Instance.new("TextLabel")
+TitleLabel.Parent = MainFrame
+TitleLabel.BackgroundTransparency = 1
+TitleLabel.Size = UDim2.new(1, 0, 0, 25)
+TitleLabel.Font = Enum.Font.SourceSansBold
+TitleLabel.Text = "Teleport v2 by Fares"
+TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+TitleLabel.TextSize = 16
+
+local Gap8Button = Instance.new("TextButton")
+Gap8Button.Parent = MainFrame
+Gap8Button.BackgroundColor3 = Color3.fromRGB(80, 40, 190)
+Gap8Button.Position = UDim2.new(0.1, 0, 0.2, 0)
+Gap8Button.Size = UDim2.new(0.8, 0, 0, 50)
+Gap8Button.Font = Enum.Font.GothamBold
+Gap8Button.Text = "الانتقال الى اخر الماب"
+Gap8Button.TextColor3 = Color3.fromRGB(255, 255, 255)
+Gap8Button.TextSize = 20
+Instance.new("UICorner", Gap8Button).CornerRadius = UDim.new(0, 6)
+
+local NoteLabel = Instance.new("TextLabel")
+NoteLabel.Parent = MainFrame
+NoteLabel.BackgroundTransparency = 1
+NoteLabel.Position = UDim2.new(0.05, 0, 0.6, 0)
+NoteLabel.Size = UDim2.new(0.9, 0, 0.4, 0)
+NoteLabel.Font = Enum.Font.SourceSans
+NoteLabel.Text = "السكربت ده تجريبي احتمال يتم اكتشاف الثغرة في اي وقت و ينقلك لاخر الماب ضروري تشوف اخر فيديو في تيك توك لانه يشرح كيفيه استخدامه"
+NoteLabel.TextColor3 = Color3.fromRGB(255, 200, 0)
+NoteLabel.TextSize = 13
+NoteLabel.TextWrapped = true
+NoteLabel.TextXAlignment = Enum.TextXAlignment.Center
+NoteLabel.TextYAlignment = Enum.TextYAlignment.Center
+
+
+task.spawn(function()
+    while task.wait() do
+        for i = 0, 1, 0.01 do
+            if NeonBorder and NeonBorder.Parent then
+                NeonBorder.BackgroundColor3 = Color3.fromHSV(i, 1, 1)
+                task.wait(0.02)
+            else
+                break
+            end
+        end
+    end
+end)
+
+
+local function getTargetForIndex(index)
+    local mapVariants = Workspace:WaitForChild("MapVariants", 10)
+    if not mapVariants then return nil end
+    local map = mapVariants:WaitForChild("DefaultMap", 10)
+    if not map then return nil end
+    local gapsFolder = map:WaitForChild("Gaps", 10)
+    if not gapsFolder then return nil end
+    
+    local gapName = "Gap" .. index
+    local specificGap = gapsFolder:FindFirstChild(gapName)
+    if not specificGap then return nil end
+    
+    while #specificGap:GetChildren() < 3 do task.wait(0.1) end
+    
+    if index == 8 then return specificGap:GetChildren()[2] end
+    return nil
+end
+
+local function smoothTeleportTo(targetPart)
+    local character = LocalPlayer.Character
+    local rootPart = character and character:FindFirstChild("HumanoidRootPart")
+    if not (rootPart and targetPart) then return end
+    local targetPosition = targetPart.Position + Vector3.new(0, 5, 0)
+    local tweenInfo = TweenInfo.new(0.1, Enum.EasingStyle.Linear)
+    local properties = {CFrame = CFrame.new(targetPosition)}
+    local tween = TweenService:Create(rootPart, tweenInfo, properties)
+    tween:Play()
+end
+
+Gap8Button.MouseButton1Click:Connect(function()
+    local target = getTargetForIndex(8)
+    if target then
+        smoothTeleportTo(target)
+    else
+        Gap8Button.Text = "لم يتم العثور على الهدف!"
+        task.wait(2)
+        Gap8Button.Text = "الانتقال لاخر الماب"
+    end
+end)
+end})
+
 SixTab:CreateParagraph({
         Title = " ملاحظة مهمة بخصوص الانتقال لاخر الماب! ",
-        Content =" راعي الماب قفل الثغرة):"
+        Content =" لازم تشغل سكربت الي يحميك من التسونامي و تخلية، On و بعدها تضغط علي زر التنقل كتيرررر لين ينقلك"
     })
 
 SixTab:CreateSection("© Copyright by FARES")
@@ -1992,9 +2118,9 @@ FaresTab:CreateSection("© Copyright by FARES")
 
     
     InfoTab:CreateSection("معلومات السكربت")
-    InfoTab:CreateParagraph({Title = "نسخة السكربت", Content = "هذا الاصدار .4.7v .\n تم تحسين بعض المشاكلوويعمل  بكفاءه اقوي و تمت اضافة الانتقال الى اخر الماب مع شرح و تم اصلاح و اضافة الانتقالبدون جهد منك و تمت اضافه مميزات  و اضافة سكربتات جديدة و قوية و اضافة auto collect و العديد من المميزات اكتشفها بنفسك (اذا اكتشفت اي مشاكل في السكربت تواصل معي في التيك توك علي الخاص  ._.f.o_  ) و تمت اضافة مميزات حصرية و تمت اضافه عدم الموت من تسونامي و سكربتات رائعه و تم تحسين بعض المشاكل في الاداء  وواضافه misc.\nالسكربت هذا تم تطويره من FARES."})
+    InfoTab:CreateParagraph({Title = "نسخة السكربت", Content = "هذا الاصدار .4.8v .\n تم تحسين بعض المشاكلوويعمل  بكفاءه اقوي و تمت اضافة الانتقال الى اخر الماب مع شرح و تم اصلاح و اضافة الانتقالبدون جهد منك و تمت اضافه مميزات  و اضافة سكربتات جديدة و قوية و اضافة auto collect و العديد من المميزات اكتشفها بنفسك (اذا اكتشفت اي مشاكل في السكربت تواصل معي في التيك توك علي الخاص  ._.f.o_  ) و تمت اضافة مميزات حصرية و تمت اضافه عدم الموت من تسونامي و تمت اضافة التنقل الى اخر الماب التجريبي و تم اصلاح الثغرة و سكربتات رائعه و تم تحسين بعض المشاكل في الاداء  وواضافه misc.\nالسكربت هذا تم تطويره من FARES."})
     
-    InfoTab:CreateParagraph({Title = "Script Version", Content = "This is the release V4.7 .\n Problems have been improved, new features have been added, Misc has been added,auto collect has been added, and teleport to end of map has been added and script exclusive features has been added and fixed and exclusive features has been added and protection from tsunami has been added and fixed some glitchs and problems  if you had any problems dm me in tiktok (._.f.o_)  and added more taps more scripts take a LOOK by yourself, and the script  works more efficiently on phones.\nThis script has been developed by FARES."})
+    InfoTab:CreateParagraph({Title = "Script Version", Content = "This is the release V4.8 .\n Problems have been improved, new features have been added, Misc has been added,auto collect has been added, and teleport to end of map has been added and script exclusive features has been added and fixed and exclusive features has been added and protection from tsunami has been added and  fixed the teleport to end of map fixed some glitchs and problems  if you had any problems dm me in tiktok (._.f.o_)  and added more taps more scripts take a LOOK by yourself, and the script  works more efficiently on phones.\nThis script has been developed by FARES."})
     
     InfoTab:CreateParagraph({Title = "المطور / Developer", Content = "FARES (egyptiandeveloper)"})
 
