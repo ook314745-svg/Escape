@@ -173,7 +173,7 @@ local function ExecuteHub()
     repeat task.wait() until game:IsLoaded()
 
     local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
-    local Window = Rayfield:CreateWindow({Name = "Escape  Tsunami for brainrot | سكربت فارس V4.9", LoadingTitle = "سكربت فارس", LoadingSubtitle = "Fares Script", ConfigurationSaving = { Enabled = false }, KeySystem = false})
+    local Window = Rayfield:CreateWindow({Name = "Escape  Tsunami for brainrot | سكربت فارس V4.9.1", LoadingTitle = "سكربت فارس", LoadingSubtitle = "Fares Script", ConfigurationSaving = { Enabled = false }, KeySystem = false})
 
     local MainTab = Window:CreateTab("القائمة الرئيسية", 4483362458)
 
@@ -793,7 +793,6 @@ local RunService = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
 local LocalPlayer = Players.LocalPlayer
 
-
 local antiVoidPart = Instance.new("Part")
 antiVoidPart.Name = "Fares_SafetyNet"
 antiVoidPart.Size = Vector3.new(20000, 10, 20000)
@@ -802,7 +801,6 @@ antiVoidPart.Anchored = true
 antiVoidPart.CanCollide = true
 antiVoidPart.Transparency = 1
 antiVoidPart.Parent = Workspace
-
 
 local ScreenGui = Instance.new("ScreenGui", LocalPlayer:WaitForChild("PlayerGui"))
 ScreenGui.Name = "GapNavigatorUI"
@@ -857,13 +855,11 @@ PopperButton.Font = Enum.Font.SourceSans
 PopperButton.TextSize = 12
 Instance.new("UICorner", PopperButton).CornerRadius = UDim.new(0, 4)
 
-
 local isPopperActive = false
 local noclipActive = false
 local noclipConnection = nil
 local popperConnection = nil
 local lastOccludedParts = {}
-
 
 local function setNoclip(state)
     if state == noclipActive then return end
@@ -885,7 +881,6 @@ local function setNoclip(state)
     end
 end
 
-
 local function setPopper(state)
     isPopperActive = state
     if isPopperActive then
@@ -894,7 +889,6 @@ local function setPopper(state)
             local character = LocalPlayer.Character
             local head = character and character:FindFirstChild("Head")
             if not (camera and head) then return end
-
             
             for part, _ in pairs(lastOccludedParts) do
                 if part and part.Parent then
@@ -902,7 +896,6 @@ local function setPopper(state)
                 end
             end
             table.clear(lastOccludedParts)
-
             
             local ignoreList = {character}
             local origin = head.Position
@@ -911,7 +904,7 @@ local function setPopper(state)
             local distance = (camPos - origin).Magnitude
             
             local currentOrigin = origin
-            for _ = 1, 15 do -- Limit iterations
+            for _ = 1, 15 do
                 local remainingDistance = (camPos - currentOrigin).Magnitude
                 if remainingDistance < 1 then break end
 
@@ -949,21 +942,20 @@ PopperButton.MouseButton1Click:Connect(function()
     setPopper(not isPopperActive)
 end)
 
-
 local totalGaps = 9
 local currentGapIndex = 0
+
 local function getTargetForIndex(index)
-    local map = Workspace:WaitForChild("MapVariants"):WaitForChild("DefaultMap")
+    local map = Workspace:WaitForChild("DefaultMap")
     local gaps = map:WaitForChild("Gaps")
     local gap = gaps:WaitForChild("Gap"..index)
-    local needed = (index == 7 or index == 9) and 3 or 2
-    while #gap:GetChildren() < needed do task.wait(0.1) end
-    if index == 1 or index == 4 or index == 6 then return gap:WaitForChild("Mud")
-    elseif index == 7 or index == 9 then return gap:GetChildren()[3]
-    else return gap:GetChildren()[2] end
+    while #gap:GetChildren() < 2 do task.wait(0.1) end
+    return gap:GetChildren()[2]
 end
-local function updateStatus() Status.Text = "سيف بوينت: "..currentGapIndex.." / "..totalGaps end
 
+local function updateStatus() 
+    Status.Text = "سيف بوينت: "..currentGapIndex.." / "..totalGaps 
+end
 
 local movementId = 0
 local function microStepMove(targetPart, myId)
@@ -986,7 +978,6 @@ local function microStepMove(targetPart, myId)
     setNoclip(false)
 end
 
-
 local function moveForward()
     if currentGapIndex < totalGaps then
         movementId += 1; local myId = movementId; currentGapIndex += 1
@@ -994,6 +985,7 @@ local function moveForward()
         if target then task.spawn(microStepMove, target, myId); updateStatus() end
     end
 end
+
 local function moveBackward()
     if currentGapIndex > 1 then
         movementId += 1; local myId = movementId; currentGapIndex -= 1
@@ -1001,10 +993,12 @@ local function moveBackward()
         if target then task.spawn(microStepMove, target, myId); updateStatus() end
     end
 end
+
 Next.MouseButton1Click:Connect(moveForward)
 Prev.MouseButton1Click:Connect(moveBackward)
 LocalPlayer.CharacterAdded:Connect(function() movementId += 1; currentGapIndex = 0; updateStatus() end)
 updateStatus()
+
 
 end})
 
@@ -1532,19 +1526,15 @@ SixTab:CreateButton({
     Callback = function()
 
 
-
-
 local Players = game:GetService("Players")
 local Workspace = game:GetService("Workspace")
 local TweenService = game:GetService("TweenService")
 local LocalPlayer = Players.LocalPlayer
 
-
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Name = "ExperimentalGap8UI"
 ScreenGui.Parent = LocalPlayer:WaitForChild("PlayerGui")
 ScreenGui.ResetOnSpawn = false
-
 
 local NeonBorder = Instance.new("Frame")
 NeonBorder.Parent = ScreenGui
@@ -1554,7 +1544,6 @@ NeonBorder.Size = UDim2.new(0, 304, 0, 154)
 NeonBorder.Active = true 
 NeonBorder.Draggable = true 
 Instance.new("UICorner", NeonBorder).CornerRadius = UDim.new(0, 8)
-
 
 local MainFrame = Instance.new("Frame")
 MainFrame.Parent = NeonBorder
@@ -1597,7 +1586,6 @@ NoteLabel.TextWrapped = true
 NoteLabel.TextXAlignment = Enum.TextXAlignment.Center
 NoteLabel.TextYAlignment = Enum.TextYAlignment.Center
 
-
 task.spawn(function()
     while task.wait() do
         for i = 0, 1, 0.01 do
@@ -1611,23 +1599,15 @@ task.spawn(function()
     end
 end)
 
-
-local function getTargetForIndex(index)
-    local mapVariants = Workspace:WaitForChild("MapVariants", 10)
-    if not mapVariants then return nil end
-    local map = mapVariants:WaitForChild("DefaultMap", 10)
+local function getTargetForGap8()
+    local map = Workspace:WaitForChild("DefaultMap", 10)
     if not map then return nil end
     local gapsFolder = map:WaitForChild("Gaps", 10)
     if not gapsFolder then return nil end
-    
-    local gapName = "Gap" .. index
-    local specificGap = gapsFolder:FindFirstChild(gapName)
+    local specificGap = gapsFolder:FindFirstChild("Gap8")
     if not specificGap then return nil end
-    
-    while #specificGap:GetChildren() < 3 do task.wait(0.1) end
-    
-    if index == 8 then return specificGap:GetChildren()[2] end
-    return nil
+    while #specificGap:GetChildren() < 2 do task.wait(0.1) end
+    return specificGap:GetChildren()[2]
 end
 
 local function smoothTeleportTo(targetPart)
@@ -1642,7 +1622,7 @@ local function smoothTeleportTo(targetPart)
 end
 
 Gap8Button.MouseButton1Click:Connect(function()
-    local target = getTargetForIndex(8)
+    local target = getTargetForGap8()
     if target then
         smoothTeleportTo(target)
     else
@@ -1651,6 +1631,9 @@ Gap8Button.MouseButton1Click:Connect(function()
         Gap8Button.Text = "الانتقال لاخر الماب"
     end
 end)
+
+
+
 end})
 
 SixTab:CreateParagraph({
@@ -2260,9 +2243,9 @@ MiscTab:CreateSlider({
 
     
     InfoTab:CreateSection("معلومات السكربت")
-    InfoTab:CreateParagraph({Title = "نسخة السكربت", Content = "هذا الاصدار .4.9v .\n تم تحسين بعض المشاكلوويعمل  بكفاءه اقوي و تمت اضافة الانتقال الى اخر الماب مع شرح و تم اصلاح و اضافة الانتقالبدون جهد منك و تمت اضافه مميزات  و اضافة سكربتات جديدة و قوية و اضافة auto collect و العديد من المميزات اكتشفها بنفسك (اذا اكتشفت اي مشاكل في السكربت تواصل معي في التيك توك علي الخاص  ._.f.o_  ) و تمت اضافة مميزات حصرية و تمت اضافه عدم الموت من تسونامي و تمت اضافة  جمع العملات UFO الجديدة و تم اضافة التنقل الى اخر الماب التجريبي و تم اصلاح الثغرة و سكربتات رائعه و تم تحسين بعض المشاكل في الاداء  وواضافه misc.\nالسكربت هذا تم تطويره من FARES."})
+    InfoTab:CreateParagraph({Title = "نسخة السكربت", Content = "هذا الاصدار .4.9.1v .\n تم تحسين بعض المشاكلوويعمل  بكفاءه اقوي و تمت اضافة الانتقال الى اخر الماب مع شرح و تم اصلاح و اضافة الانتقالبدون جهد منك و تمت اضافه مميزات  و اضافة سكربتات جديدة و قوية و اضافة auto collect و العديد من المميزات اكتشفها بنفسك (اذا اكتشفت اي مشاكل في السكربت تواصل معي في التيك توك علي الخاص  ._.f.o_  ) و تمت اضافة مميزات حصرية و تمت اضافه عدم الموت من تسونامي و تمت اضافة  جمع العملات UFO الجديدة و تم اضافة التنقل الى اخر الماب التجريبي و تم اصلاح الثغرة و سكربتات رائعه و تم تحسين بعض المشاكل في الاداء  وواضافه misc.\nالسكربت هذا تم تطويره من FARES."})
     
-    InfoTab:CreateParagraph({Title = "Script Version", Content = "This is the release V4.9 .\n Problems have been improved, new features have been added, Misc has been added,auto collect has been added, and collect  UFO coins has been added and teleport to end of map has been added and script exclusive features has been added and fixed and exclusive features has been added and protection from tsunami has been added and  fixed the teleport to end of map fixed some glitchs and problems  if you had any problems dm me in tiktok (._.f.o_)  and added more taps more scripts take a LOOK by yourself, and the script  works more efficiently on phones.\nThis script has been developed by FARES."})
+    InfoTab:CreateParagraph({Title = "Script Version", Content = "This is the release V4.9.1 .\n Problems have been improved, new features have been added, Misc has been added,auto collect has been added, and collect  UFO coins has been added and teleport to end of map has been added and script exclusive features has been added and fixed and exclusive features has been added and protection from tsunami has been added and  fixed the teleport to end of map fixed some glitchs and problems  if you had any problems dm me in tiktok (._.f.o_)  and added more taps more scripts take a LOOK by yourself, and the script  works more efficiently on phones.\nThis script has been developed by FARES."})
     
     InfoTab:CreateParagraph({Title = "المطور / Developer", Content = "FARES (egyptiandeveloper)"})
 
