@@ -1646,7 +1646,7 @@ SixTab:CreateSection("© Copyright by FARES")
 local GGTab = Window:CreateTab("سكربت تجميع الشخصيات تلقائي", 4483362458)
 
 GGTab:CreateButton({
-    Name = "تشغيل سكربت تجميع الشخصيات تلقائي",
+    Name = " (لازم نت قوي)تشغيل سكربت تجميع الشخصيات تلقائي",
     Callback = function()
 
 
