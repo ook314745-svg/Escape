@@ -1791,7 +1791,7 @@ local function tacticalMove(targetPos)
     local start = root.Position
     local goal = targetPos + Vector3.new(0,4,0)
     local dir = (goal - start)
-    local step = 12
+    local step = 5
     local steps = math.floor(dir.Magnitude/step)
 
     for i=1,steps do
