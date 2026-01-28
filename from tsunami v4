@@ -1651,18 +1651,23 @@ GGTab:CreateButton({
 
 
 
+            
+                
+
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 
 local isFarming = false
 local selectedRarities = {}
 local fireCount = 0
+local celestialCount = 0
 local movementId = 0
 local isDodging = false
 local homeTarget = nil
 local isCollecting = false
 
 local MAX_FIRE_PER_CYCLE = 10
+local MAX_CELESTIAL = 4
 local DETECTION_RANGE = 119
 local FIXED_SAFE_POINT = Vector3.new(128.3185577392578, 3.1799826622009277, 30.747282028198242)
 
@@ -1791,7 +1796,7 @@ local function tacticalMove(targetPos)
     local start = root.Position
     local goal = targetPos + Vector3.new(0,4,0)
     local dir = (goal - start)
-    local step = 5
+    local step = 12
     local steps = math.floor(dir.Magnitude/step)
 
     for i=1,steps do
@@ -1804,6 +1809,7 @@ local function tacticalMove(targetPos)
         root.CFrame = CFrame.new(goal)
     end
 end
+
 
 
 task.spawn(function()
@@ -1846,10 +1852,11 @@ local function collectBrainrot(model)
 end
 
 
+
 task.spawn(function()
     while true do
         if isFarming then
-            if fireCount >= MAX_FIRE_PER_CYCLE then
+            if fireCount >= MAX_FIRE_PER_CYCLE or celestialCount >= MAX_CELESTIAL then
                 if not homeTarget then
                     homeTarget = FIXED_SAFE_POINT
                     setStatus("الرجوع للبيت...")
@@ -1858,6 +1865,7 @@ task.spawn(function()
                 local hrp = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
                 if hrp and (hrp.Position - homeTarget).Magnitude < 6 then
                     fireCount = 0
+                    celestialCount = 0
                     homeTarget = nil
                     setStatus("دورة جديدة")
                 end
@@ -1866,6 +1874,9 @@ task.spawn(function()
                     local foundTarget, rarityName
                     for rarity,v in pairs(selectedRarities) do
                         if v then
+                            if rarity == "Celestial" and celestialCount >= MAX_CELESTIAL then
+                                continue
+                            end
                             local folder = workspace.ActiveBrainrots:FindFirstChild(rarity)
                             if folder then
                                 local model = folder:FindFirstChild("RenderedBrainrot")
@@ -1884,12 +1895,27 @@ task.spawn(function()
                         local ok = collectBrainrot(foundTarget)
                         if ok then
                             fireCount += 1
-                            setStatus("تم الالتقاط ("..fireCount.."/"..MAX_FIRE_PER_CYCLE..")")
+                            if rarityName == "Celestial" then
+                                celestialCount += 1
+                            end
+                            if rarityName == "Celestial" then
+    setStatus("تم الالتقاط ("..celestialCount.."/"..MAX_CELESTIAL..")")
+else
+    setStatus("تم الالتقاط ("..fireCount.."/"..MAX_FIRE_PER_CYCLE..")")
+end
                         end
                     else
-                        setStatus("في انتظار الهدف... ("..fireCount.."/"..MAX_FIRE_PER_CYCLE..")")
-                        task.wait(0.1)
-                    end
+                        
+     
+
+    
+    if selectedRarities["Celestial"] then
+        setStatus("في انتظار الهدف... ("..celestialCount.."/"..MAX_CELESTIAL..")")
+    else
+        setStatus("في انتظار الهدف... ("..fireCount.."/"..MAX_FIRE_PER_CYCLE..")")
+    end
+    task.wait(0.1)
+end
                 end
             end
         end
@@ -1901,6 +1927,7 @@ startBtn.MouseButton1Click:Connect(function()
     isFarming = not isFarming
     if isFarming then
         fireCount = 0
+        celestialCount = 0
         isDodging = false
         homeTarget = nil
         startBtn.Text = "إيقاف"
@@ -1912,9 +1939,6 @@ startBtn.MouseButton1Click:Connect(function()
         setStatus("متوقف")
     end
 end)
-
-
-
 
 
 local player = game.Players.LocalPlayer
