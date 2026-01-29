@@ -1363,7 +1363,7 @@ end})
 
 HiTab:CreateSection("© Copyright by FARES")
 
-local SixTab = Window:CreateTab("NEW TELEPORTER الانتقال الى اخر الماب نسخة جديدة ", 4483362458
+local SixTab = Window:CreateTab("NEW TELEPORTER الانتقال الى اخر الماب نسخة جديدة ", 4483362458)
 
 
 
