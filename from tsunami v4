@@ -1363,275 +1363,180 @@ end})
 
 HiTab:CreateSection("© Copyright by FARES")
 
-local SixTab = Window:CreateTab("( التنقل الى اخر الماب تم اصلاح الثغرة) ", 4483362458)
+local SixTab = Window:CreateTab("NEW TELEPORTER الانتقال الى اخر الماب نسخة جديدة ", 4483362458
+
+
 
 SixTab:CreateButton({
-    Name = " لا تشغلة", 
+    Name = "الانتقال الى اخر الماب (FIXED)تم استغلال ثغرة جديدة! ", 
     Callback = function()
 
 
+if not hookfunction then
+    return
+end
 
 local Players = game:GetService("Players")
-local Workspace = game:GetService("Workspace")
-local TweenService = game:GetService("TweenService")
+local CoreGui = game:GetService("CoreGui")
 local LocalPlayer = Players.LocalPlayer
 
+local isCloaked = false
+local oldCFrame = nil
+local original_cframe_index
+local isTeleporting = false
 
-local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Name = "GapNavigatorUI"
-ScreenGui.Parent = LocalPlayer:WaitForChild("PlayerGui")
-ScreenGui.ResetOnSpawn = false
+local soundMemory = {}
+local descendantAddedConnection = nil
+
+local ControlGui = Instance.new("ScreenGui", CoreGui)
+ControlGui.Name = "PhoenixTP_UI"
+ControlGui.ResetOnSpawn = false
+ControlGui.DisplayOrder = 1000000
 
 local MainFrame = Instance.new("Frame")
-MainFrame.Parent = ScreenGui
-MainFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-MainFrame.BorderColor3 = Color3.fromRGB(255, 255, 255)
-MainFrame.BorderSizePixel = 1
-MainFrame.Position = UDim2.new(0.5, -100, 0.8, 0)
-MainFrame.Size = UDim2.new(0, 200, 0, 110)
+MainFrame.Size = UDim2.new(0, 250, 0, 80)
+MainFrame.Position = UDim2.new(0.5, -125, 0.1, 0)
+MainFrame.BackgroundColor3 = Color3.fromRGB(60, 50, 40)
 MainFrame.Active = true
 MainFrame.Draggable = true
+MainFrame.Parent = ControlGui
 
-local TitleLabel = Instance.new("TextLabel")
-TitleLabel.Parent = MainFrame
-TitleLabel.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-TitleLabel.Size = UDim2.new(1, 0, 0, 25)
-TitleLabel.Font = Enum.Font.SourceSansBold
-TitleLabel.Text = "Teleport by Fares"
-TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-TitleLabel.TextSize = 16
+local Title = Instance.new("TextLabel", MainFrame)
+Title.Size = UDim2.new(1, 0, 0, 25)
+Title.BackgroundColor3 = Color3.fromRGB(40, 30, 20)
+Title.Text = "النسخة النهائيه V2 | الانتقال الى اخر الماب من صنع فارس"
+Title.Font = Enum.Font.SourceSansBold
+Title.TextColor3 = Color3.fromRGB(255, 230, 210)
+Title.TextSize = 14
 
-local PrevButton = Instance.new("TextButton")
-PrevButton.Parent = MainFrame
-PrevButton.BackgroundColor3 = Color3.fromRGB(190, 40, 40) -- Red
-PrevButton.Position = UDim2.new(0.05, 0, 0.25, 0)
-PrevButton.Size = UDim2.new(0.4, 0, 0, 40)
-PrevButton.Font = Enum.Font.SourceSansBold
-PrevButton.Text = " للوراء (اظن مو مهم) "
-PrevButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-PrevButton.TextSize = 14
+local TeleportButton = Instance.new("TextButton", MainFrame)
+TeleportButton.Size = UDim2.new(1, -20, 0, 35)
+TeleportButton.Position = UDim2.new(0, 10, 1, -45)
+TeleportButton.BackgroundColor3 = Color3.fromRGB(200, 140, 80)
+TeleportButton.Font = Enum.Font.SourceSansBold
+TeleportButton.Text = "الانتقال الى اخر الماب"
+TeleportButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+Instance.new("UICorner", TeleportButton).CornerRadius = UDim.new(0, 4)
 
-local NextButton = Instance.new("TextButton")
-NextButton.Parent = MainFrame
-NextButton.BackgroundColor3 = Color3.fromRGB(40, 160, 70) -- Green
-NextButton.Position = UDim2.new(0.55, 0, 0.25, 0)
-NextButton.Size = UDim2.new(0.4, 0, 0, 40)
-NextButton.Font = Enum.Font.SourceSansBold
-NextButton.Text = "انتقال (اضغط كتير لين تصير 9)"
-NextButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-NextButton.TextSize = 14
+local BlackoutGui = Instance.new("ScreenGui", CoreGui)
+BlackoutGui.Name = "FaresEclipseGui"
+BlackoutGui.IgnoreGuiInset = true
+BlackoutGui.ResetOnSpawn = false
+BlackoutGui.DisplayOrder = 999999
+BlackoutGui.Enabled = false
 
-local StatusLabel = Instance.new("TextLabel")
-StatusLabel.Parent = MainFrame
-StatusLabel.Position = UDim2.new(0, 0, 1, -30)
-StatusLabel.Size = UDim2.new(1, 0, 0, 25)
-StatusLabel.Font = Enum.Font.SourceSansItalic
-StatusLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
-StatusLabel.BackgroundTransparency = 1
-StatusLabel.TextXAlignment = Enum.TextXAlignment.Center
+local BlackScreen = Instance.new("Frame", BlackoutGui)
+BlackScreen.Size = UDim2.new(1, 0, 1, 0)
+BlackScreen.BackgroundColor3 = Color3.new(0, 0, 0)
 
+local LoadingText = Instance.new("TextLabel", BlackScreen)
+LoadingText.Size = UDim2.new(1, 0, 0, 50)
+LoadingText.Position = UDim2.new(0, 0, 0.5, -25)
+LoadingText.BackgroundTransparency = 1
+LoadingText.Font = Enum.Font.SourceSansBold
+LoadingText.Text = "جاري الانتقال..."
+LoadingText.TextColor3 = Color3.new(1, 1, 1)
+LoadingText.TextSize = 30
 
-local totalGaps = 9
-local currentGapIndex = 0
-
-
-local function getTargetForIndex(index)
-    local mapVariants = Workspace:WaitForChild("MapVariants")
-    local map = mapVariants:WaitForChild("DefaultMap")
-    local gapsFolder = map:WaitForChild("Gaps")
-    
-    local gapName = "Gap" .. index
-    local specificGap = gapsFolder:WaitForChild(gapName)
-
-    
-    while #specificGap:GetChildren() < 3 do 
-        wait(0.1)
-    end
-    
-    if index == 1 then return specificGap:WaitForChild("Mud")
-    elseif index == 2 then return specificGap:GetChildren()[2]
-    elseif index == 3 then return specificGap:GetChildren()[2]
-    elseif index == 4 then return specificGap:WaitForChild("Mud")
-    elseif index == 5 then return specificGap:GetChildren()[2]
-    elseif index == 6 then return specificGap:WaitForChild("Mud")
-    elseif index == 7 then return specificGap:GetChildren()[3]
-    elseif index == 8 then return specificGap:GetChildren()[2]
-    elseif index == 9 then return specificGap:GetChildren()[3]
-    end
-    return nil
-end
-
-local function updateStatus()
-    StatusLabel.Text = "سيف بوينت: " .. currentGapIndex .. " / " .. totalGaps
-end
-
-local function smoothTeleportTo(targetPart)
-    local character = LocalPlayer.Character
-    local rootPart = character and character:FindFirstChild("HumanoidRootPart")
-    if not (rootPart and targetPart) then return end
-    local targetPosition = targetPart.Position + Vector3.new(0, 5, 0)
-    local tweenInfo = TweenInfo.new(0.1, Enum.EasingStyle.Linear, Enum.EasingDirection.Out)
-    local properties = {CFrame = CFrame.new(targetPosition)}
-    local tween = TweenService:Create(rootPart, tweenInfo, properties)
-    tween:Play()
-end
-
-local function moveForward()
-    if currentGapIndex < totalGaps then
-        local nextIndex = currentGapIndex + 1
-        local target = getTargetForIndex(nextIndex)
-        if target then
-            currentGapIndex = nextIndex
-            smoothTeleportTo(target)
-            updateStatus()
+function MuteAllSounds()
+    soundMemory = {}
+    for _, v in pairs(game:GetDescendants()) do
+        if v:IsA("Sound") then
+            pcall(function()
+                soundMemory[v] = {Volume = v.Volume, IsPlaying = v.IsPlaying}
+                v.Volume = 0; v:Stop()
+            end)
         end
     end
-end
-
-local function moveBackward()
-    if currentGapIndex > 1 then
-        local prevIndex = currentGapIndex - 1
-        local target = getTargetForIndex(prevIndex)
-        if target then
-            currentGapIndex = prevIndex
-            smoothTeleportTo(target)
-            updateStatus()
-        end
-    end
-end
-
-local function resetOnDeath()
-    currentGapIndex = 0
-    updateStatus()
-end
-
-NextButton.MouseButton1Click:Connect(moveForward)
-PrevButton.MouseButton1Click:Connect(moveBackward)
-
-LocalPlayer.CharacterAdded:Connect(function(character)
-    character:WaitForChild("Humanoid").Died:Connect(resetOnDeath)
-end)
-
-if LocalPlayer.Character then
-    pcall(function()
-        LocalPlayer.Character:WaitForChild("Humanoid").Died:Connect(resetOnDeath)
+    descendantAddedConnection = game.DescendantAdded:Connect(function(v)
+        if v:IsA("Sound") then pcall(function() v.Volume = 0; v:Stop() end) end
     end)
 end
 
-
-updateStatus()
-end})
-
-SixTab:CreateButton({
-    Name = " التنقل الى اخر الماب (تجريبي-تم اصلاح الثغرة) ", 
-    Callback = function()
-
-
-local Players = game:GetService("Players")
-local Workspace = game:GetService("Workspace")
-local TweenService = game:GetService("TweenService")
-local LocalPlayer = Players.LocalPlayer
-
-local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Name = "ExperimentalGap8UI"
-ScreenGui.Parent = LocalPlayer:WaitForChild("PlayerGui")
-ScreenGui.ResetOnSpawn = false
-
-local NeonBorder = Instance.new("Frame")
-NeonBorder.Parent = ScreenGui
-NeonBorder.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-NeonBorder.Position = UDim2.new(0.5, -152, 0.7, 0)
-NeonBorder.Size = UDim2.new(0, 304, 0, 154)
-NeonBorder.Active = true 
-NeonBorder.Draggable = true 
-Instance.new("UICorner", NeonBorder).CornerRadius = UDim.new(0, 8)
-
-local MainFrame = Instance.new("Frame")
-MainFrame.Parent = NeonBorder
-MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-MainFrame.Position = UDim2.new(0.5, -150, 0.5, -75) 
-MainFrame.Size = UDim2.new(0, 300, 0, 150)
-MainFrame.Draggable = false 
-Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 6)
-
-local TitleLabel = Instance.new("TextLabel")
-TitleLabel.Parent = MainFrame
-TitleLabel.BackgroundTransparency = 1
-TitleLabel.Size = UDim2.new(1, 0, 0, 25)
-TitleLabel.Font = Enum.Font.SourceSansBold
-TitleLabel.Text = "Teleport v2 by Fares"
-TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-TitleLabel.TextSize = 16
-
-local Gap8Button = Instance.new("TextButton")
-Gap8Button.Parent = MainFrame
-Gap8Button.BackgroundColor3 = Color3.fromRGB(80, 40, 190)
-Gap8Button.Position = UDim2.new(0.1, 0, 0.2, 0)
-Gap8Button.Size = UDim2.new(0.8, 0, 0, 50)
-Gap8Button.Font = Enum.Font.GothamBold
-Gap8Button.Text = "الانتقال الى اخر الماب"
-Gap8Button.TextColor3 = Color3.fromRGB(255, 255, 255)
-Gap8Button.TextSize = 20
-Instance.new("UICorner", Gap8Button).CornerRadius = UDim.new(0, 6)
-
-local NoteLabel = Instance.new("TextLabel")
-NoteLabel.Parent = MainFrame
-NoteLabel.BackgroundTransparency = 1
-NoteLabel.Position = UDim2.new(0.05, 0, 0.6, 0)
-NoteLabel.Size = UDim2.new(0.9, 0, 0.4, 0)
-NoteLabel.Font = Enum.Font.SourceSans
-NoteLabel.Text = "السكربت ده تجريبي احتمال يتم اكتشاف الثغرة في اي وقت و ينقلك لاخر الماب ضروري تشوف اخر فيديو في تيك توك لانه يشرح كيفيه استخدامه"
-NoteLabel.TextColor3 = Color3.fromRGB(255, 200, 0)
-NoteLabel.TextSize = 13
-NoteLabel.TextWrapped = true
-NoteLabel.TextXAlignment = Enum.TextXAlignment.Center
-NoteLabel.TextYAlignment = Enum.TextYAlignment.Center
-
-task.spawn(function()
-    while task.wait() do
-        for i = 0, 1, 0.01 do
-            if NeonBorder and NeonBorder.Parent then
-                NeonBorder.BackgroundColor3 = Color3.fromHSV(i, 1, 1)
-                task.wait(0.02)
-            else
-                break
-            end
+function RestoreAllSounds()
+    if descendantAddedConnection then descendantAddedConnection:Disconnect(); descendantAddedConnection = nil end
+    for sound, originalState in pairs(soundMemory) do
+        if sound and sound.Parent then
+            pcall(function()
+                sound.Volume = originalState.Volume
+                if originalState.IsPlaying then sound:Play() end
+            end)
         end
     end
-end)
-
-local function getTargetForGap8()
-    local map = Workspace:WaitForChild("DefaultMap", 10)
-    if not map then return nil end
-    local gapsFolder = map:WaitForChild("Gaps", 10)
-    if not gapsFolder then return nil end
-    local specificGap = gapsFolder:FindFirstChild("Gap8")
-    if not specificGap then return nil end
-    while #specificGap:GetChildren() < 2 do task.wait(0.1) end
-    return specificGap:GetChildren()[2]
+    soundMemory = {}
 end
 
-local function smoothTeleportTo(targetPart)
-    local character = LocalPlayer.Character
-    local rootPart = character and character:FindFirstChild("HumanoidRootPart")
-    if not (rootPart and targetPart) then return end
-    local targetPosition = targetPart.Position + Vector3.new(0, 5, 0)
-    local tweenInfo = TweenInfo.new(0.1, Enum.EasingStyle.Linear)
-    local properties = {CFrame = CFrame.new(targetPosition)}
-    local tween = TweenService:Create(rootPart, tweenInfo, properties)
-    tween:Play()
-end
-
-Gap8Button.MouseButton1Click:Connect(function()
-    local target = getTargetForGap8()
-    if target then
-        smoothTeleportTo(target)
-    else
-        Gap8Button.Text = "لم يتم العثور على الهدف!"
-        task.wait(2)
-        Gap8Button.Text = "الانتقال لاخر الماب"
+local mt = getrawmetatable(CFrame.new())
+original_cframe_index = hookfunction(mt.__index, function(self, index)
+    if isCloaked and self == LocalPlayer.Character.HumanoidRootPart.CFrame and (index == "p" or index == "Position") then
+        return oldCFrame.p
     end
+    return original_cframe_index(self, index)
 end)
+
+local function TheImmortalPhoenix()
+    if isTeleporting then return end
+    isTeleporting = true
+
+    MuteAllSounds()
+    BlackoutGui.Enabled = true
+    TeleportButton.Text = "جاري الانتقال..."
+    TeleportButton.Interactable = false
+
+    task.spawn(function()
+        local success = false
+        local attempts = 0
+        local targetPart = workspace.DefaultMap.Gaps.Gap9:GetChildren()[2]
+        if not targetPart then
+            RestoreAllSounds(); BlackoutGui.Enabled = false; isTeleporting = false; TeleportButton.Interactable = true
+            return
+        end
+        local destination = CFrame.new(targetPart.Position)
+
+        while not success and attempts < 10 do
+            attempts = attempts + 1
+
+            local character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+            local rootPart = character:WaitForChild("HumanoidRootPart")
+            local humanoid = character:WaitForChild("Humanoid")
+
+            if humanoid.Health <= 0 then
+                LocalPlayer.CharacterAdded:Wait()
+                character = LocalPlayer.Character
+                rootPart = character:WaitForChild("HumanoidRootPart")
+                humanoid = character:WaitForChild("Humanoid")
+            end
+
+            local died = false
+            local diedConnection = humanoid.Died:Connect(function() died = true end)
+
+            oldCFrame = rootPart.CFrame
+            isCloaked = true
+            rootPart.CFrame = destination
+            task.wait(1)
+            isCloaked = false
+            oldCFrame = nil
+            
+            diedConnection:Disconnect()
+
+            if not died and (rootPart.Position - destination.Position).Magnitude < 20 then
+                success = true
+            elseif died then
+                
+            else
+                task.wait(0.5)
+            end
+        end
+
+        RestoreAllSounds()
+        BlackoutGui.Enabled = false
+        TeleportButton.Text = "الانتقال"
+        TeleportButton.Interactable = true
+        isTeleporting = false
+    end)
+end
+
+TeleportButton.MouseButton1Click:Connect(TheImmortalPhoenix)
 
 
 
@@ -1639,7 +1544,7 @@ end})
 
 SixTab:CreateParagraph({
         Title = " ملاحظة مهمة بخصوص الانتقال لاخر الماب! ",
-        Content =" لازم تشغل سكربت الي يحميك من التسونامي و تخلية، On و بعدها تضغط علي زر التنقل كتيرررر لين ينقلك"
+        Content =" قد يتم اكتشاف ثغرة في اي وقت في حاله تم تعطيل السكربت يرجى التواصل علي الخاص في تيك توك  my tiktok(._.f.o_) "
     })
 
 SixTab:CreateSection("© Copyright by FARES")
@@ -1658,7 +1563,6 @@ end
 end})
 
 vipTab:CreateSection("© Copyright by FARES")
-
 
 local GGTab = Window:CreateTab("سكربت تجميع الشخصيات تلقائي", 4483362458)
 
@@ -2638,9 +2542,9 @@ MiscTab:CreateSlider({
 
     
     InfoTab:CreateSection("معلومات السكربت")
-    InfoTab:CreateParagraph({Title = "نسخة السكربت", Content = "هذا الاصدار .6v .\n تم تحسين بعض المشاكلوويعمل  بكفاءه اقوي و تمت اضافة vip مجانا و  تمت اضافة الانتقال الى اخر الماب مع شرح و تم اضافة تجميع الشخصيات تلقائي  يمكنك تجميع فوق 30 clesteal و تم اصلاح و اضافة الانتقالبدون جهد منك و تمت اضافه مميزات  و اضافة سكربتات جديدة و قوية و اضافة auto collect و العديد من المميزات اكتشفها بنفسك (اذا اكتشفت اي مشاكل في السكربت تواصل معي في التيك توك علي الخاص  ._.f.o_  ) و تمت اضافة مميزات حصرية و تمت اضافه عدم الموت من تسونامي و تمت اضافة  جمع العملات UFO الجديدة و تم اضافة التنقل الى اخر الماب التجريبي و تم اصلاح الثغرة و سكربتات رائعه و تم تحسين بعض المشاكل في الاداء  وواضافه misc.\nالسكربت هذا تم تطويره من FARES."})
+    InfoTab:CreateParagraph({Title = "نسخة السكربت", Content = "هذا الاصدار .6v .\n تم تحسين بعض المشاكلوويعمل  بكفاءه اقوي و تمت اضافة VIP مجانا و  تمت اضافة الانتقال الى اخر الماب مع شرح و تم اضافة تجميع الشخصيات تلقائي  يمكنك تجميع فوق 30 clesteal و تم اصلاح و اضافة الانتقالبدون جهد منك و تمت اضافه مميزات  و اضافة سكربتات جديدة و قوية و اضافة auto collect و العديد من المميزات اكتشفها بنفسك (اذا اكتشفت اي مشاكل في السكربت تواصل معي في التيك توك علي الخاص  ._.f.o_  ) و تمت اضافة مميزات حصرية و تمت اضافه عدم الموت من تسونامي و تمت اضافة  جمع العملات UFO الجديدة و تم اضافة التنقل الى اخر الماب التجريبي و تم اصلاح الثغرة و سكربتات رائعه و تم تحسين بعض المشاكل في الاداء  وواضافه misc.\nالسكربت هذا تم تطويره من FARES."})
     
-    InfoTab:CreateParagraph({Title = "Script Version", Content = "This is the release V6.\n Problems have been improved, new features have been added,and Free Vip has been added Misc has been added,auto collect has been added, and collect  UFO coins has been added and teleport to end of map has been added and script exclusive features has been added  and Auto collect brainrots has been added so u can get 30 clesteal and fixed  some problems and exclusive features has been added and protection from tsunami has been added and  fixed the teleport to end of map fixed some glitchs and problems  if you had any problems dm me in tiktok (._.f.o_)  and added more taps more scripts take a LOOK by yourself, and the script  works more efficiently on phones.\nThis script has been developed by FARES."})
+    InfoTab:CreateParagraph({Title = "Script Version", Content = "This is the release V6.\n Problems have been improved, new features have been added, and Free Vip has been added Misc has been added,auto collect has been added, and collect  UFO coins has been added and teleport to end of map has been added and script exclusive features has been added  and Auto collect brainrots has been added so u can get 30 clesteal and fixed  some problems and exclusive features has been added and protection from tsunami has been added and  fixed the teleport to end of map fixed some glitchs and problems  if you had any problems dm me in tiktok (._.f.o_)  and added more taps more scripts take a LOOK by yourself, and the script  works more efficiently on phones.\nThis script has been developed by FARES."})
     
     InfoTab:CreateParagraph({Title = "المطور / Developer", Content = "FARES (egyptiandeveloper)"})
 
