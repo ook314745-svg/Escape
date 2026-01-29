@@ -1367,6 +1367,7 @@ local SixTab = Window:CreateTab("NEW TELEPORTER الانتقال الى اخر �
 
 
 
+
 SixTab:CreateButton({
     Name = "الانتقال الى اخر الماب (FIXED)تم استغلال ثغرة جديدة! ", 
     Callback = function()
