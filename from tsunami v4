@@ -306,11 +306,13 @@ local player = Players.LocalPlayer
 local PlayerGui = player:WaitForChild("PlayerGui")
 
 
-local originalTextLabel = nil
-local modelChildren = workspace.Model:GetChildren()
 
-for i = 1, math.min(100, #modelChildren) do
-    local part = modelChildren[i]
+local originalTextLabel = nil
+local timersFolder = workspace:WaitForChild("EventTimers")
+local children = timersFolder:GetChildren()
+
+for i = 1, math.min(100, #children) do
+    local part = children[i]
     if part:FindFirstChild("SurfaceGui") then
         local surfaceGui = part.SurfaceGui
         if surfaceGui:FindFirstChild("Frame") then
@@ -325,7 +327,7 @@ end
 
 
 if not originalTextLabel then
-    warn("TextLabel not found in workspace.Model (1-100)")
+    warn("TextLabel not found in workspace.EventTimers (1-100)")
     return
 end
 
