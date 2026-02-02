@@ -1837,7 +1837,7 @@ local isCollecting = false
 
 local MAX_FIRE_PER_CYCLE = 10
 local MAX_CELESTIAL = 4
-local DETECTION_RANGE = 250
+local DETECTION_RANGE = 200
 local FIXED_SAFE_POINT = Vector3.new(128.3185577392578, 3.1799826622009277, 30.747282028198242)
 
 local BRAINROT_TYPES = {"Celestial","Secret","Mythical","Legendary","Epic","Rare","Uncommon","Common","Cosmic"}
