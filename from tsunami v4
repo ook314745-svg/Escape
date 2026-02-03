@@ -172,7 +172,7 @@ local function ExecuteHub()
     repeat task.wait() until game:IsLoaded()
 
     local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
-    local Window = Rayfield:CreateWindow({Name = "Escape  Tsunami for brainrot | سكربت فارس V10.1", LoadingTitle = "سكربت فارس", LoadingSubtitle = "Fares Script", ConfigurationSaving = { Enabled = false }, KeySystem = false})
+    local Window = Rayfield:CreateWindow({Name = "Escape  Tsunami for brainrot | سكربت فارس V11.1", LoadingTitle = "سكربت فارس", LoadingSubtitle = "Fares Script", ConfigurationSaving = { Enabled = false }, KeySystem = false})
 
     local MainTab = Window:CreateTab("القائمة الرئيسية", 4483362458)
 
@@ -1607,6 +1607,400 @@ end
 
 LuckTab:CreateSection("© Copyright by FARES")
 
+local BLOCKTab = Window:CreateTab("كشف اماكن اللاكي بلوكس ", 4483362458)
+
+BLOCKTab:CreateButton({
+    Name = " ESP تلقائي ",
+    Callback = function()
+
+-- esp تلقائي
+
+local TARGET_RARITIES = {"Secret", "Divine", "Celestial"} -- The full list of targets.
+local RARITY_COLORS = {
+    Secret = Color3.fromRGB(255, 220, 0),   -- Gold
+    Divine = Color3.fromRGB(230, 230, 255),  -- Heavenly White
+    Celestial = Color3.fromRGB(0, 170, 255) -- Cosmic Blue
+}
+local TARGET_FOLDER_PATH = workspace:WaitForChild("ActiveLuckyBlocks")
+
+
+
+local Players = game:GetService("Players")
+local CoreGui = game:GetService("CoreGui")
+local RunService = game:GetService("RunService")
+
+local isHunting = false
+local activeESPs = {}
+
+
+
+local MainGui = Instance.new("ScreenGui", CoreGui)
+MainGui.Name = "Oracle_UI_v3"
+MainGui.ResetOnSpawn = false
+
+local MainFrame = Instance.new("Frame", MainGui)
+MainFrame.Size = UDim2.new(0, 250, 0, 100)
+MainFrame.Position = UDim2.new(0.5, -125, 0, 50)
+MainFrame.BackgroundColor3 = Color3.new(0, 0, 0)
+MainFrame.BackgroundTransparency = 0.5
+MainFrame.Active = true
+MainFrame.Draggable = true
+Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 5)
+
+local TitleLabel = Instance.new("TextLabel", MainFrame)
+TitleLabel.Size = UDim2.new(1, 0, 0, 25)
+TitleLabel.BackgroundColor3 = Color3.fromRGB(80, 60, 150)
+TitleLabel.Text = "كشف اماكن تلقائي للاكي بلوكس ديفاين و سلستيال و سكرت | من صنع فارس "
+TitleLabel.Font = Enum.Font.SourceSansBold
+TitleLabel.TextColor3 = Color3.new(1, 1, 1)
+TitleLabel.TextSize = 12
+Instance.new("UICorner", TitleLabel).CornerRadius = UDim.new(0, 5)
+
+local StatusLabel = Instance.new("TextLabel", MainFrame)
+StatusLabel.Size = UDim2.new(1, -20, 0, 30)
+StatusLabel.Position = UDim2.new(0, 10, 0, 30)
+StatusLabel.BackgroundTransparency = 1
+StatusLabel.Font = Enum.Font.SourceSans
+StatusLabel.TextColor3 = Color3.new(1, 1, 1)
+StatusLabel.TextSize = 14
+StatusLabel.Text = "الحالة: غير نشط"
+StatusLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+local ToggleButton = Instance.new("TextButton", MainFrame)
+ToggleButton.Size = UDim2.new(1, -20, 0, 25)
+ToggleButton.Position = UDim2.new(0, 10, 0, 65)
+ToggleButton.BackgroundColor3 = Color3.fromRGB(200, 40, 40)
+ToggleButton.Font = Enum.Font.SourceSansBold
+ToggleButton.Text = "ابدا (: "
+ToggleButton.TextColor3 = Color3.new(1, 1, 1)
+ToggleButton.TextSize = 14
+Instance.new("UICorner", ToggleButton).CornerRadius = UDim.new(0, 3)
+
+
+
+local function createESP(targetModel, rarity)
+    if not targetModel or activeESPs[targetModel] then return end
+
+    local mainPart = targetModel.PrimaryPart
+    if not mainPart then
+        local largestSize = 0
+        for _, child in pairs(targetModel:GetChildren()) do
+            if child:IsA("BasePart") then
+                local size = child.Size.X * child.Size.Y * child.Size.Z
+                if size > largestSize then
+                    largestSize = size
+                    mainPart = child
+                end
+            end
+        end
+    end
+    if not mainPart then return end
+
+    local espFolder = Instance.new("Folder", CoreGui)
+    espFolder.Name = "ESP_" .. targetModel.Name
+    activeESPs[targetModel] = espFolder
+
+    local espColor = RARITY_COLORS[rarity] or Color3.new(1, 1, 1)
+
+    local box = Instance.new("BoxHandleAdornment", espFolder)
+    box.Adornee = mainPart; box.AlwaysOnTop = true; box.ZIndex = 10
+    box.Size = mainPart.Size; box.Transparency = 0.6; box.Color3 = espColor
+
+    local billboard = Instance.new("BillboardGui", espFolder)
+    billboard.Adornee = mainPart; billboard.Size = UDim2.new(0, 200, 0, 50)
+    billboard.StudsOffset = Vector3.new(0, 2, 0); billboard.AlwaysOnTop = true
+
+    local textLabel = Instance.new("TextLabel", billboard)
+    textLabel.Size = UDim2.new(1, 0, 1, 0); textLabel.BackgroundTransparency = 1
+    textLabel.Font = Enum.Font.SourceSansBold; textLabel.TextSize = 18
+    textLabel.TextColor3 = espColor; textLabel.TextStrokeColor3 = Color3.new(0, 0, 0)
+    textLabel.TextStrokeTransparency = 0.5; textLabel.Text = rarity .. " Block!"
+
+    targetModel.AncestryChanged:Connect(function(_, parent)
+        if parent == nil then
+            espFolder:Destroy()
+            activeESPs[targetModel] = nil
+        end
+    end)
+end
+
+local function checkExistingBlocks()
+    for _, block in pairs(TARGET_FOLDER_PATH:GetChildren()) do
+        if block:IsA("Model") then
+            local blockName = block.Name
+            for _, rarity in pairs(TARGET_RARITIES) do
+                if blockName:find(rarity) then
+                    createESP(block, rarity)
+                end
+            end
+        end
+    end
+end
+
+local function updateStatus()
+    if not isHunting then
+        StatusLabel.Text = "الحالة: غير نشط"
+        StatusLabel.TextColor3 = Color3.new(1, 1, 1)
+        return
+    end
+
+    if next(activeESPs) then
+        StatusLabel.Text = "الحالة: تم العثور على الهدف!"
+        StatusLabel.TextColor3 = Color3.fromRGB(0, 255, 127) -- Green light
+    else
+        StatusLabel.Text = "الحالة: في انتظار الريسبون..."
+        StatusLabel.TextColor3 = Color3.new(1, 1, 1)
+    end
+end
+
+local watcherConnection
+local function startHunt()
+    isHunting = true
+    ToggleButton.Text = "ايقاف):"
+    ToggleButton.BackgroundColor3 = Color3.fromRGB(0, 180, 0)
+    
+    checkExistingBlocks()
+
+    watcherConnection = TARGET_FOLDER_PATH.ChildAdded:Connect(function(child)
+        if child:IsA("Model") then
+            local blockName = child.Name
+            for _, rarity in pairs(TARGET_RARITIES) do
+                if blockName:find(rarity) then
+                    createESP(child, rarity)
+                end
+            end
+        end
+    end)
+    
+    RunService:BindToRenderStep("OracleStatusUpdate", 200, updateStatus)
+end
+
+local function stopHunt()
+    isHunting = false
+    ToggleButton.Text = "ابدا(:"
+    ToggleButton.BackgroundColor3 = Color3.fromRGB(200, 40, 40)
+    
+    if watcherConnection then
+        watcherConnection:Disconnect()
+        watcherConnection = nil
+    end
+
+    for part, folder in pairs(activeESPs) do
+        folder:Destroy()
+    end
+    activeESPs = {}
+    
+    RunService:UnbindFromRenderStep("OracleStatusUpdate")
+    updateStatus()
+end
+
+ToggleButton.MouseButton1Click:Connect(function()
+    if isHunting then
+        stopHunt()
+    else
+        startHunt()
+    end
+end)
+end})
+
+BLOCKTab:CreateButton({
+    Name = " ESP يدوي ",
+    Callback = function()
+
+--ESP يدوي
+
+local RARITY_DATA = {
+    Secret = { Color = Color3.fromRGB(255, 220, 0), Active = false, Button = nil },
+    Divine = { Color = Color3.fromRGB(230, 230, 255), Active = false, Button = nil },
+    Celestial = { Color = Color3.fromRGB(0, 170, 255), Active = false, Button = nil }
+}
+local TARGET_FOLDER_PATH = workspace:WaitForChild("ActiveLuckyBlocks")
+
+
+
+local CoreGui = game:GetService("CoreGui")
+local RunService = game:GetService("RunService")
+
+local activeESPs = {}
+local watcherConnection = nil
+
+
+
+local MainGui = Instance.new("ScreenGui", CoreGui)
+MainGui.Name = "Hunter_UI_v5"
+MainGui.ResetOnSpawn = false
+
+local MainFrame = Instance.new("Frame", MainGui)
+MainFrame.Size = UDim2.new(0, 250, 0, 100)
+MainFrame.Position = UDim2.new(0.5, -125, 0, 50)
+MainFrame.BackgroundColor3 = Color3.new(0, 0, 0)
+MainFrame.BackgroundTransparency = 0.5
+MainFrame.Active = true
+MainFrame.Draggable = true
+Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 5)
+
+local TitleLabel = Instance.new("TextLabel", MainFrame)
+TitleLabel.Size = UDim2.new(1, 0, 0, 25)
+TitleLabel.BackgroundColor3 = Color3.fromRGB(80, 60, 150)
+TitleLabel.Text = "ESP LUCKYBLOCKS | By Fares v2"
+TitleLabel.Font = Enum.Font.SourceSansBold
+TitleLabel.TextColor3 = Color3.new(1, 1, 1)
+TitleLabel.TextSize = 13
+Instance.new("UICorner", TitleLabel).CornerRadius = UDim.new(0, 5)
+
+local StatusLabel = Instance.new("TextLabel", MainFrame)
+StatusLabel.Size = UDim2.new(1, -20, 0, 30)
+StatusLabel.Position = UDim2.new(0, 10, 0, 65)
+StatusLabel.BackgroundTransparency = 1
+StatusLabel.Font = Enum.Font.SourceSans
+StatusLabel.TextColor3 = Color3.new(1, 1, 1)
+StatusLabel.TextSize = 14
+StatusLabel.Text = "الحالة: في وضع الاستعداد"
+StatusLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+
+local buttonOrder = {"Secret", "Divine", "Celestial"}
+local buttonXOffset = 10
+
+for _, rarity in ipairs(buttonOrder) do
+    local data = RARITY_DATA[rarity]
+    local ToggleButton = Instance.new("TextButton", MainFrame)
+    ToggleButton.Size = UDim2.new(0, 70, 0, 25)
+    ToggleButton.Position = UDim2.new(0, buttonXOffset, 0, 35)
+    ToggleButton.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+    ToggleButton.Font = Enum.Font.SourceSansBold
+    ToggleButton.Text = rarity
+    ToggleButton.TextColor3 = Color3.new(1, 1, 1)
+    ToggleButton.TextSize = 12
+    Instance.new("UICorner", ToggleButton).CornerRadius = UDim.new(0, 3)
+    
+    data.Button = ToggleButton
+    buttonXOffset = buttonXOffset + 80 -- Increment X position for the next button
+end
+
+
+local function createESP(targetModel, rarity)
+    if not targetModel or activeESPs[targetModel] then return end
+
+    local mainPart = targetModel.PrimaryPart
+    if not mainPart then
+        local largestSize = 0
+        for _, child in pairs(targetModel:GetChildren()) do
+            if child:IsA("BasePart") then
+                local size = child.Size.X * child.Size.Y * child.Size.Z
+                if size > largestSize then largestSize = size; mainPart = child end
+            end
+        end
+    end
+    if not mainPart then return end
+
+    local espFolder = Instance.new("Folder", CoreGui); espFolder.Name = "ESP_" .. targetModel.Name
+    activeESPs[targetModel] = espFolder
+    local espColor = RARITY_DATA[rarity].Color
+
+    local box = Instance.new("BoxHandleAdornment", espFolder)
+    box.Adornee = mainPart; box.AlwaysOnTop = true; box.ZIndex = 10
+    box.Size = mainPart.Size; box.Transparency = 0.6; box.Color3 = espColor
+
+    local billboard = Instance.new("BillboardGui", espFolder)
+    billboard.Adornee = mainPart; billboard.Size = UDim2.new(0, 200, 0, 50)
+    billboard.StudsOffset = Vector3.new(0, 2, 0); billboard.AlwaysOnTop = true
+
+    local textLabel = Instance.new("TextLabel", billboard)
+    textLabel.Size = UDim2.new(1, 0, 1, 0); textLabel.BackgroundTransparency = 1
+    textLabel.Font = Enum.Font.SourceSansBold; textLabel.TextSize = 18
+    textLabel.TextColor3 = espColor; textLabel.TextStrokeColor3 = Color3.new(0, 0, 0)
+    textLabel.TextStrokeTransparency = 0.5; textLabel.Text = rarity .. " Block!"
+
+    targetModel.AncestryChanged:Connect(function(_, parent)
+        if parent == nil then espFolder:Destroy(); activeESPs[targetModel] = nil end
+    end)
+end
+
+local function checkBlocks()
+    for _, block in pairs(TARGET_FOLDER_PATH:GetChildren()) do
+        if block:IsA("Model") then
+            local blockName = block.Name
+            for rarity, data in pairs(RARITY_DATA) do
+                if data.Active and blockName:find(rarity) then
+                    createESP(block, rarity)
+                end
+            end
+        end
+    end
+end
+
+local function updateStatus()
+    if next(activeESPs) then
+        StatusLabel.Text = "الحالة: تم العثور على الهدف!"
+        StatusLabel.TextColor3 = Color3.fromRGB(0, 255, 127)
+    else
+        local isAnyHuntActive = false
+        for _, data in pairs(RARITY_DATA) do
+            if data.Active then isAnyHuntActive = true; break end
+        end
+        
+        if isAnyHuntActive then
+            StatusLabel.Text = "الحالة: في انتظار الريسبون..."
+            StatusLabel.TextColor3 = Color3.new(1, 1, 1)
+        else
+            StatusLabel.Text = "الحالة: في وضع الاستعداد"
+            StatusLabel.TextColor3 = Color3.fromRGB(150, 150, 150)
+        end
+    end
+end
+
+local function setupWatcher()
+    if watcherConnection then return end
+    checkBlocks()
+    watcherConnection = TARGET_FOLDER_PATH.ChildAdded:Connect(function(child)
+        if child:IsA("Model") then
+            local blockName = child.Name
+            for rarity, data in pairs(RARITY_DATA) do
+                if data.Active and blockName:find(rarity) then
+                    createESP(child, rarity)
+                end
+            end
+        end
+    end)
+end
+
+local function teardownWatcher()
+    if not watcherConnection then return end
+    local isAnyHuntActive = false
+    for _, data in pairs(RARITY_DATA) do
+        if data.Active then isAnyHuntActive = true; break end
+    end
+    
+    if not isAnyHuntActive then
+        watcherConnection:Disconnect()
+        watcherConnection = nil
+        for _, folder in pairs(activeESPs) do folder:Destroy() end
+        activeESPs = {}
+    end
+end
+
+for rarity, data in pairs(RARITY_DATA) do
+    data.Button.MouseButton1Click:Connect(function()
+        data.Active = not data.Active
+        if data.Active then
+            data.Button.BackgroundColor3 = data.Color
+            data.Button.TextColor3 = Color3.new(0,0,0)
+            setupWatcher()
+        else
+            data.Button.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+            data.Button.TextColor3 = Color3.new(1,1,1)
+            teardownWatcher()
+        end
+    end)
+end
+
+RunService:BindToRenderStep("HunterStatusUpdate", 200, updateStatus)
+
+end})
+
+BLOCKTab:CreateSection("© Copyright by FARES")
+
 local vipTab = Window:CreateTab("VIPمجانا!ميزة جديدة! ", 4483362458)
 
 vipTab:CreateButton({
@@ -2897,9 +3291,9 @@ MiscTab:CreateSlider({
 
     
     InfoTab:CreateSection("معلومات السكربت")
-    InfoTab:CreateParagraph({Title = "نسخة السكربت", Content = "هذا الاصدار .10.1v .\n تم تحسين بعض المشاكلوويعمل  بكفاءه اقوي و تمت اضافة VIP مجاناو تم اضافة Max Luck  و  تمت اضافة الانتقال الى اخر الماب مع شرح و تم تطوير ميزة الانتقال الى اخر الماب و تم اضافة تجميع الشخصيات تلقائي  يمكنك تجميع فوق 30 clesteal و تم اصلاح و اضافة الانتقالبدون جهد منك و تمت اضافه  تخطي الباركور و تم اضافة مميزات  و اضافة سكربتات جديدة و قوية و اضافة auto collect و العديد من المميزات اكتشفها بنفسك (اذا اكتشفت اي مشاكل في السكربت تواصل معي في التيك توك علي الخاص  ._.f.o_  ) و تمت اضافة مميزات حصرية و  تم اضافة تجميع عملات حدث ال Money و تمت اضافه عدم الموت من تسونامي و تمت اضافة التنقل عبر جدار Vip و تمت اضافة  جمع العملات UFO الجديدة و تم اضافة التنقل الى اخر الماب التجريبي و تم اصلاح الثغرة و سكربتات رائعه و تم تحسين بعض المشاكل في الاداء  وواضافه misc.\nالسكربت هذا تم تطويره من FARES."})
+    InfoTab:CreateParagraph({Title = "نسخة السكربت", Content = "هذا الاصدار .11.1v .\n تم تحسين بعض المشاكلوويعمل  بكفاءه اقوي و تمت اضافة VIP مجاناو تم اضافة Max Luck  و  تمت اضافة الانتقال الى اخر الماب مع شرح و تم تطوير ميزة الانتقال الى اخر الماب و تم اضافة تجميع الشخصيات تلقائي و تم اضافة ESP لاكي بلوكس يمكنك تجميع فوق 30 clesteal و تم اصلاح و اضافة الانتقالبدون جهد منك و تمت اضافه  تخطي الباركور و تم اضافة مميزات  و اضافة سكربتات جديدة و قوية و اضافة auto collect و العديد من المميزات اكتشفها بنفسك (اذا اكتشفت اي مشاكل في السكربت تواصل معي في التيك توك علي الخاص  ._.f.o_  ) و تمت اضافة مميزات حصرية و  تم اضافة تجميع عملات حدث ال Money و تمت اضافه عدم الموت من تسونامي و تمت اضافة التنقل عبر جدار Vip و تمت اضافة  جمع العملات UFO الجديدة و تم اضافة التنقل الى اخر الماب التجريبي و تم اصلاح الثغرة و سكربتات رائعه و تم تحسين بعض المشاكل في الاداء  وواضافه misc.\nالسكربت هذا تم تطويره من FARES."})
     
-    InfoTab:CreateParagraph({Title = "Script Version", Content = "This is the release V10.1.\n Problems have been improved, new features have been added, and Free Vip has been added  and Tp in Vip walls has been added Misc has been added,and MAX LUCK has been added, and auto collect has been added, and SKIP PARKOUR has been added, and auto collect coins event Money has been added,  and collect  UFO coins has been added and teleport to end of map has been added  and fixed the Teleporter and script exclusive features has been added  and Auto collect brainrots has been added so u can get 30 clesteal and fixed  some problems and exclusive features has been added and protection from tsunami has been added and  fixed the teleport to end of map fixed some glitchs and problems  if you had any problems dm me in tiktok (._.f.o_)  and added more taps more scripts take a LOOK by yourself, and the script  works more efficiently on phones.\nThis script has been developed by FARES."})
+    InfoTab:CreateParagraph({Title = "Script Version", Content = "This is the release V11.1.\n Problems have been improved, new features have been added, and Free Vip has been added and ESP LUCKYBLOCKShas been added and Tp in Vip walls has been added Misc has been added,and MAX LUCK has been added, and auto collect has been added, and SKIP PARKOUR has been added, and auto collect coins event Money has been added,  and collect  UFO coins has been added and teleport to end of map has been added  and fixed the Teleporter and script exclusive features has been added  and Auto collect brainrots has been added so u can get 30 clesteal and fixed  some problems and exclusive features has been added and protection from tsunami has been added and  fixed the teleport to end of map fixed some glitchs and problems  if you had any problems dm me in tiktok (._.f.o_)  and added more taps more scripts take a LOOK by yourself, and the script  works more efficiently on phones.\nThis script has been developed by FARES."})
     
     InfoTab:CreateParagraph({Title = "المطور / Developer", Content = "FARES (egyptiandeveloper)"})
 
