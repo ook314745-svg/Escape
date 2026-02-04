@@ -1545,7 +1545,7 @@ end})
 
 SixTab:CreateParagraph({
         Title = " ملاحظة مهمة بخصوص الانتقال لاخر الماب! ",
-        Content =" قد يتم اكتشاف ثغرة في اي وقت في حاله تم تعطيل السكربت يرجى التواصل علي الخاص في تيك توك  my tiktok(._.f.o_) "
+        Content =" قد يتم اكتشاف ثغرة في اي وقت و ايضا يجب سرعتك ان تكون بلماب 200 و  في حاله تم تعطيل السكربت يرجى التواصل علي الخاص في تيك توك  my tiktok(._.f.o_) "
     })
 
 SixTab:CreateSection("© Copyright by FARES")
@@ -2020,6 +2020,10 @@ vipTab:CreateButton({
 loadstring(game:HttpGet("https://pastefy.app/oYkuQAHZ/raw"))()
 end})
 
+vipTab:CreateParagraph({
+        Title = "  ملاحظه مهمة بخصوص ثغرات VIP",
+        Content = "لازم سرعتك بلماب تكون 200."
+    })
 
 vipTab:CreateSection("© Copyright by FARES")
 
