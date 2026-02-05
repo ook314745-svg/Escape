@@ -1,4 +1,3 @@
-
 local BLUE_ACCENT = Color3.fromRGB(25, 85, 160)
 local DARK_GLASS = Color3.fromRGB(10, 15, 30)
 local FIELD_BG = Color3.fromRGB(18, 25, 45)
@@ -172,7 +171,7 @@ local function ExecuteHub()
     repeat task.wait() until game:IsLoaded()
 
     local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
-    local Window = Rayfield:CreateWindow({Name = "Escape  Tsunami for brainrot | سكربت فارس V12.1", LoadingTitle = "سكربت فارس", LoadingSubtitle = "Fares Script", ConfigurationSaving = { Enabled = false }, KeySystem = false})
+    local Window = Rayfield:CreateWindow({Name = "Escape  Tsunami for brainrot | سكربت فارس V13.1", LoadingTitle = "سكربت فارس", LoadingSubtitle = "Fares Script", ConfigurationSaving = { Enabled = false }, KeySystem = false})
 
     local MainTab = Window:CreateTab("القائمة الرئيسية", 4483362458)
 
@@ -3488,6 +3487,207 @@ FaresTab:CreateSection("© Copyright by FARES")
 
     
     MiscTab:CreateSection("مميزات جديدة! ")
+    
+    
+    MiscTab:CreateButton({
+    Name = "تفادي التسونامي V3 تم الاصلاح ",
+    Callback = function()
+    -- تفادي المناخ
+
+
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local CoreGui = game:GetService("CoreGui")
+
+
+local LocalPlayer = Players.LocalPlayer
+
+
+local SAFE_POINTS = {
+    Vector3.new(199.60, -2.82, -6.53),
+    Vector3.new(284.93, -2.82, 8.38),
+    Vector3.new(396.99, -2.82, 8.23),
+    Vector3.new(540.65, -2.82, 18.45),
+    Vector3.new(754.31, -2.82, 2.02),
+    Vector3.new(1072.14, -2.82, 15.34),
+    Vector3.new(1559.02, -2.82, 18.66),
+    Vector3.new(2246.13, -2.82, -7.86),
+    Vector3.new(2600.88, -2.82, -11.53)
+}
+
+
+local DETECTION_RANGE = 120
+local MOVEMENT_SPEED = 1500 
+local isDodgingEnabled = false
+local isCurrentlyMoving = false
+local movementConnection = nil
+
+
+
+
+function findNearestTsunami()
+    local activeTsunamisFolder = workspace:FindFirstChild("ActiveTsunamis")
+    local hrp = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+    
+    if not activeTsunamisFolder or #activeTsunamisFolder:GetChildren() == 0 or not hrp then
+        return nil 
+    end
+
+    local nearestTsunami = nil
+    local minDistance = DETECTION_RANGE + 1 
+
+    for _, model in ipairs(activeTsunamisFolder:GetChildren()) do
+        if model:IsA("Model") then
+            local tsunamiCenter = model.PrimaryPart and model.PrimaryPart.Position or model:GetBoundingBox().p
+            local distance = (hrp.Position - tsunamiCenter).Magnitude
+            if distance < minDistance then
+                minDistance = distance
+                nearestTsunami = model
+            end
+        end
+    end
+    
+    
+    
+    if minDistance <= DETECTION_RANGE then
+        return nearestTsunami
+    end
+    
+    return nil
+end
+
+
+
+function moveToPosition(targetPosition)
+    if isCurrentlyMoving then return end
+
+    local char = LocalPlayer.Character
+    local hrp = char and char:FindFirstChild("HumanoidRootPart")
+    if not hrp then return end
+
+    isCurrentlyMoving = true
+    
+
+    if movementConnection then movementConnection:Disconnect() end
+
+    movementConnection = RunService.Heartbeat:Connect(function(deltaTime)
+    
+  
+        
+        if not isDodgingEnabled or not findNearestTsunami() then
+            
+            isCurrentlyMoving = false
+            movementConnection:Disconnect()
+            movementConnection = nil
+            return
+        end
+
+        local currentPos = hrp.Position
+        local direction = (targetPosition - currentPos).Unit
+        local distance = (targetPosition - currentPos).Magnitude
+        local step = MOVEMENT_SPEED * deltaTime
+
+        if distance > step then
+            hrp.CFrame = CFrame.new(currentPos + direction * step)
+        else
+            hrp.CFrame = CFrame.new(targetPosition)
+            isCurrentlyMoving = false
+            movementConnection:Disconnect()
+            movementConnection = nil
+            
+            task.wait(0.5)
+        end
+    end)
+end
+
+function dodgeToNearestSafePoint()
+    local hrp = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+    if not hrp then return end
+
+    local nearestPoint = nil
+    local minDistance = math.huge
+
+    for _, point in ipairs(SAFE_POINTS) do
+        local distance = (hrp.Position - point).Magnitude
+        if distance < minDistance then
+            minDistance = distance
+            nearestPoint = point
+        end
+    end
+
+    if nearestPoint then
+        moveToPosition(nearestPoint)
+    end
+end
+
+
+
+if CoreGui:FindFirstChild("TsunamiDodgerGUI_Fares") then
+    CoreGui.TsunamiDodgerGUI_Fares:Destroy()
+end
+
+local TsunamiDodgerGui = Instance.new("ScreenGui")
+TsunamiDodgerGui.Name = "TsunamiDodgerGUI_Fares"
+TsunamiDodgerGui.Parent = CoreGui
+TsunamiDodgerGui.ResetOnSpawn = false
+
+local MainFrame = Instance.new("Frame", TsunamiDodgerGui)
+MainFrame.Size = UDim2.new(0, 250, 0, 100)
+MainFrame.Position = UDim2.new(0.5, -125, 0.1, 0)
+MainFrame.BackgroundColor3 = Color3.fromRGB(40, 25, 60)
+MainFrame.BorderColor3 = Color3.fromRGB(140, 80, 255)
+MainFrame.BorderSizePixel = 2
+MainFrame.Active = true
+MainFrame.Draggable = true
+Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 8)
+
+local TitleLabel = Instance.new("TextLabel", MainFrame)
+TitleLabel.Size = UDim2.new(1, 0, 0, 30)
+TitleLabel.BackgroundColor3 = Color3.fromRGB(140, 80, 255)
+TitleLabel.Text = "تفادي التسوناخي | من صنع فارس V3"
+TitleLabel.Font = Enum.Font.SourceSansBold
+TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+TitleLabel.TextSize = 16
+
+local ToggleButton = Instance.new("TextButton", MainFrame)
+ToggleButton.Size = UDim2.new(0.8, 0, 0, 40)
+ToggleButton.Position = UDim2.new(0.1, 0, 0.45, 0)
+ToggleButton.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+ToggleButton.Text = "تفعيل التسوناخي ابن المناخي"
+ToggleButton.Font = Enum.Font.GothamBold
+ToggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+ToggleButton.TextSize = 18
+Instance.new("UICorner", ToggleButton).CornerRadius = UDim.new(0, 6)
+
+
+
+ToggleButton.MouseButton1Click:Connect(function()
+    isDodgingEnabled = not isDodgingEnabled
+    if isDodgingEnabled then
+        ToggleButton.Text = "شغال! "
+        ToggleButton.BackgroundColor3 = Color3.fromRGB(50, 200, 50)
+    else
+        ToggleButton.Text = "تفعيل تفادي التسوناخي ابن المناخي"
+        ToggleButton.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+        if movementConnection then
+            movementConnection:Disconnect()
+            movementConnection = nil
+        end
+        isCurrentlyMoving = false
+    end
+end)
+
+RunService.Heartbeat:Connect(function()
+    if not isDodgingEnabled or isCurrentlyMoving then return end
+    
+    local nearestTsunami = findNearestTsunami()
+    if nearestTsunami then
+        
+        dodgeToNearestSafePoint()
+    end
+end)
+end})
+    
     MiscTab:CreateToggle({Name = " لا تشغلة)", CurrentValue = false, Callback = function(v) isGuarding = v; if v then isInstantGuarding = false; Rayfield:Notify({Title="تفادي التسونامي العادي", Content="تم التفعيل (عمو فارس بيحبك)!", Duration=3}) end end})
     MiscTab:CreateToggle({Name = "لا تشغلة", CurrentValue = false, Callback = function(v) isInstantGuarding = v; if v then isGuarding = false; Rayfield:Notify({Title="تفادي التسونامي السريع فشخ", Content="تم التفعيل (عمو فارس بيحبك) ", Duration=3}) end end})
     
@@ -3750,9 +3950,9 @@ MiscTab:CreateSlider({
 
     
     InfoTab:CreateSection("معلومات السكربت")
-    InfoTab:CreateParagraph({Title = "نسخة السكربت", Content = "هذا الاصدار .12.1v .\n تم تحسين بعض المشاكلوويعمل  بكفاءه اقوي و تمت اضافة VIP مجاناو تم اضافة Max Luck   و تم اضافة ESP لاكي بلوكس و  تمت  اضافة الانتقال الى اخر الماب مع شرح و تم تطوير ميزة الانتقال الى اخر الماب و تم اضافة تجميع الشخصيات تلقائي  يمكنك تجميع فوق 30 clesteal و تم اصلاح و اضافة الانتقالبدون جهد منك و تمت اضافه  تخطي الباركور و تم اضافة مميزات  و اضافة سكربتات جديدة و قوية و اضافة auto collect و العديد من المميزات اكتشفها بنفسك (اذا اكتشفت اي مشاكل في السكربت تواصل معي في التيك توك علي الخاص  ._.f.o_  ) و تمت اضافة مميزات حصرية و  تم اضافة تجميع عملات حدث ال Money و تمت اضافه عدم الموت من تسونامي و تمت اضافة التنقل عبر جدار Vip و تمت اضافة  جمع العملات UFO الجديدة و تم اضافة التنقل الى اخر الماب التجريبي و تم اصلاح الثغرة و سكربتات رائعه و تم تحسين بعض المشاكل في الاداء  وواضافه misc.\nالسكربت هذا تم تطويره من FARES."})
+    InfoTab:CreateParagraph({Title = "نسخة السكربت", Content = "هذا الاصدار .13.1v .\n تم تحسين بعض المشاكلوويعمل  بكفاءه اقوي و تمت اضافة VIP مجاناو تم اضافة Max Luck   و تم اضافة ESP لاكي بلوكس و  تمت  اضافة الانتقال الى اخر الماب مع شرح و تم تطوير ميزة الانتقال الى اخر الماب و تم اضافة تجميع الشخصيات تلقائي  يمكنك تجميع فوق 30 clesteal و تم اصلاح و اضافة الانتقالبدون جهد منك و تمت اضافه  تخطي الباركور و تم اضافة مميزات  و اضافة سكربتات جديدة و قوية و اضافة auto collect و العديد من المميزات اكتشفها بنفسك (اذا اكتشفت اي مشاكل في السكربت تواصل معي في التيك توك علي الخاص  ._.f.o_  ) و تمت اضافة مميزات حصرية و  تم اضافة تجميع عملات حدث ال Money و تمت اضافه عدم الموت من تسونامي و تمت اضافة التنقل عبر جدار Vip و تم اصلاح تفادي التسونامي و تطويرة و تمت اضافة  جمع العملات UFO الجديدة و تم اضافة التنقل الى اخر الماب التجريبي و تم اصلاح الثغرة و سكربتات رائعه و تم تحسين بعض المشاكل في الاداء  وواضافه misc.\nالسكربت هذا تم تطويره من FARES."})
     
-    InfoTab:CreateParagraph({Title = "Script Version", Content = "This is the release V12.1.\n Problems have been improved, new features have been added, and Free Vip has been added  and ESP LUCKYBLOCKS has been added and Tp in Vip walls has been added UPDATED Script Misc has been added,and MAX LUCK has been added, and auto collect has been added, and SKIP PARKOUR has been added, and auto collect coins event Money has been added,  and collect  UFO coins has been added and teleport to end of map has been added  and fixed the Teleporter and script exclusive features has been added  and Auto collect brainrots has been added so u can get 30 clesteal and fixed  some problems and exclusive features has been added and protection from tsunami has been added and  fixed the teleport to end of map fixed some glitchs and problems  if you had any problems dm me in tiktok (._.f.o_)  and added more taps more scripts take a LOOK by yourself, and the script  works more efficiently on phones.\nThis script has been developed by FARES."})
+    InfoTab:CreateParagraph({Title = "Script Version", Content = "This is the release V13.1.\n Problems have been improved, new features have been added,  and new protection from Tsunami  has been added, and Free Vip has been added  and ESP LUCKYBLOCKS has been added and Tp in Vip walls has been added UPDATED Script Misc has been added,and MAX LUCK has been added, and auto collect has been added, and SKIP PARKOUR has been added, and auto collect coins event Money has been added,  and collect  UFO coins has been added and teleport to end of map has been added  and fixed the Teleporter and script exclusive features has been added  and Auto collect brainrots has been added so u can get 30 clesteal and fixed  some problems and exclusive features has been added and protection from tsunami has been added and  fixed the teleport to end of map fixed some glitchs and problems  if you had any problems dm me in tiktok (._.f.o_)  and added more taps more scripts take a LOOK by yourself, and the script  works more efficiently on phones.\nThis script has been developed by FARES."})
     
     InfoTab:CreateParagraph({Title = "المطور / Developer", Content = "FARES (egyptiandeveloper)"})
 
