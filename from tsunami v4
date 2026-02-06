@@ -171,7 +171,7 @@ local function ExecuteHub()
     repeat task.wait() until game:IsLoaded()
 
     local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
-    local Window = Rayfield:CreateWindow({Name = "Escape  Tsunami for brainrot | سكربت فارس V13.2", LoadingTitle = "سكربت فارس", LoadingSubtitle = "Fares Script", ConfigurationSaving = { Enabled = false }, KeySystem = false})
+    local Window = Rayfield:CreateWindow({Name = "Escape  Tsunami for brainrot | سكربت فارس V13.3", LoadingTitle = "سكربت فارس", LoadingSubtitle = "Fares Script", ConfigurationSaving = { Enabled = false }, KeySystem = false})
 
     local MainTab = Window:CreateTab("القائمة الرئيسية", 4483362458)
 
@@ -3834,7 +3834,7 @@ FaresTab:CreateSection("© Copyright by FARES")
     
     
     MiscTab:CreateButton({
-    Name = "تفادي التسونامي V3 تم الاصلاح ",
+    Name = "تفادي التسونامي V3.1 تم الاصلاح ",
     Callback = function()
     -- تفادي المناخ
 
@@ -3860,7 +3860,7 @@ local SAFE_POINTS = {
 }
 
 
-local DETECTION_RANGE = 120
+local DETECTION_RANGE = 250
 local MOVEMENT_SPEED = 1500 
 local isDodgingEnabled = false
 local isCurrentlyMoving = false
