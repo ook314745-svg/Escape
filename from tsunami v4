@@ -171,7 +171,7 @@ local function ExecuteHub()
     repeat task.wait() until game:IsLoaded()
 
     local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
-    local Window = Rayfield:CreateWindow({Name = "Escape  Tsunami for brainrot | سكربت فارس V14.6", LoadingTitle = "سكربت فارس", LoadingSubtitle = "Fares Script", ConfigurationSaving = { Enabled = false }, KeySystem = false})
+    local Window = Rayfield:CreateWindow({Name = "Escape  Tsunami for brainrot | سكربت فارس V14.8", LoadingTitle = "سكربت فارس", LoadingSubtitle = "Fares Script", ConfigurationSaving = { Enabled = false }, KeySystem = false})
 
     local MainTab = Window:CreateTab("القائمة الرئيسية", 4483362458)
 
@@ -3977,6 +3977,205 @@ FaresTab:CreateSection("© Copyright by FARES")
     
     MiscTab:CreateSection("مميزات جديدة! ")
     
+    
+    MiscTab:CreateButton({
+    Name = "تجميع عملات الحدث الجديد| Arcade (نسخة محسنة و قوية)",
+    Callback = function()
+    
+    -- نسخة محسنه
+
+local COLLECTION_SPEED = 800
+
+
+local Players = game:GetService("Players")
+local CoreGui = game:GetService("CoreGui")
+local TweenService = game:GetService("TweenService")
+local LocalPlayer = Players.LocalPlayer
+
+local isChimeraActive = false
+local swarmLoopActive = false
+local pulseLoopActive = false
+
+
+local MainGui = Instance.new("ScreenGui", CoreGui)
+MainGui.Name = "Chimera_UI_v11"
+MainGui.ResetOnSpawn = false
+
+local MainFrame = Instance.new("Frame", MainGui)
+MainFrame.Size = UDim2.new(0, 220, 0, 90)
+MainFrame.Position = UDim2.new(0.5, -110, 0.2, 0)
+MainFrame.BackgroundColor3 = Color3.fromRGB(45, 30, 45) -- A hybrid, chimeric purple
+MainFrame.Active = true
+MainFrame.Draggable = true
+Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 6)
+
+local TitleLabel = Instance.new("TextLabel", MainFrame)
+TitleLabel.Size = UDim2.new(1, 0, 0, 30)
+TitleLabel.BackgroundColor3 = Color3.fromRGB(65, 50, 65)
+TitleLabel.Text = "سكربت تجميع عملات Arcade من صنع فارس V3"
+TitleLabel.Font = Enum.Font.SourceSansBold
+TitleLabel.TextColor3 = Color3.new(1, 1, 1)
+TitleLabel.TextSize = 9
+
+local StatusLabel = Instance.new("TextLabel", MainFrame)
+StatusLabel.Size = UDim2.new(1, -20, 0, 20)
+StatusLabel.Position = UDim2.new(0, 10, 1, -25)
+StatusLabel.BackgroundTransparency = 1
+StatusLabel.Font = Enum.Font.SourceSans
+StatusLabel.TextColor3 = Color3.fromRGB(180, 180, 180)
+StatusLabel.TextSize = 12
+StatusLabel.Text = "الحالة: غير نشط"
+StatusLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+local ToggleButton = Instance.new("TextButton", MainFrame)
+ToggleButton.Size = UDim2.new(1, -20, 0, 35)
+ToggleButton.Position = UDim2.new(0, 10, 0, 35)
+ToggleButton.BackgroundColor3 = Color3.fromRGB(200, 40, 40)
+ToggleButton.Font = Enum.Font.GothamBold
+ToggleButton.Text = "ابدا يشبح"
+ToggleButton.TextColor3 = Color3.new(1, 1, 1)
+ToggleButton.TextSize = 16
+Instance.new("UICorner", ToggleButton).CornerRadius = UDim.new(0, 4)
+
+
+
+
+local function safeTweenTo(targetPosition)
+    local character = LocalPlayer.Character
+    local rootPart = character and character:FindFirstChild("HumanoidRootPart")
+    if not rootPart then return end
+    local distance = (rootPart.Position - targetPosition).Magnitude
+    local duration = math.max(distance / COLLECTION_SPEED, 0.05)
+    local tweenInfo = TweenInfo.new(duration, Enum.EasingStyle.Linear)
+    local tween = TweenService:Create(rootPart, tweenInfo, {CFrame = CFrame.new(targetPosition)})
+    tween:Play()
+    tween.Completed:Wait()
+end
+
+local function getAvailableTargets(folder)
+    local targets = {}
+    for _, consoleModel in ipairs(folder:GetChildren()) do
+        if consoleModel:IsA("Model") then
+            local gameConsolePart = consoleModel:FindFirstChild("Game Console")
+            if gameConsolePart and gameConsolePart:IsA("BasePart") and gameConsolePart:FindFirstChild("TouchInterest") then
+                table.insert(targets, gameConsolePart)
+            end
+        end
+    end
+    return targets
+end
+
+local function findNearestTarget(currentPos, targets)
+    local nearestTarget, minDistance = nil, math.huge
+    for i = #targets, 1, -1 do
+        local target = targets[i]
+        if target and target.Parent then
+            local distance = (currentPos - target.Position).Magnitude
+            if distance < minDistance then minDistance = distance; nearestTarget = target end
+        else
+            table.remove(targets, i)
+        end
+    end
+    return nearestTarget
+end
+
+local function swarmCycle()
+    local harvestFolder = workspace:FindFirstChild("ArcadeEventConsoles")
+    if not harvestFolder then StatusLabel.Text = "الحالة: في انتظار بدء الحدث..."; return end
+
+    local character = LocalPlayer.Character
+    local rootPart = character and character:FindFirstChild("HumanoidRootPart")
+    if not rootPart then return end
+    
+    local startingCFrame = rootPart.CFrame
+    local availableTargets = getAvailableTargets(harvestFolder)
+
+    if #availableTargets == 0 then StatusLabel.Text = "الحالة: لا توجد أهداف، جاري البحث..."; return end
+
+    StatusLabel.Text = "الحالة: تم العثور على " .. #availableTargets .. " هدف، جاري التجميع..."
+
+    while isChimeraActive and #availableTargets > 0 do
+        rootPart = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+        if not rootPart then break end
+
+        local nearestTarget = findNearestTarget(rootPart.Position, availableTargets)
+        
+        if nearestTarget then
+            safeTweenTo(nearestTarget.Position + Vector3.new(0, 3, 0))
+            for i, t in ipairs(availableTargets) do
+                if t == nearestTarget then table.remove(availableTargets, i); break end
+            end
+        else
+            break
+        end
+    end
+
+    rootPart = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+    if rootPart and rootPart.Parent and isChimeraActive then
+        safeTweenTo(startingCFrame.Position)
+    end
+end
+
+
+local function pulseCycle()
+    local harvestFolder = workspace:FindFirstChild("ArcadeEventConsoles")
+    if not harvestFolder or not firetouchinterest then return end
+
+    local character = LocalPlayer.Character
+    local rootPart = character and character:FindFirstChild("HumanoidRootPart")
+    if not rootPart then return end
+
+    for _, consoleModel in ipairs(harvestFolder:GetChildren()) do
+        if not isChimeraActive then break end
+        if consoleModel:IsA("Model") then
+            local gameConsolePart = consoleModel:FindFirstChild("Game Console")
+            if gameConsolePart and gameConsolePart:FindFirstChild("TouchInterest") then
+                firetouchinterest(rootPart, gameConsolePart, 0)
+                task.wait(0.01)
+                firetouchinterest(rootPart, gameConsolePart, 1)
+            end
+        end
+    end
+end
+
+
+local function startLoops()
+    if swarmLoopActive or pulseLoopActive then return end
+    
+    swarmLoopActive = true
+    task.spawn(function()
+        while isChimeraActive do
+            swarmCycle()
+            task.wait(1)
+        end
+        swarmLoopActive = false
+    end)
+
+    pulseLoopActive = true
+    task.spawn(function()
+        while isChimeraActive do
+            pulseCycle()
+            task.wait(0.2)
+        end
+        pulseLoopActive = false
+    end)
+end
+
+local function toggleChimera(state)
+    isChimeraActive = state
+    if isChimeraActive then
+        ToggleButton.Text = "وقف يا شيبس"; ToggleButton.BackgroundColor3 = Color3.fromRGB(0, 180, 0)
+        startLoops()
+    else
+        ToggleButton.Text = "ابدا يزماله"; ToggleButton.BackgroundColor3 = Color3.fromRGB(200, 40, 40)
+        StatusLabel.Text = "الحالة: غير نشط"
+    end
+end
+
+ToggleButton.MouseButton1Click:Connect(function() toggleChimera(not isChimeraActive) end)
+LocalPlayer.CharacterAdded:Connect(function(character) task.wait(2); if isChimeraActive then startLoops() end end)
+end})
+    
     MiscTab:CreateButton({
     Name = "تجميع عملات الحدث الجديد| Arcade ",
     Callback = function()
@@ -4719,9 +4918,9 @@ MiscTab:CreateSlider({
 
     
     InfoTab:CreateSection("معلومات السكربت")
-    InfoTab:CreateParagraph({Title = "نسخة السكربت", Content = "هذا الاصدار .14.6v .\n تم تحسين بعض المشاكلوويعمل  بكفاءه اقوي و تمت اضافة VIP مجاناو تم اضافة Max Luck   و تم اضافة ESP لاكي بلوكس و   و تمت اضافة تجميع عملات حدث ال Arcade  و تمت  اضافة الانتقال الى اخر الماب مع شرح و تم تطوير ميزة الانتقال الى اخر الماب و تم اضافة تجميع الشخصيات تلقائي  يمكنك تجميع فوق 30 clesteal و تم اصلاح و اضافة الانتقالبدون جهد منك و تمت اضافه  تخطي الباركور و تم اضافة مميزات  و اضافة سكربتات جديدة و قوية و اضافة auto collect و العديد من المميزات اكتشفها بنفسك (اذا اكتشفت اي مشاكل في السكربت تواصل معي في التيك توك علي الخاص  ._.f.o_  ) و تمت اضافة مميزات حصرية و  تم اضافة تجميع عملات حدث ال Money و تمت اضافه عدم الموت من تسونامي و تمت اضافة التنقل عبر جدار Vip و تم اصلاح تفادي التسونامي و تطويرة و تمت اضافة  جمع العملات UFO الجديدة و تم اضافة التنقل الى اخر الماب التجريبي و تم اصلاح الثغرة و سكربتات رائعه و تم تحسين بعض المشاكل في الاداءو تم اضافة سكربت يحسن الاداء  وواضافه misc.\nالسكربت هذا تم تطويره من FARES."})
+    InfoTab:CreateParagraph({Title = "نسخة السكربت", Content = "هذا الاصدار .14.8v .\n تم تحسين بعض المشاكلوويعمل  بكفاءه اقوي و تمت اضافة VIP مجاناو تم اضافة Max Luck   و تم اضافة ESP لاكي بلوكس و   و تمت اضافة تجميع عملات حدث ال Arcade  و تمت  اضافة الانتقال الى اخر الماب مع شرح و تم تطوير ميزة الانتقال الى اخر الماب و تم اضافة تجميع الشخصيات تلقائي  يمكنك تجميع فوق 30 clesteal و تم اصلاح و اضافة الانتقالبدون جهد منك و تمت اضافه  تخطي الباركور و تم اضافة مميزات  و اضافة سكربتات جديدة و قوية و اضافة auto collect و العديد من المميزات اكتشفها بنفسك (اذا اكتشفت اي مشاكل في السكربت تواصل معي في التيك توك علي الخاص  ._.f.o_  ) و تمت اضافة مميزات حصرية و  تم اضافة تجميع عملات حدث ال Money و تمت اضافه عدم الموت من تسونامي و تمت اضافة التنقل عبر جدار Vip و تم اصلاح تفادي التسونامي و تطويرة و تمت اضافة  جمع العملات UFO الجديدة و تم اضافة التنقل الى اخر الماب التجريبي و تم اصلاح الثغرة و سكربتات رائعه و تم تحسين بعض المشاكل في الاداءو تم اضافة سكربت يحسن الاداء  وواضافه misc.\nالسكربت هذا تم تطويره من FARES."})
     
-    InfoTab:CreateParagraph({Title = "Script Version", Content = "This is the release V14.6.\n Problems have been improved, new features have been added, and script Fix Lag Has been added, and new protection from Tsunami  has been added,And collect ArcadeCoins has been added, and Free Vip has been added  and ESP LUCKYBLOCKS has been added and Tp in Vip walls has been added UPDATED Script Misc has been added,and MAX LUCK has been added, and auto collect has been added, and SKIP PARKOUR has been added, and auto collect coins event Money has been added,  and collect  UFO coins has been added and teleport to end of map has been added  and fixed the Teleporter and script exclusive features has been added  and Auto collect brainrots has been added so u can get 30 clesteal and fixed  some problems and exclusive features has been added and protection from tsunami has been added and  fixed the teleport to end of map fixed some glitchs and problems  if you had any problems dm me in tiktok (._.f.o_)  and added more taps more scripts take a LOOK by yourself, and the script  works more efficiently on phones.\nThis script has been developed by FARES."})
+    InfoTab:CreateParagraph({Title = "Script Version", Content = "This is the release V14.8.\n Problems have been improved, new features have been added, and script Fix Lag Has been added, and new protection from Tsunami  has been added,And collect ArcadeCoins has been added, and Free Vip has been added  and ESP LUCKYBLOCKS has been added and Tp in Vip walls has been added UPDATED Script Misc has been added,and MAX LUCK has been added, and auto collect has been added, and SKIP PARKOUR has been added, and auto collect coins event Money has been added,  and collect  UFO coins has been added and teleport to end of map has been added  and fixed the Teleporter and script exclusive features has been added  and Auto collect brainrots has been added so u can get 30 clesteal and fixed  some problems and exclusive features has been added and protection from tsunami has been added and  fixed the teleport to end of map fixed some glitchs and problems  if you had any problems dm me in tiktok (._.f.o_)  and added more taps more scripts take a LOOK by yourself, and the script  works more efficiently on phones.\nThis script has been developed by FARES."})
     
     InfoTab:CreateParagraph({Title = "المطور / Developer", Content = "FARES (egyptiandeveloper)"})
 
