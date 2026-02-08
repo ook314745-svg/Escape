@@ -171,7 +171,7 @@ local function ExecuteHub()
     repeat task.wait() until game:IsLoaded()
 
     local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
-    local Window = Rayfield:CreateWindow({Name = "Escape  Tsunami for brainrot | سكربت فارس V14.3", LoadingTitle = "سكربت فارس", LoadingSubtitle = "Fares Script", ConfigurationSaving = { Enabled = false }, KeySystem = false})
+    local Window = Rayfield:CreateWindow({Name = "Escape  Tsunami for brainrot | سكربت فارس V14.6", LoadingTitle = "سكربت فارس", LoadingSubtitle = "Fares Script", ConfigurationSaving = { Enabled = false }, KeySystem = false})
 
     local MainTab = Window:CreateTab("القائمة الرئيسية", 4483362458)
 
@@ -295,6 +295,151 @@ end)
 		]])()
 	end
 })
+
+OtherScriptsTab:CreateButton({
+	Name = "تحسين الاداء (ملحوظه:تراه يرفع البنق) v1",
+	Callback = function()
+
+
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local VirtualUser = game:GetService("VirtualUser")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Lighting = game:GetService("Lighting")
+
+local player = Players.LocalPlayer
+local GhostPreserverEnabled = false
+local LastHeartbeat = tick()
+local LastVisualClean = tick()
+local LastPacketSent = 0
+
+
+pcall(function()
+	settings().Rendering.QualityLevel = Enum.QualityLevel.Level01
+	RunService:SetThrottleFramerateEnabled(true)
+	RunService:Set3dRenderingEnabled(true)
+end)
+
+task.spawn(function()
+	while true do
+		settings().Rendering.FramerateCap = 120
+		task.wait(10)
+	end
+end)
+
+
+local ScreenGui = Instance.new("ScreenGui", player.PlayerGui)
+ScreenGui.ResetOnSpawn = false
+
+local Frame = Instance.new("Frame", ScreenGui)
+Frame.Size = UDim2.new(0, 250, 0, 120)
+Frame.Position = UDim2.new(0.5, -125, 0.1, 0)
+Frame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+Frame.BackgroundTransparency = 0.3
+Frame.Active = true
+Frame.Draggable = true
+Frame.BorderSizePixel = 2
+
+local Button = Instance.new("TextButton", Frame)
+Button.Size = UDim2.new(1, 0, 0.5, 0)
+Button.Position = UDim2.new(0, 0, 0, 0)
+Button.Text = "تحسين الاداء: OFF"
+Button.TextColor3 = Color3.new(1, 1, 1)
+Button.BackgroundTransparency = 0.4
+
+local Status = Instance.new("TextLabel", Frame)
+Status.Size = UDim2.new(1, 0, 0.5, 0)
+Status.Position = UDim2.new(0, 0, 0.5, 0)
+Status.Text = "Status: Inactive"
+Status.TextColor3 = Color3.new(1, 0, 0)
+Status.BackgroundTransparency = 1
+Status.Font = Enum.Font.SourceSansBold
+Status.TextScaled = true
+
+
+task.spawn(function()
+	while true do
+		for i = 0, 1, 0.01 do
+			Status.TextColor3 = Color3.fromHSV(i, 1, 1)
+			task.wait(0.1)
+		end
+	end
+end)
+
+
+local function disableVisuals()
+	Lighting.GlobalShadows = false
+	Lighting.FogEnd = 1000000
+	Lighting.Brightness = 0
+	for _, v in pairs(workspace:GetDescendants()) do
+		if v:IsA("Decal") or v:IsA("Texture") then
+			v:Destroy()
+		elseif v:IsA("ParticleEmitter") or v:IsA("Trail") then
+			v:Destroy()
+		end
+	end
+end
+
+
+local mt = getrawmetatable(game)
+setreadonly(mt, false)
+local oldNamecall = mt.__namecall
+
+mt.__namecall = newcclosure(function(self, ...)
+	local method = getnamecallmethod()
+	if method == "FireServer" or method == "InvokeServer" then
+		if tick() - LastPacketSent < 1.5 then
+			return
+		end
+		LastPacketSent = tick()
+	end
+	return oldNamecall(self, ...)
+end)
+
+
+RunService.Heartbeat:Connect(function()
+	if GhostPreserverEnabled then
+		
+		if tick() - LastHeartbeat >= 5 then
+			local remote = ReplicatedStorage:FindFirstChildOfClass("RemoteEvent")
+			if remote then
+				remote:FireServer("Heartbeat")
+			end
+			player:SetAttribute("ActiveSim", math.random())
+			LastHeartbeat = tick()
+		end
+		
+		if tick() - LastVisualClean >= 20 then
+			disableVisuals()
+			LastVisualClean = tick()
+		end
+		
+		if player.Character and not player.Character:FindFirstChildOfClass("Animator") then
+			for _, anim in pairs(player.Character:GetDescendants()) do
+				if anim:IsA("Animator") then
+					anim:Destroy()
+				end
+			end
+		end
+	end
+end)
+
+
+Players.LocalPlayer.Idled:Connect(function()
+	if GhostPreserverEnabled then
+		VirtualUser:CaptureController()
+		VirtualUser:ClickButton2(Vector2.new(0,0))
+	end
+end)
+
+
+Button.MouseButton1Click:Connect(function()
+	GhostPreserverEnabled = not GhostPreserverEnabled
+	Button.Text = GhostPreserverEnabled and "تحسين الادا ON" or "تحسين الاداء OFF"
+	Status.Text = GhostPreserverEnabled and "Status: Active  - من صنع فارس" or "Status: Inactive"
+end)
+end})
+
 
 OtherScriptsTab:CreateButton({
 	Name = "سكربت يعرفك متى الشيء النادر يترسبن",
@@ -4019,7 +4164,13 @@ local CoreGui = game:GetService("CoreGui")
 local LocalPlayer = Players.LocalPlayer
 
 local isHarvesting = false
+local HARVEST_FOLDER
 
+if workspace:FindFirstChild("ArcadeEventConsoles") then
+    HARVEST_FOLDER = workspace:FindFirstChild("ArcadeEventConsoles")
+else
+    HARVEST_FOLDER = workspace:WaitForChild("ArcadeEventConsoles")
+end
 
  
 local MainGui = Instance.new("ScreenGui", CoreGui)
@@ -4568,9 +4719,9 @@ MiscTab:CreateSlider({
 
     
     InfoTab:CreateSection("معلومات السكربت")
-    InfoTab:CreateParagraph({Title = "نسخة السكربت", Content = "هذا الاصدار .14.3v .\n تم تحسين بعض المشاكلوويعمل  بكفاءه اقوي و تمت اضافة VIP مجاناو تم اضافة Max Luck   و تم اضافة ESP لاكي بلوكس و   و تمت اضافة تجميع عملات حدث ال Arcade  و تمت  اضافة الانتقال الى اخر الماب مع شرح و تم تطوير ميزة الانتقال الى اخر الماب و تم اضافة تجميع الشخصيات تلقائي  يمكنك تجميع فوق 30 clesteal و تم اصلاح و اضافة الانتقالبدون جهد منك و تمت اضافه  تخطي الباركور و تم اضافة مميزات  و اضافة سكربتات جديدة و قوية و اضافة auto collect و العديد من المميزات اكتشفها بنفسك (اذا اكتشفت اي مشاكل في السكربت تواصل معي في التيك توك علي الخاص  ._.f.o_  ) و تمت اضافة مميزات حصرية و  تم اضافة تجميع عملات حدث ال Money و تمت اضافه عدم الموت من تسونامي و تمت اضافة التنقل عبر جدار Vip و تم اصلاح تفادي التسونامي و تطويرة و تمت اضافة  جمع العملات UFO الجديدة و تم اضافة التنقل الى اخر الماب التجريبي و تم اصلاح الثغرة و سكربتات رائعه و تم تحسين بعض المشاكل في الاداء  وواضافه misc.\nالسكربت هذا تم تطويره من FARES."})
+    InfoTab:CreateParagraph({Title = "نسخة السكربت", Content = "هذا الاصدار .14.6v .\n تم تحسين بعض المشاكلوويعمل  بكفاءه اقوي و تمت اضافة VIP مجاناو تم اضافة Max Luck   و تم اضافة ESP لاكي بلوكس و   و تمت اضافة تجميع عملات حدث ال Arcade  و تمت  اضافة الانتقال الى اخر الماب مع شرح و تم تطوير ميزة الانتقال الى اخر الماب و تم اضافة تجميع الشخصيات تلقائي  يمكنك تجميع فوق 30 clesteal و تم اصلاح و اضافة الانتقالبدون جهد منك و تمت اضافه  تخطي الباركور و تم اضافة مميزات  و اضافة سكربتات جديدة و قوية و اضافة auto collect و العديد من المميزات اكتشفها بنفسك (اذا اكتشفت اي مشاكل في السكربت تواصل معي في التيك توك علي الخاص  ._.f.o_  ) و تمت اضافة مميزات حصرية و  تم اضافة تجميع عملات حدث ال Money و تمت اضافه عدم الموت من تسونامي و تمت اضافة التنقل عبر جدار Vip و تم اصلاح تفادي التسونامي و تطويرة و تمت اضافة  جمع العملات UFO الجديدة و تم اضافة التنقل الى اخر الماب التجريبي و تم اصلاح الثغرة و سكربتات رائعه و تم تحسين بعض المشاكل في الاداءو تم اضافة سكربت يحسن الاداء  وواضافه misc.\nالسكربت هذا تم تطويره من FARES."})
     
-    InfoTab:CreateParagraph({Title = "Script Version", Content = "This is the release V14.3.\n Problems have been improved, new features have been added,  and new protection from Tsunami  has been added,And collect ArcadeCoins has been added, and Free Vip has been added  and ESP LUCKYBLOCKS has been added and Tp in Vip walls has been added UPDATED Script Misc has been added,and MAX LUCK has been added, and auto collect has been added, and SKIP PARKOUR has been added, and auto collect coins event Money has been added,  and collect  UFO coins has been added and teleport to end of map has been added  and fixed the Teleporter and script exclusive features has been added  and Auto collect brainrots has been added so u can get 30 clesteal and fixed  some problems and exclusive features has been added and protection from tsunami has been added and  fixed the teleport to end of map fixed some glitchs and problems  if you had any problems dm me in tiktok (._.f.o_)  and added more taps more scripts take a LOOK by yourself, and the script  works more efficiently on phones.\nThis script has been developed by FARES."})
+    InfoTab:CreateParagraph({Title = "Script Version", Content = "This is the release V14.6.\n Problems have been improved, new features have been added, and script Fix Lag Has been added, and new protection from Tsunami  has been added,And collect ArcadeCoins has been added, and Free Vip has been added  and ESP LUCKYBLOCKS has been added and Tp in Vip walls has been added UPDATED Script Misc has been added,and MAX LUCK has been added, and auto collect has been added, and SKIP PARKOUR has been added, and auto collect coins event Money has been added,  and collect  UFO coins has been added and teleport to end of map has been added  and fixed the Teleporter and script exclusive features has been added  and Auto collect brainrots has been added so u can get 30 clesteal and fixed  some problems and exclusive features has been added and protection from tsunami has been added and  fixed the teleport to end of map fixed some glitchs and problems  if you had any problems dm me in tiktok (._.f.o_)  and added more taps more scripts take a LOOK by yourself, and the script  works more efficiently on phones.\nThis script has been developed by FARES."})
     
     InfoTab:CreateParagraph({Title = "المطور / Developer", Content = "FARES (egyptiandeveloper)"})
 
