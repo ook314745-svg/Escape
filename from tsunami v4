@@ -171,7 +171,7 @@ local function ExecuteHub()
     repeat task.wait() until game:IsLoaded()
 
     local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
-    local Window = Rayfield:CreateWindow({Name = "Escape  Tsunami for brainrot | سكربت فارس V13.3", LoadingTitle = "سكربت فارس", LoadingSubtitle = "Fares Script", ConfigurationSaving = { Enabled = false }, KeySystem = false})
+    local Window = Rayfield:CreateWindow({Name = "Escape  Tsunami for brainrot | سكربت فارس V14.3", LoadingTitle = "سكربت فارس", LoadingSubtitle = "Fares Script", ConfigurationSaving = { Enabled = false }, KeySystem = false})
 
     local MainTab = Window:CreateTab("القائمة الرئيسية", 4483362458)
 
@@ -3832,6 +3832,280 @@ FaresTab:CreateSection("© Copyright by FARES")
     
     MiscTab:CreateSection("مميزات جديدة! ")
     
+    MiscTab:CreateButton({
+    Name = "تجميع عملات الحدث الجديد| Arcade ",
+    Callback = function()
+    
+    
+local COLLECTION_SPEED = 800
+
+
+local Players = game:GetService("Players")
+local CoreGui = game:GetService("CoreGui")
+local TweenService = game:GetService("TweenService")
+local LocalPlayer = Players.LocalPlayer
+
+local isHarvesting = false
+local harvestLoopActive = false
+
+
+local MainGui = Instance.new("ScreenGui", CoreGui)
+MainGui.Name = "Sentinel_UI_v10"
+MainGui.ResetOnSpawn = false
+
+local MainFrame = Instance.new("Frame", MainGui)
+MainFrame.Size = UDim2.new(0, 220, 0, 90)
+MainFrame.Position = UDim2.new(0.5, -110, 0.2, 0)
+MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+MainFrame.Active = true
+MainFrame.Draggable = true
+Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 6)
+
+local TitleLabel = Instance.new("TextLabel", MainFrame)
+TitleLabel.Size = UDim2.new(1, 0, 0, 30)
+TitleLabel.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+TitleLabel.Text = "سكربت تج٠ميع عملات الحدث الجديد من صنع فارسv2| اذا حدث خطا عيد تشغيله من صفحه Misc"
+TitleLabel.Font = Enum.Font.SourceSansBold
+TitleLabel.TextColor3 = Color3.new(1, 1, 1)
+TitleLabel.TextSize = 8.6
+
+local StatusLabel = Instance.new("TextLabel", MainFrame)
+StatusLabel.Size = UDim2.new(1, -20, 0, 20)
+StatusLabel.Position = UDim2.new(0, 10, 1, -25)
+StatusLabel.BackgroundTransparency = 1
+StatusLabel.Font = Enum.Font.SourceSans
+StatusLabel.TextColor3 = Color3.fromRGB(180, 180, 180)
+StatusLabel.TextSize = 12
+StatusLabel.Text = "الحالة: غير نشط"
+StatusLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+local ToggleButton = Instance.new("TextButton", MainFrame)
+ToggleButton.Size = UDim2.new(1, -20, 0, 35)
+ToggleButton.Position = UDim2.new(0, 10, 0, 35)
+ToggleButton.BackgroundColor3 = Color3.fromRGB(200, 40, 40)
+ToggleButton.Font = Enum.Font.GothamBold
+ToggleButton.Text = "تفعيل التجميع"
+ToggleButton.TextColor3 = Color3.new(1, 1, 1)
+ToggleButton.TextSize = 16
+Instance.new("UICorner", ToggleButton).CornerRadius = UDim.new(0, 4)
+
+
+
+local function safeTweenTo(targetPosition)
+    local character = LocalPlayer.Character
+    local rootPart = character and character:FindFirstChild("HumanoidRootPart")
+    if not rootPart then return end
+    local distance = (rootPart.Position - targetPosition).Magnitude
+    local duration = math.max(distance / COLLECTION_SPEED, 0.05)
+    local tweenInfo = TweenInfo.new(duration, Enum.EasingStyle.Linear)
+    local tween = TweenService:Create(rootPart, tweenInfo, {CFrame = CFrame.new(targetPosition)})
+    tween:Play()
+    tween.Completed:Wait()
+end
+
+local function getAvailableTargets(folder)
+    local targets = {}
+    for _, consoleModel in ipairs(folder:GetChildren()) do
+        if consoleModel:IsA("Model") then
+            local gameConsolePart = consoleModel:FindFirstChild("Game Console")
+            if gameConsolePart and gameConsolePart:IsA("BasePart") and gameConsolePart:FindFirstChild("TouchInterest") then
+                table.insert(targets, gameConsolePart)
+            end
+        end
+    end
+    return targets
+end
+
+local function findNearestTarget(currentPos, targets)
+    local nearestTarget, minDistance = nil, math.huge
+    for i = #targets, 1, -1 do
+        local target = targets[i]
+        if target and target.Parent then
+            local distance = (currentPos - target.Position).Magnitude
+            if distance < minDistance then minDistance = distance; nearestTarget = target end
+        else
+            table.remove(targets, i)
+        end
+    end
+    return nearestTarget
+end
+
+local function harvestCycle()
+    
+    local harvestFolder = workspace:FindFirstChild("ArcadeEventConsoles")
+    if not harvestFolder then
+        StatusLabel.Text = "الحالة: في انتظار بدء الحدث..."
+        task.wait(2) -- Wait 2 seconds before checking again
+        return
+    end
+
+    if not firetouchinterest then warn("Sentinel Error: firetouchinterest not available."); isHarvesting = false; return end
+    
+    local character = LocalPlayer.Character
+    local rootPart = character and character:FindFirstChild("HumanoidRootPart")
+    if not rootPart then return end
+    
+    local startingCFrame = rootPart.CFrame
+    local availableTargets = getAvailableTargets(harvestFolder)
+
+    if #availableTargets == 0 then
+        StatusLabel.Text = "الحالة: لا توجد أهداف، جاري البحث..."
+        task.wait(1)
+        return
+    end
+
+    StatusLabel.Text = "الحالة: تم العثور على " .. #availableTargets .. " هدف، جاري التجميع .."
+
+    while isHarvesting and #availableTargets > 0 do
+        rootPart = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+        if not rootPart then break end
+
+        local nearestTarget = findNearestTarget(rootPart.Position, availableTargets)
+        
+        if nearestTarget then
+            safeTweenTo(nearestTarget.Position + Vector3.new(0, 3, 0))
+            
+            rootPart = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+            if not rootPart then break end
+            
+            firetouchinterest(rootPart, nearestTarget, 0); task.wait(0.05); firetouchinterest(rootPart, nearestTarget, 1)
+            
+            for i, t in ipairs(availableTargets) do
+                if t == nearestTarget then table.remove(availableTargets, i); break end
+            end
+            task.wait(0.1)
+        else
+            break
+        end
+    end
+
+    rootPart = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+    if rootPart and rootPart.Parent and isHarvesting then
+        safeTweenTo(startingCFrame.Position)
+    end
+end
+
+local function startHarvestLoop()
+    if harvestLoopActive then return end
+    harvestLoopActive = true
+    
+    task.spawn(function()
+        while isHarvesting do
+            harvestCycle()
+            task.wait(0.5) -- Wait before starting the next full sweep
+        end
+        harvestLoopActive = false
+    end)
+end
+
+local function toggleHarvesting(state)
+    isHarvesting = state
+    if isHarvesting then
+        ToggleButton.Text = "وقف التجميع"; ToggleButton.BackgroundColor3 = Color3.fromRGB(0, 180, 0)
+        startHarvestLoop()
+    else
+        ToggleButton.Text = "تفعيل التجميع"; ToggleButton.BackgroundColor3 = Color3.fromRGB(200, 40, 40)
+        StatusLabel.Text = "الحالة: غير نشط"
+    end
+end
+
+ToggleButton.MouseButton1Click:Connect(function() toggleHarvesting(not isHarvesting) end)
+LocalPlayer.CharacterAdded:Connect(function(character) task.wait(2); if isHarvesting then startHarvestLoop() end end)
+
+-- بدايه السكربت التاني
+
+local Players = game:GetService("Players")
+local CoreGui = game:GetService("CoreGui")
+local LocalPlayer = Players.LocalPlayer
+
+local isHarvesting = false
+
+
+ 
+local MainGui = Instance.new("ScreenGui", CoreGui)
+MainGui.Name = "Harvester_UI_v1"
+MainGui.ResetOnSpawn = false
+
+local MainFrame = Instance.new("Frame", MainGui)
+MainFrame.Size = UDim2.new(0, 200, 0, 80)
+MainFrame.Position = UDim2.new(0.5, -100, 0.2, 0)
+MainFrame.BackgroundColor3 = Color3.fromRGB(10, 30, 15)
+MainFrame.Active = true
+MainFrame.Draggable = true
+Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 5)
+local stroke = Instance.new("UIStroke", MainFrame); stroke.Color = Color3.fromRGB(0, 255, 127); stroke.Thickness = 1
+
+local TitleLabel = Instance.new("TextLabel", MainFrame)
+TitleLabel.Size = UDim2.new(1, 0, 0, 25)
+TitleLabel.BackgroundColor3 = Color3.fromRGB(20, 50, 30)
+TitleLabel.Text = "المساعد القوي للتجميع | v1"
+TitleLabel.Font = Enum.Font.SourceSansBold
+TitleLabel.TextColor3 = Color3.new(1, 1, 1)
+TitleLabel.TextSize = 16
+
+local ToggleButton = Instance.new("TextButton", MainFrame)
+ToggleButton.Size = UDim2.new(1, -20, 0, 35)
+ToggleButton.Position = UDim2.new(0, 10, 0, 35)
+ToggleButton.BackgroundColor3 = Color3.fromRGB(200, 40, 40)
+ToggleButton.Font = Enum.Font.GothamBold
+ToggleButton.Text = "شغل التجميع🫩"
+ToggleButton.TextColor3 = Color3.new(1, 1, 1)
+ToggleButton.TextSize = 16
+Instance.new("UICorner", ToggleButton).CornerRadius = UDim.new(0, 4)
+
+
+
+local function harvestConsoles()
+    if not firetouchinterest then
+        warn("غير هاكك الضعيف ههههههههههههههههههههه.")
+        isHarvesting = false -- Stop the loop if the function doesn't exist
+        return
+    end
+
+    local character = LocalPlayer.Character
+    local rootPart = character and character:FindFirstChild("HumanoidRootPart")
+    if not rootPart then return end
+
+    for _, consoleModel in ipairs(HARVEST_FOLDER:GetChildren()) do
+        if consoleModel:IsA("Model") then
+            
+            local gameConsolePart = consoleModel:FindFirstChild("Game Console")
+            if gameConsolePart then
+                local touchInterest = gameConsolePart:FindFirstChild("TouchInterest")
+                if touchInterest then
+                    
+                    firetouchinterest(rootPart, gameConsolePart, 0)
+                    task.wait(0.05)
+                    firetouchinterest(rootPart, gameConsolePart, 1)
+                end
+            end
+        end
+    end
+end
+
+local function toggleHarvesting(state)
+    isHarvesting = state
+    if isHarvesting then
+        ToggleButton.Text = "وقف المساعد القوي"
+        ToggleButton.BackgroundColor3 = Color3.fromRGB(0, 180, 0)
+        
+        
+        task.spawn(function()
+            while isHarvesting do
+                harvestConsoles()
+                task.wait(0.2) 
+            end
+        end)
+    else
+        ToggleButton.Text = "تشغيل التجميع"
+        ToggleButton.BackgroundColor3 = Color3.fromRGB(200, 40, 40)
+    end
+end
+
+ToggleButton.MouseButton1Click:Connect(function()
+    toggleHarvesting(not isHarvesting)
+end)
+end})
     
     MiscTab:CreateButton({
     Name = "تفادي التسونامي V3.1 تم الاصلاح ",
@@ -4294,9 +4568,9 @@ MiscTab:CreateSlider({
 
     
     InfoTab:CreateSection("معلومات السكربت")
-    InfoTab:CreateParagraph({Title = "نسخة السكربت", Content = "هذا الاصدار .13.2v .\n تم تحسين بعض المشاكلوويعمل  بكفاءه اقوي و تمت اضافة VIP مجاناو تم اضافة Max Luck   و تم اضافة ESP لاكي بلوكس و  تمت  اضافة الانتقال الى اخر الماب مع شرح و تم تطوير ميزة الانتقال الى اخر الماب و تم اضافة تجميع الشخصيات تلقائي  يمكنك تجميع فوق 30 clesteal و تم اصلاح و اضافة الانتقالبدون جهد منك و تمت اضافه  تخطي الباركور و تم اضافة مميزات  و اضافة سكربتات جديدة و قوية و اضافة auto collect و العديد من المميزات اكتشفها بنفسك (اذا اكتشفت اي مشاكل في السكربت تواصل معي في التيك توك علي الخاص  ._.f.o_  ) و تمت اضافة مميزات حصرية و  تم اضافة تجميع عملات حدث ال Money و تمت اضافه عدم الموت من تسونامي و تمت اضافة التنقل عبر جدار Vip و تم اصلاح تفادي التسونامي و تطويرة و تمت اضافة  جمع العملات UFO الجديدة و تم اضافة التنقل الى اخر الماب التجريبي و تم اصلاح الثغرة و سكربتات رائعه و تم تحسين بعض المشاكل في الاداء  وواضافه misc.\nالسكربت هذا تم تطويره من FARES."})
+    InfoTab:CreateParagraph({Title = "نسخة السكربت", Content = "هذا الاصدار .14.3v .\n تم تحسين بعض المشاكلوويعمل  بكفاءه اقوي و تمت اضافة VIP مجاناو تم اضافة Max Luck   و تم اضافة ESP لاكي بلوكس و   و تمت اضافة تجميع عملات حدث ال Arcade  و تمت  اضافة الانتقال الى اخر الماب مع شرح و تم تطوير ميزة الانتقال الى اخر الماب و تم اضافة تجميع الشخصيات تلقائي  يمكنك تجميع فوق 30 clesteal و تم اصلاح و اضافة الانتقالبدون جهد منك و تمت اضافه  تخطي الباركور و تم اضافة مميزات  و اضافة سكربتات جديدة و قوية و اضافة auto collect و العديد من المميزات اكتشفها بنفسك (اذا اكتشفت اي مشاكل في السكربت تواصل معي في التيك توك علي الخاص  ._.f.o_  ) و تمت اضافة مميزات حصرية و  تم اضافة تجميع عملات حدث ال Money و تمت اضافه عدم الموت من تسونامي و تمت اضافة التنقل عبر جدار Vip و تم اصلاح تفادي التسونامي و تطويرة و تمت اضافة  جمع العملات UFO الجديدة و تم اضافة التنقل الى اخر الماب التجريبي و تم اصلاح الثغرة و سكربتات رائعه و تم تحسين بعض المشاكل في الاداء  وواضافه misc.\nالسكربت هذا تم تطويره من FARES."})
     
-    InfoTab:CreateParagraph({Title = "Script Version", Content = "This is the release V13.2.\n Problems have been improved, new features have been added,  and new protection from Tsunami  has been added, and Free Vip has been added  and ESP LUCKYBLOCKS has been added and Tp in Vip walls has been added UPDATED Script Misc has been added,and MAX LUCK has been added, and auto collect has been added, and SKIP PARKOUR has been added, and auto collect coins event Money has been added,  and collect  UFO coins has been added and teleport to end of map has been added  and fixed the Teleporter and script exclusive features has been added  and Auto collect brainrots has been added so u can get 30 clesteal and fixed  some problems and exclusive features has been added and protection from tsunami has been added and  fixed the teleport to end of map fixed some glitchs and problems  if you had any problems dm me in tiktok (._.f.o_)  and added more taps more scripts take a LOOK by yourself, and the script  works more efficiently on phones.\nThis script has been developed by FARES."})
+    InfoTab:CreateParagraph({Title = "Script Version", Content = "This is the release V14.3.\n Problems have been improved, new features have been added,  and new protection from Tsunami  has been added,And collect ArcadeCoins has been added, and Free Vip has been added  and ESP LUCKYBLOCKS has been added and Tp in Vip walls has been added UPDATED Script Misc has been added,and MAX LUCK has been added, and auto collect has been added, and SKIP PARKOUR has been added, and auto collect coins event Money has been added,  and collect  UFO coins has been added and teleport to end of map has been added  and fixed the Teleporter and script exclusive features has been added  and Auto collect brainrots has been added so u can get 30 clesteal and fixed  some problems and exclusive features has been added and protection from tsunami has been added and  fixed the teleport to end of map fixed some glitchs and problems  if you had any problems dm me in tiktok (._.f.o_)  and added more taps more scripts take a LOOK by yourself, and the script  works more efficiently on phones.\nThis script has been developed by FARES."})
     
     InfoTab:CreateParagraph({Title = "المطور / Developer", Content = "FARES (egyptiandeveloper)"})
 
