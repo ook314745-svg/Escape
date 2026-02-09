@@ -171,7 +171,7 @@ local function ExecuteHub()
     repeat task.wait() until game:IsLoaded()
 
     local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
-    local Window = Rayfield:CreateWindow({Name = "Escape  Tsunami for brainrot | سكربت فارس V14.8", LoadingTitle = "سكربت فارس", LoadingSubtitle = "Fares Script", ConfigurationSaving = { Enabled = false }, KeySystem = false})
+    local Window = Rayfield:CreateWindow({Name = "Escape  Tsunami for brainrot | سكربت فارس V15.9", LoadingTitle = "سكربت فارس", LoadingSubtitle = "Fares Script", ConfigurationSaving = { Enabled = false }, KeySystem = false})
 
     local MainTab = Window:CreateTab("القائمة الرئيسية", 4483362458)
 
@@ -1767,6 +1767,203 @@ LuckTab:CreateSection("© Copyright by FARES")
 local BLOCKTab = Window:CreateTab("كشف اماكن اللاكي بلوكس ", 4483362458)
 
 BLOCKTab:CreateButton({
+    Name = " ESP/Admin/Infinity/Cosmic| تلقائي ",
+    Callback = function()
+--esp جديد بس تلقائي هههههههههههههههههههههههههههه
+
+local TARGET_RARITIES = {"Cosmic", "Admin", "Infinity"}
+local RARITY_COLORS = {
+    Cosmic = Color3.fromRGB(255, 200, 100),
+    Admin = Color3.fromRGB(220, 20, 60),
+    Infinity = Color3.fromRGB(138, 43, 226)
+}
+local TARGET_FOLDER_PATH = workspace:WaitForChild("ActiveLuckyBlocks")
+
+
+
+local Players = game:GetService("Players")
+local CoreGui = game:GetService("CoreGui")
+local RunService = game:GetService("RunService")
+
+local isHunting = false
+local activeESPs = {}
+local watcherConnection = nil
+
+
+
+local MainGui = Instance.new("ScreenGui", CoreGui)
+MainGui.Name = "Hydra_UI_v5"
+MainGui.ResetOnSpawn = false
+
+local MainFrame = Instance.new("Frame", MainGui)
+MainFrame.Size = UDim2.new(0, 280, 0, 110)
+MainFrame.Position = UDim2.new(0.5, -140, 0, 50)
+MainFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 40)
+MainFrame.Active = true
+MainFrame.Draggable = true
+Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 8)
+local stroke = Instance.new("UIStroke", MainFrame); stroke.Color = Color3.fromRGB(138, 43, 226); stroke.Thickness = 1.5
+
+local TitleLabel = Instance.new("TextLabel", MainFrame)
+TitleLabel.Size = UDim2.new(1, 0, 0, 30)
+TitleLabel.BackgroundColor3 = Color3.fromRGB(45, 45, 60)
+TitleLabel.Text = "ESP Admin / Infinity / Cosmic | تلقائي من صنع فارس v1"
+TitleLabel.Font = Enum.Font.GothamBold
+TitleLabel.TextColor3 = Color3.new(1, 1, 1)
+TitleLabel.TextSize = 9
+
+local StatusLabel = Instance.new("TextLabel", MainFrame)
+StatusLabel.Size = UDim2.new(1, -20, 0, 30)
+StatusLabel.Position = UDim2.new(0, 10, 0, 35)
+StatusLabel.BackgroundTransparency = 1
+StatusLabel.Font = Enum.Font.SourceSans
+StatusLabel.TextColor3 = Color3.new(1, 1, 1)
+StatusLabel.TextSize = 14
+StatusLabel.Text = "الحالة: غير نشط"
+StatusLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+local ToggleButton = Instance.new("TextButton", MainFrame)
+ToggleButton.Size = UDim2.new(1, -20, 0, 30)
+ToggleButton.Position = UDim2.new(0, 10, 0, 70)
+ToggleButton.BackgroundColor3 = Color3.fromRGB(200, 40, 40)
+ToggleButton.Font = Enum.Font.GothamBold
+ToggleButton.Text = "ابدا•-•"
+ToggleButton.TextColor3 = Color3.new(1, 1, 1)
+ToggleButton.TextSize = 16
+Instance.new("UICorner", ToggleButton).CornerRadius = UDim.new(0, 5)
+
+
+
+local function createESP(targetModel, rarity)
+    if not targetModel or activeESPs[targetModel] then return end
+
+    local mainPart = targetModel.PrimaryPart
+    if not mainPart then
+        local largestSize = 0
+        for _, child in pairs(targetModel:GetChildren()) do
+            if child:IsA("BasePart") then
+                local size = child.Size.X * child.Size.Y * child.Size.Z
+                if size > largestSize then largestSize = size; mainPart = child end
+            end
+        end
+    end
+    if not mainPart then return end
+
+    local espFolder = Instance.new("Folder", CoreGui)
+    espFolder.Name = "ESP_" .. targetModel.Name
+    activeESPs[targetModel] = espFolder
+
+    local espColor = RARITY_COLORS[rarity] or Color3.new(1, 1, 1)
+
+    local box = Instance.new("BoxHandleAdornment", espFolder)
+    box.Adornee = mainPart; box.AlwaysOnTop = true; box.ZIndex = 10
+    box.Size = mainPart.Size; box.Transparency = 0.6; box.Color3 = espColor
+
+    local billboard = Instance.new("BillboardGui", espFolder)
+    billboard.Adornee = mainPart; billboard.Size = UDim2.new(0, 200, 0, 50)
+    billboard.StudsOffset = Vector3.new(0, 2, 0); billboard.AlwaysOnTop = true
+
+    local textLabel = Instance.new("TextLabel", billboard)
+    textLabel.Size = UDim2.new(1, 0, 1, 0); textLabel.BackgroundTransparency = 1
+    textLabel.Font = Enum.Font.GothamBold; textLabel.TextSize = 20
+    textLabel.TextColor3 = espColor; textLabel.TextStrokeColor3 = Color3.new(0, 0, 0)
+    textLabel.TextStrokeTransparency = 0.4; textLabel.Text = rarity .. " Block!"
+
+    
+    targetModel.AncestryChanged:Connect(function(_, parent)
+        if parent == nil then
+            if activeESPs[targetModel] then
+                activeESPs[targetModel]:Destroy()
+                activeESPs[targetModel] = nil
+            end
+        end
+    end)
+end
+
+local function checkExistingBlocks()
+    for _, block in pairs(TARGET_FOLDER_PATH:GetChildren()) do
+        if block:IsA("Model") then
+            local blockName = block.Name
+            for _, rarity in pairs(TARGET_RARITIES) do
+                if blockName:find(rarity) then
+                    createESP(block, rarity)
+                end
+            end
+        end
+    end
+end
+
+local function updateStatus()
+    if not isHunting then
+        StatusLabel.Text = "الحالة: غير نشط"
+        StatusLabel.TextColor3 = Color3.new(1, 1, 1)
+        return
+    end
+
+    
+    if next(activeESPs) then
+        StatusLabel.Text = "الحالة: تم العثور على الهدف!"
+        StatusLabel.TextColor3 = Color3.fromRGB(0, 255, 127)
+    else
+        StatusLabel.Text = "الحالة: في انتظار الريسبون..."
+        StatusLabel.TextColor3 = Color3.new(1, 1, 1)
+    end
+end
+
+local function startHunt()
+    isHunting = true
+    ToggleButton.Text = "وقف-_-"
+    ToggleButton.BackgroundColor3 = Color3.fromRGB(0, 180, 0)
+    
+    checkExistingBlocks()
+
+    
+    if not watcherConnection then
+        watcherConnection = TARGET_FOLDER_PATH.ChildAdded:Connect(function(child)
+            if isHunting and child:IsA("Model") then
+                local blockName = child.Name
+                for _, rarity in pairs(TARGET_RARITIES) do
+                    if blockName:find(rarity) then
+                        createESP(child, rarity)
+                    end
+                end
+            end
+        end)
+    end
+    
+    RunService:BindToRenderStep("HydraStatusUpdate", 200, updateStatus)
+end
+
+local function stopHunt()
+    isHunting = false
+    ToggleButton.Text = "ابدا •-•"
+    ToggleButton.BackgroundColor3 = Color3.fromRGB(200, 40, 40)
+    
+    
+    if watcherConnection then
+        watcherConnection:Disconnect()
+        watcherConnection = nil
+    end
+
+    for part, folder in pairs(activeESPs) do
+        if folder then folder:Destroy() end
+    end
+    activeESPs = {}
+    
+    RunService:UnbindFromRenderStep("HydraStatusUpdate")
+    updateStatus()
+end
+
+ToggleButton.MouseButton1Click:Connect(function()
+    if isHunting then
+        stopHunt()
+    else
+        startHunt()
+    end
+end)
+end})
+
+BLOCKTab:CreateButton({
     Name = " ESP تلقائي ",
     Callback = function()
 
@@ -2621,6 +2818,265 @@ end)
 updateSafePoint()
 end})
 
+vipTab:CreateButton({
+    Name = "التنقل عبر جدار vip من صنع فارس و EX-HUB| شغله في حدث ARCADE فقط",
+    Callback = function()
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local TweenService = game:GetService("TweenService")
+
+local player = Players.LocalPlayer
+
+local ZOOM_ON_MAX = 2000
+local ZOOM_ON_MIN = 0.5
+local ZOOM_OFF_MAX = 12
+local ZOOM_OFF_MIN = 8
+
+player.CameraMaxZoomDistance = ZOOM_ON_MAX
+player.CameraMinZoomDistance = ZOOM_ON_MIN
+
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "LogoGui"
+screenGui.ResetOnSpawn = false
+screenGui.Parent = player:WaitForChild("PlayerGui")
+
+-- ===== INTRO =====
+local intro = Instance.new("Frame", screenGui)
+intro.Size = UDim2.new(1,0,1,0)
+intro.BackgroundColor3 = Color3.new(0,0,0)
+intro.ZIndex = 100
+
+local introImg = Instance.new("ImageLabel", intro)
+introImg.Size = UDim2.new(0,220,0,220)
+introImg.Position = UDim2.new(0.5,0,0.45,0)
+introImg.AnchorPoint = Vector2.new(0.5,0.5)
+introImg.BackgroundTransparency = 1
+introImg.Image = "rbxassetid://3420079845"
+introImg.ZIndex = 101
+
+local barBG = Instance.new("Frame", intro)
+barBG.Size = UDim2.new(0,260,0,6)
+barBG.Position = UDim2.new(0.5,0,0.62,0)
+barBG.AnchorPoint = Vector2.new(0.5,0.5)
+barBG.BackgroundColor3 = Color3.fromRGB(60,60,60)
+barBG.BorderSizePixel = 0
+barBG.ZIndex = 101
+Instance.new("UICorner", barBG).CornerRadius = UDim.new(1,0)
+
+local barFill = Instance.new("Frame", barBG)
+barFill.Size = UDim2.new(0,0,1,0)
+barFill.BackgroundColor3 = Color3.fromRGB(0,170,255)
+barFill.BorderSizePixel = 0
+barFill.ZIndex = 102
+Instance.new("UICorner", barFill).CornerRadius = UDim.new(1,0)
+
+TweenService:Create(barFill, TweenInfo.new(2.5, Enum.EasingStyle.Linear), {Size = UDim2.new(1,0,1,0)}):Play()
+task.wait(2.8)
+
+TweenService:Create(intro,TweenInfo.new(1),{BackgroundTransparency=1}):Play()
+TweenService:Create(introImg,TweenInfo.new(1),{ImageTransparency=1}):Play()
+TweenService:Create(barBG,TweenInfo.new(1),{BackgroundTransparency=1}):Play()
+TweenService:Create(barFill,TweenInfo.new(1),{BackgroundTransparency=1}):Play()
+task.wait(1)
+intro:Destroy()
+-- ===== END INTRO =====
+
+local logo = Instance.new("ImageButton")
+logo.Parent = screenGui
+logo.BackgroundTransparency = 1
+logo.Image = "rbxassetid://93738238823550"
+logo.Size = UDim2.new(0,50,0,50)
+logo.AnchorPoint = Vector2.new(0.5,0.5)
+logo.Position = UDim2.new(0.5,0,0.5,0)
+logo.Active = true
+logo.Draggable = true
+
+TweenService:Create(logo, TweenInfo.new(1.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Position = UDim2.new(0,60,1,-60)}):Play()
+
+local menu = Instance.new("Frame", screenGui)
+menu.Size = UDim2.new(0,240,0,320)
+menu.Position = UDim2.new(0,60,1,-380)
+menu.BackgroundColor3 = Color3.fromRGB(15,15,15)
+menu.Visible = false
+menu.Active = true
+menu.Draggable = true
+Instance.new("UICorner", menu).CornerRadius = UDim.new(0,16)
+
+local stroke = Instance.new("UIStroke", menu)
+stroke.Color = Color3.fromRGB(80,80,80)
+stroke.Thickness = 1.5
+
+local title = Instance.new("TextLabel", menu)
+title.Size = UDim2.new(1,0,0,35)
+title.Text = "made by Fares"
+title.TextColor3 = Color3.fromRGB(0,200,255)
+title.BackgroundTransparency = 1
+title.Font = Enum.Font.GothamBold
+title.TextSize = 16
+
+local note = Instance.new("TextLabel", menu)
+note.Size = UDim2.new(1,-20,0,35)
+note.Position = UDim2.new(0,10,0,35)
+note.Text = "Note: لازم تفعل Free Vip أولا"
+note.TextColor3 = Color3.fromRGB(255,200,0)
+note.BackgroundTransparency = 1
+note.Font = Enum.Font.Gotham
+note.TextWrapped = true
+note.TextSize = 13
+
+local safeLabel = Instance.new("TextLabel", menu)
+safeLabel.Size = UDim2.new(1,-30,0,25)
+safeLabel.Position = UDim2.new(0,15,0,75)
+safeLabel.Text = "Safe Point: 0/12"
+safeLabel.TextColor3 = Color3.new(1,1,1)
+safeLabel.BackgroundTransparency = 1
+safeLabel.Font = Enum.Font.GothamBold
+safeLabel.TextSize = 14
+
+local warning = Instance.new("TextLabel", menu)
+warning.Size = UDim2.new(1,-20,0,25)
+warning.Position = UDim2.new(0,10,1,-30)
+warning.Text = ""
+warning.TextColor3 = Color3.fromRGB(255,60,60)
+warning.BackgroundTransparency = 1
+warning.Font = Enum.Font.GothamBold
+warning.TextSize = 14
+
+local function makeButton(text,y,color)
+	local b = Instance.new("TextButton", menu)
+	b.Size = UDim2.new(1,-30,0,40)
+	b.Position = UDim2.new(0,15,0,y)
+	b.Text = text
+	b.BackgroundColor3 = color
+	b.TextColor3 = Color3.new(1,1,1)
+	b.Font = Enum.Font.GothamBold
+	b.TextSize = 16
+	Instance.new("UICorner", b)
+	return b
+end
+
+local nextBtn = makeButton("Tp",105,Color3.fromRGB(60,120,255))
+local backBtn = makeButton("Back",150,Color3.fromRGB(170,70,70))
+local zoomBtn = makeButton("INF ZOOM OFF",195,Color3.fromRGB(100,100,100))
+local vipBtn = makeButton("Free Vip",240,Color3.fromRGB(200,160,60))
+
+logo.MouseButton1Click:Connect(function()
+	menu.Visible = not menu.Visible
+end)
+
+local points = {
+	Vector3.new(152.50,3.16,-135.32),
+	Vector3.new(242.45,3.21,-139.48),
+	Vector3.new(341.16,3.21,-139.46),
+	Vector3.new(466.67,3.21,-139.51),
+	Vector3.new(651.80,3.21,-139.50),
+	Vector3.new(912.58,3.21,-139.47),
+	Vector3.new(1302.22,3.21,-139.48),
+	-- محذوف 
+	Vector3.new(2685,4,-137),     
+	Vector3.new(3149,5,-136),     
+	Vector3.new(3497,4,-138),     
+	Vector3.new(3864,2,-136),     
+}
+
+local index = 0
+local moveConn
+local SPEED = 1999
+
+local function updateSafePoint()
+	safeLabel.Text = "Safe Point: "..index.."/12"
+end
+
+local function stopMove()
+	if moveConn then
+		moveConn:Disconnect()
+		moveConn = nil
+	end
+end
+
+local function moveTo(pos)
+	stopMove()
+	local char = player.Character
+	if not char then return end
+	local hrp = char:FindFirstChild("HumanoidRootPart")
+	if not hrp then return end
+
+	moveConn = RunService.RenderStepped:Connect(function(dt)
+		local dir = pos - hrp.Position
+		local dist = dir.Magnitude
+		if dist < 1 then
+			hrp.CFrame = CFrame.new(pos)
+			stopMove()
+			return
+		end
+		local step = math.min(dist, SPEED * dt)
+		hrp.CFrame = CFrame.new(hrp.Position + dir.Unit * step)
+	end)
+end
+
+nextBtn.MouseButton1Click:Connect(function()
+	if index == #points then
+		warning.Text = "وصلت لخر نقطة!"
+		return
+	end
+	warning.Text = ""
+	if index < #points then
+		index += 1
+		updateSafePoint()
+		moveTo(points[index])
+	end
+end)
+
+backBtn.MouseButton1Click:Connect(function()
+	if index > 1 then
+		index -= 1
+		updateSafePoint()
+		moveTo(points[index])
+	end
+end)
+
+local zoomEnabled = false
+zoomBtn.MouseButton1Click:Connect(function()
+	zoomEnabled = not zoomEnabled
+	if zoomEnabled then
+		player.CameraMaxZoomDistance = ZOOM_ON_MAX
+		player.CameraMinZoomDistance = ZOOM_ON_MIN
+		zoomBtn.Text = "INF ZOOM ON"
+	else
+		player.CameraMaxZoomDistance = ZOOM_OFF_MAX
+		player.CameraMinZoomDistance = ZOOM_OFF_MIN
+		zoomBtn.Text = "INF ZOOM OFF"
+	end
+end)
+
+vipBtn.MouseButton1Click:Connect(function()
+	local function deleteVIPWalls(parent)
+		for _, child in pairs(parent:GetChildren()) do
+			if child.Name == "VIPWalls" then
+				child:Destroy()
+			else
+				deleteVIPWalls(child)
+			end
+		end
+	end
+
+	local vipWalls = workspace:FindFirstChild("DefaultMap_SharedInstances")
+	if vipWalls and vipWalls:FindFirstChild("VIPWalls") then
+		vipWalls.VIPWalls:Destroy()
+	else
+		deleteVIPWalls(workspace)
+	end
+end)
+
+player.CharacterAdded:Connect(function()
+	stopMove()
+	index = 0
+	updateSafePoint()
+end)
+
+updateSafePoint()
+
+end})
 
 vipTab:CreateParagraph({
         Title = "  ملاحظه مهمة بخصوص ثغرات VIP",
@@ -4918,9 +5374,9 @@ MiscTab:CreateSlider({
 
     
     InfoTab:CreateSection("معلومات السكربت")
-    InfoTab:CreateParagraph({Title = "نسخة السكربت", Content = "هذا الاصدار .14.8v .\n تم تحسين بعض المشاكلوويعمل  بكفاءه اقوي و تمت اضافة VIP مجاناو تم اضافة Max Luck   و تم اضافة ESP لاكي بلوكس و   و تمت اضافة تجميع عملات حدث ال Arcade  و تمت  اضافة الانتقال الى اخر الماب مع شرح و تم تطوير ميزة الانتقال الى اخر الماب و تم اضافة تجميع الشخصيات تلقائي  يمكنك تجميع فوق 30 clesteal و تم اصلاح و اضافة الانتقالبدون جهد منك و تمت اضافه  تخطي الباركور و تم اضافة مميزات  و اضافة سكربتات جديدة و قوية و اضافة auto collect و العديد من المميزات اكتشفها بنفسك (اذا اكتشفت اي مشاكل في السكربت تواصل معي في التيك توك علي الخاص  ._.f.o_  ) و تمت اضافة مميزات حصرية و  تم اضافة تجميع عملات حدث ال Money و تمت اضافه عدم الموت من تسونامي و تمت اضافة التنقل عبر جدار Vip و تم اصلاح تفادي التسونامي و تطويرة و تمت اضافة  جمع العملات UFO الجديدة و تم اضافة التنقل الى اخر الماب التجريبي و تم اصلاح الثغرة و سكربتات رائعه و تم تحسين بعض المشاكل في الاداءو تم اضافة سكربت يحسن الاداء  وواضافه misc.\nالسكربت هذا تم تطويره من FARES."})
+    InfoTab:CreateParagraph({Title = "نسخة السكربت", Content = "هذا الاصدار .15.9v .\n تم تحسين بعض المشاكلوويعمل  بكفاءه اقوي و تمت اضافة VIP مجاناو تم اضافة Max Luck   و تم اضافة ESP لاكي بلوكس و   و تمت اضافة تجميع عملات حدث ال Arcade  و تمت  اضافة الانتقال الى اخر الماب مع شرح و تم تطوير ميزة الانتقال الى اخر الماب و تم اضافة تجميع الشخصيات تلقائي  يمكنك تجميع فوق 30 clesteal و تم اصلاح و اضافة الانتقالبدون جهد منك و تمت اضافه  تخطي الباركور و تم اضافة مميزات  و اضافة سكربتات جديدة و قوية و اضافة auto collect و العديد من المميزات اكتشفها بنفسك (اذا اكتشفت اي مشاكل في السكربت تواصل معي في التيك توك علي الخاص  ._.f.o_  ) و تمت اضافة مميزات حصرية و  تم اضافة تجميع عملات حدث ال Money و تمت اضافه عدم الموت من تسونامي و تمت اضافة التنقل عبر جدار Vip و تم اصلاح تفادي التسونامي و تطويرة و تمت اضافة  جمع العملات UFO الجديدة و تم اضافة التنقل الى اخر الماب التجريبي و تم اصلاح الثغرة و سكربتات رائعه و تم تحسين بعض المشاكل في الاداءو تم اضافة سكربت يحسن الاداء  وواضافه misc.\nالسكربت هذا تم تطويره من FARES."})
     
-    InfoTab:CreateParagraph({Title = "Script Version", Content = "This is the release V14.8.\n Problems have been improved, new features have been added, and script Fix Lag Has been added, and new protection from Tsunami  has been added,And collect ArcadeCoins has been added, and Free Vip has been added  and ESP LUCKYBLOCKS has been added and Tp in Vip walls has been added UPDATED Script Misc has been added,and MAX LUCK has been added, and auto collect has been added, and SKIP PARKOUR has been added, and auto collect coins event Money has been added,  and collect  UFO coins has been added and teleport to end of map has been added  and fixed the Teleporter and script exclusive features has been added  and Auto collect brainrots has been added so u can get 30 clesteal and fixed  some problems and exclusive features has been added and protection from tsunami has been added and  fixed the teleport to end of map fixed some glitchs and problems  if you had any problems dm me in tiktok (._.f.o_)  and added more taps more scripts take a LOOK by yourself, and the script  works more efficiently on phones.\nThis script has been developed by FARES."})
+    InfoTab:CreateParagraph({Title = "Script Version", Content = "This is the release V15.9.\n Problems have been improved, new features have been added, and script Fix Lag Has been added, and new protection from Tsunami  has been added,And collect ArcadeCoins has been added, and Free Vip has been added  and ESP LUCKYBLOCKS has been added and Tp in Vip walls has been added UPDATED Script Misc has been added,and MAX LUCK has been added, and auto collect has been added, and SKIP PARKOUR has been added, and auto collect coins event Money has been added,  and collect  UFO coins has been added and teleport to end of map has been added  and fixed the Teleporter and script exclusive features has been added  and Auto collect brainrots has been added so u can get 30 clesteal and fixed  some problems and exclusive features has been added and protection from tsunami has been added and  fixed the teleport to end of map fixed some glitchs and problems  if you had any problems dm me in tiktok (._.f.o_)  and added more taps more scripts take a LOOK by yourself, and the script  works more efficiently on phones.\nThis script has been developed by FARES."})
     
     InfoTab:CreateParagraph({Title = "المطور / Developer", Content = "FARES (egyptiandeveloper)"})
 
