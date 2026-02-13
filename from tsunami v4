@@ -171,7 +171,7 @@ local function ExecuteHub()
     repeat task.wait() until game:IsLoaded()
 
     local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
-    local Window = Rayfield:CreateWindow({Name = "Escape  Tsunami for brainrot | سكربت فارس V16", LoadingTitle = "سكربت فارس", LoadingSubtitle = "Fares Script", ConfigurationSaving = { Enabled = false }, KeySystem = false})
+    local Window = Rayfield:CreateWindow({Name = "Escape  Tsunami for brainrot | سكربت فارس V19.1", LoadingTitle = "سكربت فارس", LoadingSubtitle = "Fares Script", ConfigurationSaving = { Enabled = false }, KeySystem = false})
 
     local MainTab = Window:CreateTab("القائمة الرئيسية", 4483362458)
 
@@ -783,6 +783,471 @@ end)
 OtherScriptsTab:CreateSection("© Copyright by FARES")
 
 
+local boxTab = Window:CreateTab("اضافات التحديث الجديد! ", 4483362458)
+
+boxTab:CreateButton({
+Name =  "  AutoSteal/AutoGrab-byFares ",
+Callback = function()
+-- سرقه تلقائي بس هيفشخ الجهاز
+
+local player = game.Players.LocalPlayer
+local running = false
+local TweenService = game:GetService("TweenService")
+
+local gui = Instance.new("ScreenGui", game.CoreGui)
+gui.Name = "AutoStealDeepPurple"
+
+
+local notif = Instance.new("TextLabel", gui)
+notif.Size = UDim2.fromScale(0.7,0.07)
+notif.Position = UDim2.fromScale(0.15,0.05)
+notif.BackgroundColor3 = Color3.fromRGB(40,20,60)
+notif.BackgroundTransparency = 0.15
+notif.Text = "ملحوظة: ممكن يسبب لاج"
+notif.TextColor3 = Color3.fromRGB(230,200,255)
+notif.TextScaled = true
+notif.Font = Enum.Font.GothamBold
+notif.BorderSizePixel = 0
+
+local notifCorner = Instance.new("UICorner", notif)
+notifCorner.CornerRadius = UDim.new(1,0)
+
+local notifStroke = Instance.new("UIStroke", notif)
+notifStroke.Color = Color3.fromRGB(180,100,255)
+notifStroke.Thickness = 1.5
+
+task.delay(2.5,function()
+	notif:Destroy()
+end)
+
+
+local btn = Instance.new("TextButton", gui)
+btn.Size = UDim2.fromScale(0.14,0.08)
+btn.Position = UDim2.fromScale(0.43,0.8)
+btn.Text = "OFF"
+btn.TextColor3 = Color3.fromRGB(255,255,255)
+btn.TextScaled = true
+btn.Font = Enum.Font.GothamBold
+btn.BackgroundColor3 = Color3.fromRGB(90,40,130)
+btn.BorderSizePixel = 0
+btn.Active = true
+btn.Draggable = true
+
+local corner = Instance.new("UICorner", btn)
+corner.CornerRadius = UDim.new(1,0)
+
+local stroke = Instance.new("UIStroke", btn)
+stroke.Color = Color3.fromRGB(200,120,255)
+stroke.Thickness = 2
+stroke.Transparency = 0.2
+
+
+local function animate()
+	local tween = TweenService:Create(
+		btn,
+		TweenInfo.new(0.15, Enum.EasingStyle.Back, Enum.EasingDirection.Out),
+		{Size = UDim2.fromScale(0.16,0.09)}
+	)
+	tween:Play()
+	tween.Completed:Wait()
+	TweenService:Create(
+		btn,
+		TweenInfo.new(0.15),
+		{Size = UDim2.fromScale(0.14,0.08)}
+	):Play()
+end
+
+
+task.spawn(function()
+	while true do
+		if running then
+			local char = player.Character
+			if char and char:FindFirstChild("HumanoidRootPart") then
+				for _,v in pairs(workspace:GetDescendants()) do
+					if v:IsA("ProximityPrompt") then
+						pcall(function()
+							v.HoldDuration = 0
+							if (v.Parent.Position - char.HumanoidRootPart.Position).Magnitude <= v.MaxActivationDistance then
+								fireproximityprompt(v)
+							end
+						end)
+					end
+				end
+			end
+		end
+		task.wait(0.05)
+	end
+end)
+
+
+btn.MouseButton1Click:Connect(function()
+	animate()
+	running = not running
+	if running then
+		btn.Text = "ON"
+		btn.BackgroundColor3 = Color3.fromRGB(120,70,180)
+	else
+		btn.Text = "OFF"
+		btn.BackgroundColor3 = Color3.fromRGB(90,40,130)
+	end
+end)
+end})
+
+boxTab:CreateButton({
+Name =  "  تسونامي مرئي من صنع فارس",
+Callback = function()
+
+--المناخ المرئي
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+local PlayerGui = player:WaitForChild("PlayerGui")
+
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "TsunamiProGUI"
+screenGui.Parent = PlayerGui
+
+screenGui.ResetOnSpawn = false
+
+
+local mainFrame = Instance.new("Frame")
+mainFrame.Size = UDim2.new(0, 200, 0, 70)
+mainFrame.Position = UDim2.new(0.5, -125, 0.1, 0)
+mainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+mainFrame.BackgroundTransparency = 0.1
+mainFrame.BorderSizePixel = 0
+mainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+mainFrame.Parent = screenGui
+mainFrame.ClipsDescendants = true
+
+
+local UserInputService = game:GetService("UserInputService")
+
+local dragging
+local dragInput
+local dragStart
+local startPos
+
+local function update(input)
+	local delta = input.Position - dragStart
+	mainFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X,
+	                               startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+end
+
+mainFrame.InputBegan:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+		dragging = true
+		dragStart = input.Position
+		startPos = mainFrame.Position
+
+		input.Changed:Connect(function()
+			if input.UserInputState == Enum.UserInputState.End then
+				dragging = false
+			end
+		end)
+	end
+end)
+
+mainFrame.InputChanged:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+		dragInput = input
+	end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+	if input == dragInput and dragging then
+		update(input)
+	end
+end)
+
+
+local uicorner = Instance.new("UICorner", mainFrame)
+uicorner.CornerRadius = UDim.new(0, 15)
+
+local shadow = Instance.new("ImageLabel")
+shadow.BackgroundTransparency = 1
+shadow.Image = "rbxassetid://6014261993" 
+shadow.ImageColor3 = Color3.fromRGB(0,0,0)
+shadow.ImageTransparency = 0.5
+shadow.Size = UDim2.new(1, 20, 1, 20)
+shadow.Position = UDim2.new(0, -10, 0, -10)
+shadow.ScaleType = Enum.ScaleType.Slice
+shadow.SliceCenter = Rect.new(10,10,118,118)
+shadow.Parent = mainFrame
+shadow.ZIndex = 0
+
+
+local toggleButton = Instance.new("TextButton")
+toggleButton.Size = UDim2.new(1, -20, 1, -20)
+toggleButton.Position = UDim2.new(0, 10, 0, 10)
+toggleButton.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
+toggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+toggleButton.Font = Enum.Font.GothamBold
+toggleButton.TextSize = 20
+toggleButton.Text = "Tsunami OFF"
+toggleButton.Parent = mainFrame
+toggleButton.AutoButtonColor = true
+
+
+local buttonCorner = Instance.new("UICorner", toggleButton)
+buttonCorner.CornerRadius = UDim.new(0, 12)
+
+local buttonStroke = Instance.new("UIStroke", toggleButton)
+buttonStroke.Thickness = 2
+buttonStroke.Color = Color3.fromRGB(0, 255, 255)
+buttonStroke.Transparency = 0.3
+
+
+local tweenService = game:GetService("TweenService")
+local colors = {Color3.fromRGB(0,170,255), Color3.fromRGB(255,0,128), Color3.fromRGB(0,255,128)}
+local index = 1
+
+
+local tsunamiActive = false
+
+
+local originalProperties = {}
+
+local function makeTsunamiVisible(obj)
+	if obj:IsA("BasePart") or obj:IsA("MeshPart") or obj:IsA("UnionOperation") then
+		if not originalProperties[obj] then
+			originalProperties[obj] = {Transparency = obj.Transparency, CanCollide = obj.CanCollide, LocalTransparencyModifier = obj.LocalTransparencyModifier}
+		end
+		obj.Transparency = 0.3
+		obj.LocalTransparencyModifier = 0.3
+		obj.CanCollide = false
+	elseif obj:IsA("ParticleEmitter") or obj:IsA("Trail") or obj:IsA("Beam") then
+		obj.Enabled = false
+	elseif obj:IsA("BillboardGui") or obj:IsA("SurfaceGui") then
+		obj.Enabled = false
+	elseif obj:IsA("Frame") or obj:IsA("ImageLabel") or obj:IsA("UIAspectRatioConstraint") 
+		or obj:IsA("UIGradient") or obj:IsA("UIStroke") then
+		obj.Visible = false
+	elseif obj:IsA("Folder") or obj:IsA("Model") then
+		for _, child in ipairs(obj:GetChildren()) do
+			makeTsunamiVisible(child)
+		end
+	end
+end
+
+local function restoreTsunami(obj)
+	if obj:IsA("BasePart") or obj:IsA("MeshPart") or obj:IsA("UnionOperation") then
+		if originalProperties[obj] then
+			obj.Transparency = originalProperties[obj].Transparency
+			obj.LocalTransparencyModifier = originalProperties[obj].LocalTransparencyModifier
+			obj.CanCollide = originalProperties[obj].CanCollide
+		end
+	elseif obj:IsA("ParticleEmitter") or obj:IsA("Trail") or obj:IsA("Beam") then
+		obj.Enabled = true
+	elseif obj:IsA("BillboardGui") or obj:IsA("SurfaceGui") then
+		obj.Enabled = true
+	elseif obj:IsA("Frame") or obj:IsA("ImageLabel") or obj:IsA("UIAspectRatioConstraint") 
+		or obj:IsA("UIGradient") or obj:IsA("UIStroke") then
+		obj.Visible = true
+	elseif obj:IsA("Folder") or obj:IsA("Model") then
+		for _, child in ipairs(obj:GetChildren()) do
+			restoreTsunami(child)
+		end
+	end
+end
+
+
+task.spawn(function()
+	while true do
+		if tsunamiActive then
+			local tweenInfo = TweenInfo.new(1, Enum.EasingStyle.Linear)
+			local tween = tweenService:Create(buttonStroke, tweenInfo, {Color = colors[index]})
+			tween:Play()
+			index = index % #colors + 1
+		end
+		task.wait(1)
+	end
+end)
+
+
+toggleButton.MouseButton1Click:Connect(function()
+	tsunamiActive = not tsunamiActive
+	if tsunamiActive then
+		toggleButton.Text = "Tsunami ON"
+		for _, obj in ipairs(workspace:GetChildren()) do
+			if (obj:IsA("Model") or obj:IsA("Folder")) and string.find(obj.Name, "Wave") then
+				makeTsunamiVisible(obj)
+			end
+		end
+	else
+		toggleButton.Text = "Tsunami OFF"
+		for _, obj in ipairs(workspace:GetChildren()) do
+			if (obj:IsA("Model") or obj:IsA("Folder")) and string.find(obj.Name, "Wave") then
+				restoreTsunami(obj)
+			end
+		end
+	end
+end)
+end})
+
+boxTab:CreateButton({
+Name =  "  كشف اماكن التيكتات من صنع فارس ",
+Callback = function()
+
+--سكربت تيكتات يسطا
+
+local player = game.Players.LocalPlayer
+local running = false
+
+local espObjects = {}
+
+
+local gui = Instance.new("ScreenGui", game.CoreGui)
+gui.Name = "TicketESP_UI"
+
+local main = Instance.new("Frame", gui)
+main.Size = UDim2.fromScale(0.28,0.17)
+main.Position = UDim2.fromScale(0.36,0.78)
+main.BackgroundColor3 = Color3.fromRGB(15,25,45)
+main.BorderSizePixel = 0
+main.Active = true
+main.Draggable = true
+
+local corner = Instance.new("UICorner", main)
+corner.CornerRadius = UDim.new(0,18)
+
+local stroke = Instance.new("UIStroke", main)
+stroke.Color = Color3.fromRGB(80,140,255)
+stroke.Thickness = 1.5
+
+
+local title = Instance.new("TextLabel", main)
+title.Size = UDim2.fromScale(1,0.22)
+title.BackgroundTransparency = 1
+title.Text = "TICKET ESP"
+title.TextColor3 = Color3.fromRGB(180,210,255)
+title.TextScaled = true
+title.Font = Enum.Font.GothamBold
+
+
+local statusLabel = Instance.new("TextLabel", main)
+statusLabel.Position = UDim2.fromScale(0.05,0.25)
+statusLabel.Size = UDim2.fromScale(0.9,0.2)
+statusLabel.BackgroundTransparency = 1
+statusLabel.Text = "الحالة: في انتظار الريسبون..."
+statusLabel.TextColor3 = Color3.fromRGB(200,200,200)
+statusLabel.TextScaled = true
+statusLabel.Font = Enum.Font.Gotham
+
+
+local countLabel = Instance.new("TextLabel", main)
+countLabel.Position = UDim2.fromScale(0.05,0.45)
+countLabel.Size = UDim2.fromScale(0.9,0.18)
+countLabel.BackgroundTransparency = 1
+countLabel.Text = "عدد التيكتس: 0"
+countLabel.TextColor3 = Color3.fromRGB(150,200,255)
+countLabel.TextScaled = true
+countLabel.Font = Enum.Font.Gotham
+
+
+local btn = Instance.new("TextButton", main)
+btn.Position = UDim2.fromScale(0.15,0.7)
+btn.Size = UDim2.fromScale(0.7,0.25)
+btn.Text = "OFF"
+btn.TextColor3 = Color3.new(1,1,1)
+btn.TextScaled = true
+btn.Font = Enum.Font.GothamBold
+btn.BackgroundColor3 = Color3.fromRGB(120,40,40)
+btn.BorderSizePixel = 0
+
+local btnCorner = Instance.new("UICorner", btn)
+btnCorner.CornerRadius = UDim.new(0,14)
+
+
+local function createESP(obj)
+	if espObjects[obj] then return end
+
+	local adornee
+	if obj:IsA("Model") then
+		adornee = obj.PrimaryPart or obj:FindFirstChildWhichIsA("BasePart")
+	else
+		adornee = obj
+	end
+
+	if not adornee then return end
+
+	local billboard = Instance.new("BillboardGui")
+	billboard.Name = "TicketESP"
+	billboard.Adornee = adornee
+	billboard.AlwaysOnTop = true
+	billboard.MaxDistance = 0 
+	billboard.Size = UDim2.fromOffset(120,40) 
+	billboard.StudsOffsetWorldSpace = Vector3.new(0,4,0)
+	billboard.Parent = adornee
+
+	local text = Instance.new("TextLabel", billboard)
+	text.Size = UDim2.fromScale(1,1)
+	text.BackgroundTransparency = 1
+	text.Text = "TICKET!"
+	text.TextColor3 = Color3.fromRGB(0,170,255)
+	text.TextStrokeColor3 = Color3.fromRGB(0,0,0)
+	text.TextStrokeTransparency = 0
+	text.TextScaled = true
+	text.Font = Enum.Font.GothamBlack
+
+	espObjects[obj] = billboard
+end
+
+local function clearESP()
+	for _,v in pairs(espObjects) do
+		if v then v:Destroy() end
+	end
+	espObjects = {}
+end
+
+
+task.spawn(function()
+	while true do
+		if running then
+			local folder = workspace:FindFirstChild("ArcadeEventTickets")
+
+			if folder and folder:FindFirstChild("Ticket") then
+				local ticketFolder = folder.Ticket
+				local found = 0
+
+				for _,v in pairs(ticketFolder:GetChildren()) do
+					if v:IsA("Model") or v:IsA("BasePart") then
+						createESP(v)
+						found += 1
+					end
+				end
+
+				if found > 0 then
+					statusLabel.Text = "الحالة: تم العثور على الهدف"
+					countLabel.Text = "عدد التيكتس: "..found
+				else
+					statusLabel.Text = "الحالة: في انتظار الريسبون..."
+					countLabel.Text = "عدد التيكتس: 0"
+				end
+			else
+				statusLabel.Text = "الحالة: في انتظار الريسبون..."
+				countLabel.Text = "عدد التيكتس: 0"
+			end
+		end
+		task.wait(1)
+	end
+end)
+
+
+btn.MouseButton1Click:Connect(function()
+	running = not running
+	if running then
+		btn.Text = "ON"
+		btn.BackgroundColor3 = Color3.fromRGB(40,140,220)
+	else
+		btn.Text = "OFF"
+		btn.BackgroundColor3 = Color3.fromRGB(120,40,40)
+		clearESP()
+	end
+end)
+end})
+
+boxTab:CreateSection("© Copyright by FARES")
+
 local HiTab = Window:CreateTab("مميزات حصرية! ", 4483362458)
 
 HiTab:CreateButton({
@@ -928,7 +1393,7 @@ end)
 end})
 
 HiTab:CreateButton({
-Name =  "  (نسخة محسنة/Online) ينقلك للامام دون جهد منك ",
+Name =  " Script Gaps By Fares ",
 Callback = function()
 
 
@@ -1006,6 +1471,25 @@ local noclipConnection = nil
 local popperConnection = nil
 local lastOccludedParts = {}
 
+
+local points = {
+    Vector3.new(198, -4, 19),
+    Vector3.new(285, -4, 18),
+    Vector3.new(395, -4, 11),
+    Vector3.new(540, -3, -9),
+    Vector3.new(756, -4, -39),
+    Vector3.new(1074, -4, -19),
+    Vector3.new(1556, -3, -11),
+    Vector3.new(2250, -4, -36),
+    Vector3.new(2960, -4, -47),
+    Vector3.new(3320, -4, -65),
+    Vector3.new(3666, -4, -24),
+    Vector3.new(4026, -4, -21),
+}
+
+local totalGaps = #points
+local currentGapIndex = 0
+
 local function setNoclip(state)
     if state == noclipActive then return end
     noclipActive = state
@@ -1026,90 +1510,18 @@ local function setNoclip(state)
     end
 end
 
-local function setPopper(state)
-    isPopperActive = state
-    if isPopperActive then
-        popperConnection = RunService.RenderStepped:Connect(function()
-            local camera = Workspace.CurrentCamera
-            local character = LocalPlayer.Character
-            local head = character and character:FindFirstChild("Head")
-            if not (camera and head) then return end
-            
-            for part, _ in pairs(lastOccludedParts) do
-                if part and part.Parent then
-                    part.LocalTransparencyModifier = 0
-                end
-            end
-            table.clear(lastOccludedParts)
-            
-            local ignoreList = {character}
-            local origin = head.Position
-            local camPos = camera.CFrame.Position
-            local direction = (camPos - origin).Unit
-            local distance = (camPos - origin).Magnitude
-            
-            local currentOrigin = origin
-            for _ = 1, 15 do
-                local remainingDistance = (camPos - currentOrigin).Magnitude
-                if remainingDistance < 1 then break end
-
-                local ray = Ray.new(currentOrigin, direction * remainingDistance)
-                local hitPart, hitPosition = Workspace:FindPartOnRayWithIgnoreList(ray, ignoreList)
-
-                if hitPart and hitPart:IsA("BasePart") and hitPart.Transparency < 1 then
-                    hitPart.LocalTransparencyModifier = 0.75
-                    lastOccludedParts[hitPart] = true
-                    table.insert(ignoreList, hitPart)
-                    currentOrigin = hitPosition
-                else
-                    break 
-                end
-            end
-        end)
-        PopperButton.BackgroundColor3 = Color3.fromRGB(25, 85, 160)
-        PopperButton.Text = "رؤية واضحة: ON"
-    elseif popperConnection then
-        popperConnection:Disconnect()
-        popperConnection = nil
-        
-        for part, _ in pairs(lastOccludedParts) do
-            if part and part.Parent then
-                part.LocalTransparencyModifier = 0
-            end
-        end
-        table.clear(lastOccludedParts)
-        PopperButton.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
-        PopperButton.Text = "رؤية واضحة: OFF"
-    end
-end
-
-PopperButton.MouseButton1Click:Connect(function()
-    setPopper(not isPopperActive)
-end)
-
-local totalGaps = 9
-local currentGapIndex = 0
-
-local function getTargetForIndex(index)
-    local map = Workspace:WaitForChild("DefaultMap")
-    local gaps = map:WaitForChild("Gaps")
-    local gap = gaps:WaitForChild("Gap"..index)
-    while #gap:GetChildren() < 2 do task.wait(0.1) end
-    return gap:GetChildren()[2]
-end
-
 local function updateStatus() 
     Status.Text = "سيف بوينت: "..currentGapIndex.." / "..totalGaps 
 end
 
 local movementId = 0
-local function microStepMove(targetPart, myId)
+local function microStepMove(targetPos, myId)
     setNoclip(true)
     local char = LocalPlayer.Character
     local root = char and char:FindFirstChild("HumanoidRootPart")
-    if not (root and targetPart) then setNoclip(false); return end
+    if not root then setNoclip(false); return end
     local startPos = root.Position
-    local endPos = targetPart.Position + Vector3.new(0,4.5,0)
+    local endPos = targetPos + Vector3.new(0,4.5,0)
     local delta = endPos - startPos
     local stepSize = 4.8
     local direction = delta.Unit
@@ -1126,7 +1538,7 @@ end
 local function moveForward()
     if currentGapIndex < totalGaps then
         movementId += 1; local myId = movementId; currentGapIndex += 1
-        local target = getTargetForIndex(currentGapIndex)
+        local target = points[currentGapIndex]
         if target then task.spawn(microStepMove, target, myId); updateStatus() end
     end
 end
@@ -1134,14 +1546,19 @@ end
 local function moveBackward()
     if currentGapIndex > 1 then
         movementId += 1; local myId = movementId; currentGapIndex -= 1
-        local target = getTargetForIndex(currentGapIndex)
+        local target = points[currentGapIndex]
         if target then task.spawn(microStepMove, target, myId); updateStatus() end
     end
 end
 
 Next.MouseButton1Click:Connect(moveForward)
 Prev.MouseButton1Click:Connect(moveBackward)
-LocalPlayer.CharacterAdded:Connect(function() movementId += 1; currentGapIndex = 0; updateStatus() end)
+LocalPlayer.CharacterAdded:Connect(function()
+    movementId += 1
+    currentGapIndex = 0
+    updateStatus()
+end)
+
 updateStatus()
 
 
@@ -2648,7 +3065,7 @@ end})
 
 vipTab:CreateParagraph({
         Title = "  ملاحظه مهمة بخصوص ثغرات VIP",
-        Content = "لازم سرعتك بلماب تكون 200."
+        Content = "لازم سرعتك بلماب تكون  200 و لو ضغطت بسرعه علي زر Tp ممكن تموت."
     })
 
 vipTab:CreateSection("© Copyright by FARES")
@@ -4942,9 +5359,9 @@ MiscTab:CreateSlider({
 
     
     InfoTab:CreateSection("معلومات السكربت")
-    InfoTab:CreateParagraph({Title = "نسخة السكربت", Content = "هذا الاصدار .16v .\n تم تحسين بعض المشاكلوويعمل  بكفاءه اقوي و تمت اضافة VIP مجاناو تم اضافة Max Luck   و تم اضافة ESP لاكي بلوكس و   و تمت اضافة تجميع عملات حدث ال Arcade  و تمت  اضافة الانتقال الى اخر الماب مع شرح و تم تطوير ميزة الانتقال الى اخر الماب و تم اضافة تجميع الشخصيات تلقائي  يمكنك تجميع فوق 30 clesteal و تم اصلاح و اضافة الانتقالبدون جهد منك و تمت اضافه  تخطي الباركور و تم اضافة مميزات  و اضافة سكربتات جديدة و قوية و اضافة auto collect و العديد من المميزات اكتشفها بنفسك (اذا اكتشفت اي مشاكل في السكربت تواصل معي في التيك توك علي الخاص  ._.f.o_  ) و تمت اضافة مميزات حصرية و  تم اضافة تجميع عملات حدث ال Money و تمت اضافه عدم الموت من تسونامي و تمت اضافة التنقل عبر جدار Vip و تم اصلاح تفادي التسونامي و تطويرة و تمت اضافة  جمع العملات UFO الجديدة و تم اضافة التنقل الى اخر الماب التجريبي و تم اصلاح الثغرة و سكربتات رائعه و تم تحسين بعض المشاكل في الاداءو تم اضافة سكربت يحسن الاداء  وواضافه misc.\nالسكربت هذا تم تطويره من FARES."})
+    InfoTab:CreateParagraph({Title = "نسخة السكربت", Content = "هذا الاصدار .19.1v .\n تم تحسين بعض المشاكلوويعمل  بكفاءه اقوي و تمت اضافة VIP مجاناو تم اضافة Max Luck   و تم اضافة ESP لاكي بلوكس و   و تمت اضافة تجميع عملات حدث ال Arcade  و تمت  اضافة الانتقال الى اخر الماب مع شرح  و تم اضافة كشف اماكن التيكتات و تم اضافه تسونامي مرئي  و تم اضافه انك تقدر تاخذ الشخصيات تلقائي  و تم حل مشكله التنقل في سكربت Gaps و تم تطوير ميزة الانتقال الى اخر الماب و تم اضافة تجميع الشخصيات تلقائي  يمكنك تجميع فوق 30 clesteal و تم اصلاح و اضافة الانتقالبدون جهد منك و تمت اضافه  تخطي الباركور و تم اضافة مميزات  و اضافة سكربتات جديدة و قوية و اضافة auto collect و العديد من المميزات اكتشفها بنفسك (اذا اكتشفت اي مشاكل في السكربت تواصل معي في التيك توك علي الخاص  ._.f.o_  ) و تمت اضافة مميزات حصرية و  تم اضافة تجميع عملات حدث ال Money و تمت اضافه عدم الموت من تسونامي و تمت اضافة التنقل عبر جدار Vip و تم اصلاح تفادي التسونامي و تطويرة و تمت اضافة  جمع العملات UFO الجديدة و تم اضافة التنقل الى اخر الماب التجريبي و تم اصلاح الثغرة و سكربتات رائعه و تم تحسين بعض المشاكل في الاداءو تم اضافة سكربت يحسن الاداء  وواضافه misc.\nالسكربت هذا تم تطويره من FARES."})
     
-    InfoTab:CreateParagraph({Title = "Script Version", Content = "This is the release V16.\n Problems have been improved, new features have been added, and script Fix Lag Has been added, and new protection from Tsunami  has been added,And collect ArcadeCoins has been added, and Free Vip has been added  and ESP LUCKYBLOCKS has been added and Tp in Vip walls has been added UPDATED Script Misc has been added,and MAX LUCK has been added, and auto collect has been added, and SKIP PARKOUR has been added, and auto collect coins event Money has been added,  and collect  UFO coins has been added and teleport to end of map has been added  and fixed the Teleporter and script exclusive features has been added  and Auto collect brainrots has been added so u can get 30 clesteal and fixed  some problems and exclusive features has been added and protection from tsunami has been added and  fixed the teleport to end of map fixed some glitchs and problems  if you had any problems dm me in tiktok (._.f.o_)  and added more taps more scripts take a LOOK by yourself, and the script  works more efficiently on phones.\nThis script has been developed by FARES."})
+    InfoTab:CreateParagraph({Title = "Script Version", Content = "This is the release V19.1.\n Problems have been improved, new features have been added, and script Fix Lag Has been added, and new protection from Tsunami  has been added,And collect ArcadeCoins has been added, and Free Vip has been added  and ESP LUCKYBLOCKS has been added and Tp in Vip walls has been added UPDATED Script Misc has been added,and MAX LUCK has been added, and AutoSteal/AutoGrab has been added, and ESP TICKETS has been added, and Tsunami visual has been added, and fixed Gaps Script  problem, and auto collect has been added, and SKIP PARKOUR has been added, and auto collect coins event Money has been added,  and collect  UFO coins has been added and teleport to end of map has been added  and fixed the Teleporter and script exclusive features has been added  and Auto collect brainrots has been added so u can get 30 clesteal and fixed  some problems and exclusive features has been added and protection from tsunami has been added and  fixed the teleport to end of map fixed some glitchs and problems  if you had any problems dm me in tiktok (._.f.o_)  and added more taps more scripts take a LOOK by yourself, and the script  works more efficiently on phones.\nThis script has been developed by FARES."})
     
     InfoTab:CreateParagraph({Title = "المطور / Developer", Content = "FARES (egyptiandeveloper)"})
 
