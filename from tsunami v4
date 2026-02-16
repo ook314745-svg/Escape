@@ -173,7 +173,7 @@ local function ExecuteHub()
 local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
 
 local Window = Rayfield:CreateWindow({
-    Name = "Escape Tsunami for brainrot | سكربت فارس V22.2",
+    Name = "Escape Tsunami for brainrot | سكربت فارس V23.2",
     LoadingTitle = "سكربت فارس",
     LoadingSubtitle = "Fares Script",
     ConfigurationSaving = { Enabled = false },
@@ -1401,44 +1401,39 @@ end)
 end})
 
 HiTab:CreateButton({
-Name =  " Script Gaps By Fares ",
+Name =  " Script Gaps By Fares V2 ",
 Callback = function()
 
 
 local Players = game:GetService("Players")
 local Workspace = game:GetService("Workspace")
 local RunService = game:GetService("RunService")
-local UserInputService = game:GetService("UserInputService")
 local LocalPlayer = Players.LocalPlayer
+local Camera = Workspace.CurrentCamera
 
 local antiVoidPart = Instance.new("Part")
-antiVoidPart.Name = "Fares_SafetyNet"
 antiVoidPart.Size = Vector3.new(20000, 10, 20000)
-antiVoidPart.Position = Vector3.new(0, -300, 0)
+antiVoidPart.Position = Vector3.new(0, -80, 0)
 antiVoidPart.Anchored = true
 antiVoidPart.CanCollide = true
 antiVoidPart.Transparency = 1
 antiVoidPart.Parent = Workspace
 
 local ScreenGui = Instance.new("ScreenGui", LocalPlayer:WaitForChild("PlayerGui"))
-ScreenGui.Name = "GapNavigatorUI"
 ScreenGui.ResetOnSpawn = false
 
 local Main = Instance.new("Frame", ScreenGui)
 Main.Size = UDim2.new(0,200,0,140)
 Main.Position = UDim2.new(0.5,-100,0.8,0)
 Main.BackgroundColor3 = Color3.fromRGB(40,40,40)
-Main.BorderSizePixel = 1
 Main.Active = true
 Main.Draggable = true
 
 local Title = Instance.new("TextLabel", Main)
 Title.Size = UDim2.new(1,0,0,25)
-Title.Text = "Made by Fares"
-Title.BackgroundColor3 = Color3.fromRGB(30,30,30)
+Title.Text = "MADE BY FARESv2"
+Title.BackgroundColor3 = Color3.fromRGB(255,0,0)
 Title.TextColor3 = Color3.new(1,1,1)
-Title.Font = Enum.Font.SourceSansBold
-Title.TextSize = 16
 
 local Prev = Instance.new("TextButton", Main)
 Prev.Text = "للوراء"
@@ -1459,26 +1454,13 @@ Status.Size = UDim2.new(1,0,0,25)
 Status.Position = UDim2.new(0,0,1,-55)
 Status.BackgroundTransparency = 1
 Status.TextColor3 = Color3.fromRGB(200,200,200)
-Status.Font = Enum.Font.SourceSansItalic
-Status.TextXAlignment = Enum.TextXAlignment.Center
 
 local PopperButton = Instance.new("TextButton", Main)
-PopperButton.Name = "PopperButton"
-PopperButton.Text = "رؤية واضحة: OFF"
+PopperButton.Text = "لا تضغط"
 PopperButton.Size = UDim2.new(0.8, 0, 0, 20)
 PopperButton.Position = UDim2.new(0.1, 0, 1, -25)
 PopperButton.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
 PopperButton.TextColor3 = Color3.new(1,1,1)
-PopperButton.Font = Enum.Font.SourceSans
-PopperButton.TextSize = 12
-Instance.new("UICorner", PopperButton).CornerRadius = UDim.new(0, 4)
-
-local isPopperActive = false
-local noclipActive = false
-local noclipConnection = nil
-local popperConnection = nil
-local lastOccludedParts = {}
-
 
 local points = {
     Vector3.new(198, -4, 19),
@@ -1497,73 +1479,97 @@ local points = {
 
 local totalGaps = #points
 local currentGapIndex = 0
+local isMoving = false
 
+local noclipConnection
 local function setNoclip(state)
-    if state == noclipActive then return end
-    noclipActive = state
-    if noclipActive then
+    if state then
+        if noclipConnection then return end
         noclipConnection = RunService.Stepped:Connect(function()
             local char = LocalPlayer.Character
             if char then
                 for _, part in pairs(char:GetDescendants()) do
-                    if part:IsA("BasePart") and part.CanCollide then
+                    if part:IsA("BasePart") then
                         part.CanCollide = false
                     end
                 end
             end
         end)
-    elseif noclipConnection then
-        noclipConnection:Disconnect()
-        noclipConnection = nil
+    else
+        if noclipConnection then
+            noclipConnection:Disconnect()
+            noclipConnection = nil
+        end
     end
 end
 
-local function updateStatus() 
-    Status.Text = "سيف بوينت: "..currentGapIndex.." / "..totalGaps 
+local function updateStatus()
+    Status.Text = "سيف بوينت: "..currentGapIndex.." / "..totalGaps
 end
 
-local movementId = 0
-local function microStepMove(targetPos, myId)
-    setNoclip(true)
-    local char = LocalPlayer.Character
-    local root = char and char:FindFirstChild("HumanoidRootPart")
-    if not root then setNoclip(false); return end
-    local startPos = root.Position
-    local endPos = targetPos + Vector3.new(0,4.5,0)
-    local delta = endPos - startPos
-    local stepSize = 4.8
-    local direction = delta.Unit
+local function stepMove(fromPos, toPos, stepSize)
+    local delta = toPos - fromPos
+    local dir = delta.Unit
     local steps = math.max(math.floor(delta.Magnitude / stepSize), 1)
+
     for i = 1, steps do
-        if myId ~= movementId then setNoclip(false); return end
-        root.CFrame = CFrame.new(startPos + direction * (stepSize * i))
+        LocalPlayer.Character.HumanoidRootPart.CFrame =
+            CFrame.new(fromPos + dir * (stepSize * i))
         RunService.Heartbeat:Wait()
     end
-    if myId == movementId then root.CFrame = CFrame.new(endPos) end
+end
+
+local function microStepMove(targetPos)
+    if isMoving then return end
+    isMoving = true
+
+    setNoclip(true)
+
+    local root = LocalPlayer.Character and
+                 LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+    if not root then
+        setNoclip(false)
+        isMoving = false
+        return
+    end
+
+    local startPos = root.Position
+    local downPos = startPos - Vector3.new(0,6,0)
+    local hiddenTarget = Vector3.new(targetPos.X, downPos.Y, targetPos.Z)
+    local finalPos = targetPos + Vector3.new(0,4.5,0)
+
+    stepMove(startPos, downPos, 3.5)
+    stepMove(downPos, hiddenTarget, 5)
+    stepMove(hiddenTarget, finalPos, 3.5)
+
     setNoclip(false)
+    isMoving = false
 end
 
 local function moveForward()
+    if isMoving then return end
     if currentGapIndex < totalGaps then
-        movementId += 1; local myId = movementId; currentGapIndex += 1
-        local target = points[currentGapIndex]
-        if target then task.spawn(microStepMove, target, myId); updateStatus() end
+        currentGapIndex += 1
+        microStepMove(points[currentGapIndex])
+        updateStatus()
     end
 end
 
 local function moveBackward()
+    if isMoving then return end
     if currentGapIndex > 1 then
-        movementId += 1; local myId = movementId; currentGapIndex -= 1
-        local target = points[currentGapIndex]
-        if target then task.spawn(microStepMove, target, myId); updateStatus() end
+        currentGapIndex -= 1
+        microStepMove(points[currentGapIndex])
+        updateStatus()
     end
 end
 
 Next.MouseButton1Click:Connect(moveForward)
 Prev.MouseButton1Click:Connect(moveBackward)
+
 LocalPlayer.CharacterAdded:Connect(function()
-    movementId += 1
     currentGapIndex = 0
+    isMoving = false
     updateStatus()
 end)
 
@@ -5816,9 +5822,9 @@ MiscTab:CreateSlider({
 
     
     InfoTab:CreateSection("معلومات السكربت")
-    InfoTab:CreateParagraph({Title = "نسخة السكربت", Content = "هذا الاصدار .22.2v .\n تم تحسين بعض المشاكلوويعمل  بكفاءه اقوي و تمت اضافة VIP مجاناو تم اضافة Max Luck   و تم اضافة ESP لاكي بلوكس و   و تمت اضافة تجميع عملات حدث ال Arcade  و تمت  اضافة الانتقال الى اخر الماب مع شرح  و تم اضافة كشف اماكن التيكتات و تم اضافه تسونامي مرئي  و تم اضافه انك تقدر تاخذ الشخصيات تلقائي  و تم حل مشكله التنقل في سكربت Gaps و تم تطوير ميزة الانتقال الى اخر الماب و تم اضافة تجميع الشخصيات تلقائي  يمكنك تجميع فوق 30 clesteal و تم اصلاح و اضافة الانتقالبدون جهد منك و تمت اضافه  تخطي الباركور و تم اضافة مميزات  و اضافة سكربتات جديدة و قوية و اضافة auto collect و العديد من المميزات اكتشفها بنفسك (اذا اكتشفت اي مشاكل في السكربت تواصل معي في التيك توك علي الخاص  ._.f.o_  ) و تمت اضافة مميزات حصرية و  تم اضافة تجميع عملات حدث ال Money و تمت اضافه عدم الموت من تسونامي و تمت اضافة التنقل عبر جدار Vip و تم اصلاح تفادي التسونامي و تطويرة و تمت اضافة  جمع العملات UFO الجديدة و تم اضافة التنقل الى اخر الماب التجريبي و تم اصلاح الثغرة و سكربتات رائعه و تم تحسين بعض المشاكل في الاداءو تم اضافة سكربت يحسن الاداء  وواضافه misc.\nالسكربت هذا تم تطويره من FARES."})
+    InfoTab:CreateParagraph({Title = "نسخة السكربت", Content = "هذا الاصدار .23.2v .\n تم تحسين بعض المشاكلوويعمل  بكفاءه اقوي و تمت اضافة VIP مجاناو تم اضافة Max Luck   و تم اضافة ESP لاكي بلوكس و   و تمت اضافة تجميع عملات حدث ال Arcade  و تمت  اضافة الانتقال الى اخر الماب مع شرح  و تم اضافة كشف اماكن التيكتات و تم اضافه تسونامي مرئي  و تم اضافه انك تقدر تاخذ الشخصيات تلقائي  و تم حل مشكله التنقل في سكربت Gaps و تم تطوير ميزة الانتقال الى اخر الماب و تم اضافة تجميع الشخصيات تلقائي  يمكنك تجميع فوق 30 clesteal و تم اصلاح و اضافة الانتقالبدون جهد منك و تمت اضافه  تخطي الباركور و تم اضافة مميزات  و اضافة سكربتات جديدة و قوية و اضافة auto collect و العديد من المميزات اكتشفها بنفسك (اذا اكتشفت اي مشاكل في السكربت تواصل معي في التيك توك علي الخاص  ._.f.o_  ) و تمت اضافة مميزات حصرية و  تم اضافة تجميع عملات حدث ال Money و تمت اضافه عدم الموت من تسونامي و تمت اضافة التنقل عبر جدار Vip و تم اصلاح تفادي التسونامي و تطويرة و تمت اضافة  جمع العملات UFO الجديدة و تم اضافة التنقل الى اخر الماب التجريبي و تم اصلاح الثغرة و سكربتات رائعه و تم تحسين بعض المشاكل في الاداءو تم اضافة سكربت يحسن الاداء  وواضافه misc.\nالسكربت هذا تم تطويره من FARES."})
     
-    InfoTab:CreateParagraph({Title = "Script Version", Content = "This is the release V22.2.\n Problems have been improved, new features have been added, and script Fix Lag Has been added, and new protection from Tsunami  has been added,And collect ArcadeCoins has been added, and Free Vip has been added  and ESP LUCKYBLOCKS has been added and Tp in Vip walls has been added UPDATED Script Misc has been added,and MAX LUCK has been added, and AutoSteal/AutoGrab has been added, and ESP TICKETS has been added, and Tsunami visual has been added, and fixed Gaps Script  problem, and auto collect has been added, and SKIP PARKOUR has been added, and auto collect coins event Money has been added,  and collect  UFO coins has been added and teleport to end of map has been added  and fixed the Teleporter and script exclusive features has been added  and Auto collect brainrots has been added so u can get 30 clesteal and fixed  some problems and exclusive features has been added and protection from tsunami has been added and  fixed the teleport to end of map fixed some glitchs and problems  if you had any problems dm me in tiktok (._.f.o_)  and added more taps more scripts take a LOOK by yourself, and the script  works more efficiently on phones.\nThis script has been developed by FARES."})
+    InfoTab:CreateParagraph({Title = "Script Version", Content = "This is the release V23.2.\n Problems have been improved, new features have been added, and script Fix Lag Has been added, and new protection from Tsunami  has been added,And collect ArcadeCoins has been added, and Free Vip has been added  and ESP LUCKYBLOCKS has been added and Tp in Vip walls has been added UPDATED Script Misc has been added,and MAX LUCK has been added, and AutoSteal/AutoGrab has been added, and ESP TICKETS has been added, and Tsunami visual has been added, and fixed Gaps Script  problem, and auto collect has been added, and SKIP PARKOUR has been added, and auto collect coins event Money has been added,  and collect  UFO coins has been added and teleport to end of map has been added  and fixed the Teleporter and script exclusive features has been added  and Auto collect brainrots has been added so u can get 30 clesteal and fixed  some problems and exclusive features has been added and protection from tsunami has been added and  fixed the teleport to end of map fixed some glitchs and problems  if you had any problems dm me in tiktok (._.f.o_)  and added more taps more scripts take a LOOK by yourself, and the script  works more efficiently on phones.\nThis script has been developed by FARES."})
     
     InfoTab:CreateParagraph({Title = "المطور / Developer", Content = "FARES (egyptiandeveloper)"})
 
