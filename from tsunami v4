@@ -3688,7 +3688,7 @@ local LocalPlayer = Players.LocalPlayer
 
 local TSUNAMI_DETECTION_RANGE = 60
 local SAFE_POSITIONS = {
-	Vector3.new(152.50,3.16,-135.32), Vector3.new(242.45,3.21,-139.48),
+	Vector3.new(113, 3, -136),Vector3.new(242.45,3.21,-139.48),
 	Vector3.new(341.16,3.21,-139.46), Vector3.new(466.67,3.21,-139.51),
 	Vector3.new(651.80,3.21,-139.50), Vector3.new(912.58,3.21,-139.47),
 	Vector3.new(1302.22,3.21,-139.48), Vector3.new(2685,4,-137),
