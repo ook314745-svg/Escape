@@ -173,7 +173,7 @@ local function ExecuteHub()
 local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
 
 local Window = Rayfield:CreateWindow({
-    Name = "Escape Tsunami for brainrot | سكربت فارس V24.3",
+    Name = "Escape Tsunami for brainrot | سكربت فارس V25.3",
     LoadingTitle = "سكربت فارس",
     LoadingSubtitle = "Fares Script",
     ConfigurationSaving = { Enabled = false },
@@ -791,7 +791,189 @@ end)
 OtherScriptsTab:CreateSection("© Copyright by FARES")
 
 
-local boxTab = Window:CreateTab("اضافات التحديث الجديد! V2", 4483362458)
+local boxTab = Window:CreateTab("اضافات التحديث الجديد! V3", 4483362458)
+
+boxTab:CreateButton({
+Name =  "  ESP Divine/كشف اماكن الديفاين ",
+Callback = function()
+
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+
+local LocalPlayer = Players.LocalPlayer
+local Camera = workspace.CurrentCamera
+
+local divineEnabled = false
+local secretEnabled = false
+
+
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "SeerRemix_Gui"
+screenGui.ResetOnSpawn = false
+screenGui.Parent = LocalPlayer:WaitForChild("PlayerGui")
+
+local mainFrame = Instance.new("Frame", screenGui)
+mainFrame.Size = UDim2.new(0, 220, 0, 120)
+mainFrame.Position = UDim2.new(0.5, -110, 0.8, -60)
+mainFrame.BackgroundColor3 = Color3.fromRGB(20,20,20)
+mainFrame.BackgroundTransparency = 0.2
+mainFrame.BorderSizePixel = 0
+mainFrame.Active = true
+mainFrame.Draggable = true
+Instance.new("UICorner", mainFrame).CornerRadius = UDim.new(0,12)
+
+local titleLabel = Instance.new("TextLabel", mainFrame)
+titleLabel.Size = UDim2.new(1,0,0,30)
+titleLabel.BackgroundTransparency = 1
+titleLabel.Font = Enum.Font.GothamBold
+titleLabel.Text = "ESP Divine | من صنع فارس"
+titleLabel.TextColor3 = Color3.fromRGB(255,255,255)
+titleLabel.TextSize = 8
+
+
+local divineButton = Instance.new("TextButton", mainFrame)
+divineButton.Size = UDim2.new(1,-20,0,30)
+divineButton.Position = UDim2.new(0,10,0,35)
+divineButton.BackgroundColor3 = Color3.fromRGB(35,35,35)
+divineButton.BorderSizePixel = 0
+divineButton.Font = Enum.Font.GothamBold
+divineButton.Text = "Divine: OFF"
+divineButton.TextColor3 = Color3.fromRGB(200,40,40)
+divineButton.TextSize = 16
+Instance.new("UICorner", divineButton).CornerRadius = UDim.new(0,8)
+
+
+local secretButton = Instance.new("TextButton", mainFrame)
+secretButton.Size = UDim2.new(1,-20,0,30)
+secretButton.Position = UDim2.new(0,10,0,70)
+secretButton.BackgroundColor3 = Color3.fromRGB(35,35,35)
+secretButton.BorderSizePixel = 0
+secretButton.Font = Enum.Font.GothamBold
+secretButton.Text = "لا تشغلة"
+secretButton.TextColor3 = Color3.fromRGB(200,40,40)
+secretButton.TextSize = 16
+Instance.new("UICorner", secretButton).CornerRadius = UDim.new(0,8)
+
+
+local espObjects = {}
+local connections = {}
+
+local function clearESP(tag)
+    if espObjects[tag] then
+        for _,obj in pairs(espObjects[tag]) do
+            pcall(function()
+                obj.line:Remove()
+                obj.text:Remove()
+            end)
+        end
+        espObjects[tag] = nil
+    end
+end
+
+local function getTargetPart(model)
+    return model:FindFirstChild("HumanoidRootPart")
+        or model:FindFirstChildWhichIsA("BasePart")
+end
+
+local function createESP(target, labelText, color, tag)
+    espObjects[tag] = espObjects[tag] or {}
+
+    local line = Drawing.new("Line")
+    local text = Drawing.new("Text")
+
+    text.Center = true
+    text.Outline = true
+    text.Font = Drawing.Fonts.UI
+
+    table.insert(espObjects[tag], {line=line, text=text, target=target})
+
+    connections[tag] = connections[tag] or RunService.Heartbeat:Connect(function()
+        if not espObjects[tag] then return end
+
+        for i,v in ipairs(espObjects[tag]) do
+            local model = v.target
+            if not model or not model.Parent then
+                v.line.Visible = false
+                v.text.Visible = false
+                continue
+            end
+
+            local part = getTargetPart(model)
+            local char = LocalPlayer.Character
+            local hrp = char and char:FindFirstChild("HumanoidRootPart")
+            if not part or not hrp then continue end
+
+            local worldPos = part.Position
+            local screenPos, onScreen = Camera:WorldToViewportPoint(worldPos)
+            if not onScreen then
+                v.line.Visible = false
+                v.text.Visible = false
+                continue
+            end
+
+            local dist = (hrp.Position - worldPos).Magnitude
+            v.text.Size = math.clamp(30 - (dist/50), 12, 30)
+
+            v.line.From = Vector2.new(Camera.ViewportSize.X/2, Camera.ViewportSize.Y)
+            v.line.To = Vector2.new(screenPos.X, screenPos.Y)
+            v.line.Color = color
+            v.line.Thickness = 2
+            v.line.Visible = true
+
+            v.text.Position = Vector2.new(screenPos.X, screenPos.Y - 20)
+            v.text.Text = string.format("%s\n[%.1fm]", labelText, dist)
+            v.text.Color = color
+            v.text.Visible = true
+        end
+    end)
+end
+
+local function watchFolder(folderName, labelText, color, tag)
+    local brainrots = workspace:WaitForChild("ActiveBrainrots",10)
+    if not brainrots then return end
+
+    local folder = brainrots:WaitForChild(folderName,10)
+    if not folder then return end
+
+    for _,child in ipairs(folder:GetChildren()) do
+        createESP(child, labelText, color, tag)
+    end
+
+    folder.ChildAdded:Connect(function(child)
+        createESP(child, labelText, color, tag)
+    end)
+end
+
+
+divineButton.MouseButton1Click:Connect(function()
+    divineEnabled = not divineEnabled
+
+    if divineEnabled then
+        divineButton.Text = "Divine: ON"
+        divineButton.TextColor3 = Color3.fromRGB(0,255,127)
+        watchFolder("Divine", "Divine", Color3.fromRGB(255,223,0), "Divine")
+    else
+        divineButton.Text = "Divine: OFF"
+        divineButton.TextColor3 = Color3.fromRGB(200,40,40)
+        clearESP("Divine")
+    end
+end)
+
+
+secretButton.MouseButton1Click:Connect(function()
+    secretEnabled = not secretEnabled
+
+    if secretEnabled then
+        secretButton.Text = "لا تشغلة"
+        secretButton.TextColor3 = Color3.fromRGB(0,255,127)
+        watchFolder("Secret", "Secret", Color3.fromRGB(255,0,255), "Secret")
+    else
+        secretButton.Text = "لا تشغلة"
+        secretButton.TextColor3 = Color3.fromRGB(200,40,40)
+        clearESP("Secret")
+    end
+end)
+end})
 
 boxTab:CreateButton({
 Name =  "  REMOVE WALLS/حذف الجدار ",
@@ -6014,9 +6196,9 @@ MiscTab:CreateSlider({
 
     
     InfoTab:CreateSection("معلومات السكربت")
-    InfoTab:CreateParagraph({Title = "نسخة السكربت", Content = "هذا الاصدار .24.3v .\n تم تحسين بعض المشاكلوويعمل  بكفاءه اقوي و تمت اضافة VIP مجاناو تم اضافة Max Luck   و تم اضافة ESP لاكي بلوكس و   و تمت اضافة تجميع عملات حدث ال Arcade  و تمت  اضافة الانتقال الى اخر الماب مع شرح  و تم اضافة كشف اماكن التيكتات و تم اضافه تسونامي مرئي  و تم اضافه انك تقدر تاخذ الشخصيات تلقائي  و تم حل مشكله التنقل في سكربت Gaps و تم تطوير ميزة الانتقال الى اخر الماب و تم اضافة تجميع الشخصيات تلقائي  يمكنك تجميع فوق 30 clesteal و تم اصلاح و اضافة الانتقالبدون جهد منك و تمت اضافه  تخطي الباركور و تم اضافة مميزات  و اضافة سكربتات جديدة و قوية و اضافة auto collect و العديد من المميزات اكتشفها بنفسك (اذا اكتشفت اي مشاكل في السكربت تواصل معي في التيك توك علي الخاص  ._.f.o_  ) و تمت اضافة مميزات حصرية و  تم اضافة تجميع عملات حدث ال Money و تمت اضافه عدم الموت من تسونامي و تمت اضافة التنقل عبر جدار Vip و تم اصلاح تفادي التسونامي و تطويرة و تمت اضافة  جمع العملات UFO الجديدة و تم اضافة التنقل الى اخر الماب التجريبي و تم اصلاح الثغرة و سكربتات رائعه و تم تحسين بعض المشاكل في الاداءو تم اضافة سكربت يحسن الاداء  وواضافه misc.\nالسكربت هذا تم تطويره من FARES."})
+    InfoTab:CreateParagraph({Title = "نسخة السكربت", Content = "هذا الاصدار .25.3v .\n تم تحسين بعض المشاكلوويعمل  بكفاءه اقوي و تمت اضافة VIP مجاناو تم اضافة Max Luck   و تم اضافة ESP لاكي بلوكس و   و تمت اضافة تجميع عملات حدث ال Arcade  و تمت  اضافة الانتقال الى اخر الماب مع شرح  و تم اضافة كشف اماكن التيكتات و تم اضافه تسونامي مرئي  و تم اضافه انك تقدر تاخذ الشخصيات تلقائي  و تم حل مشكله التنقل في سكربت Gaps و تم تطوير ميزة الانتقال الى اخر الماب و تم اضافة تجميع الشخصيات تلقائي  يمكنك تجميع فوق 30 clesteal و تم اصلاح و اضافة الانتقالبدون جهد منك و تمت اضافه  تخطي الباركور و تم اضافة مميزات  و اضافة سكربتات جديدة و قوية و اضافة auto collect و العديد من المميزات اكتشفها بنفسك (اذا اكتشفت اي مشاكل في السكربت تواصل معي في التيك توك علي الخاص  ._.f.o_  ) و تمت اضافة مميزات حصرية و  تم اضافة تجميع عملات حدث ال Money و تمت اضافه عدم الموت من تسونامي و تمت اضافة التنقل عبر جدار Vip و تم اصلاح تفادي التسونامي و تطويرة و تمت اضافة  جمع العملات UFO الجديدة و تم اضافة التنقل الى اخر الماب التجريبي و تم اصلاح الثغرة و سكربتات رائعه و تم تحسين بعض المشاكل في الاداءو تم اضافة سكربت يحسن الاداء  وواضافه misc.\nالسكربت هذا تم تطويره من FARES."})
     
-    InfoTab:CreateParagraph({Title = "Script Version", Content = "This is the release V24.3.\n Problems have been improved, new features have been added, and script Fix Lag Has been added, and new protection from Tsunami  has been added,And collect ArcadeCoins has been added, and Free Vip has been added  and ESP LUCKYBLOCKS has been added and Tp in Vip walls has been added UPDATED Script Misc has been added,and MAX LUCK has been added, and AutoSteal/AutoGrab has been added, and ESP TICKETS has been added, and Tsunami visual has been added, and fixed Gaps Script  problem, and auto collect has been added, and SKIP PARKOUR has been added, and auto collect coins event Money has been added,  and collect  UFO coins has been added and teleport to end of map has been added  and fixed the Teleporter and script exclusive features has been added  and Auto collect brainrots has been added so u can get 30 clesteal and fixed  some problems and exclusive features has been added and protection from tsunami has been added and  fixed the teleport to end of map fixed some glitchs and problems  if you had any problems dm me in tiktok (._.f.o_)  and added more taps more scripts take a LOOK by yourself, and the script  works more efficiently on phones.\nThis script has been developed by FARES."})
+    InfoTab:CreateParagraph({Title = "Script Version", Content = "This is the release V25.3.\n Problems have been improved, new features have been added, and script Fix Lag Has been added, and new protection from Tsunami  has been added,And collect ArcadeCoins has been added, and Free Vip has been added  and ESP LUCKYBLOCKS has been added and Tp in Vip walls has been added UPDATED Script Misc has been added,and MAX LUCK has been added, and AutoSteal/AutoGrab has been added, and ESP TICKETS has been added, and Tsunami visual has been added, and fixed Gaps Script  problem, and auto collect has been added, and SKIP PARKOUR has been added, and auto collect coins event Money has been added,  and collect  UFO coins has been added and teleport to end of map has been added  and fixed the Teleporter and script exclusive features has been added  and Auto collect brainrots has been added so u can get 30 clesteal and fixed  some problems and exclusive features has been added and protection from tsunami has been added and  fixed the teleport to end of map fixed some glitchs and problems  if you had any problems dm me in tiktok (._.f.o_)  and added more taps more scripts take a LOOK by yourself, and the script  works more efficiently on phones.\nThis script has been developed by FARES."})
     
     InfoTab:CreateParagraph({Title = "المطور / Developer", Content = "FARES (egyptiandeveloper)"})
 
