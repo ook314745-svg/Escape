@@ -173,7 +173,7 @@ local function ExecuteHub()
 local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
 
 local Window = Rayfield:CreateWindow({
-    Name = "Escape Tsunami for brainrot | سكربت فارس V27.3",
+    Name = "Escape Tsunami for brainrot | سكربت فارس V28.3",
     LoadingTitle = "سكربت فارس",
     LoadingSubtitle = "Fares Script",
     ConfigurationSaving = { Enabled = false },
@@ -450,36 +450,50 @@ end})
 
 
 OtherScriptsTab:CreateButton({
-	Name = "سكربت يعرفك متى الشيء النادر يترسبن",
+	Name = "سكربت يعرفك متى الشيء النادر يترسبن V2",
 	Callback = function()
 	
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local PlayerGui = player:WaitForChild("PlayerGui")
 
-
-
 local originalTextLabel = nil
-local timersFolder = workspace:WaitForChild("EventTimers")
-local children = timersFolder:GetChildren()
 
-for i = 1, math.min(100, #children) do
-    local part = children[i]
-    if part:FindFirstChild("SurfaceGui") then
-        local surfaceGui = part.SurfaceGui
-        if surfaceGui:FindFirstChild("Frame") then
-            local frame = surfaceGui.Frame
-            if frame:FindFirstChild("TextLabel") then
-                originalTextLabel = frame.TextLabel
-                break
-            end
+
+local function findByNewPath()
+    local anchor = workspace:FindFirstChild("FrenzyCountdownAnchor")
+    if anchor and anchor:FindFirstChild("FrenzyCountdown") then
+        local frenzy = anchor.FrenzyCountdown
+        if frenzy:FindFirstChild("Label") and frenzy.Label:IsA("TextLabel") then
+            return frenzy.Label
         end
     end
+    return nil
 end
 
 
+
+local function findInWorkspace()
+    for _, obj in ipairs(workspace:GetDescendants()) do
+        if obj:IsA("TextLabel") then
+            local text = obj.Text
+            if text and text:match("%d%d:%d%d") then
+                return obj
+            end
+        end
+    end
+    return nil
+end
+
+originalTextLabel = findByNewPath()
+
 if not originalTextLabel then
-    warn("TextLabel not found in workspace.EventTimers (1-100)")
+    warn("New path not found, searching in workspace...")
+    originalTextLabel = findInWorkspace()
+end
+
+if not originalTextLabel then
+    warn("Timer TextLabel not found in workspace")
     return
 end
 
@@ -2833,7 +2847,7 @@ SixTab:CreateParagraph({
 
 SixTab:CreateSection("© Copyright by FARES")
 
-local LuckTab = Window:CreateTab("MAX LUCK ", 4483362458)
+local LuckTab = Window:CreateTab("MAX LUCK V2", 4483362458)
 
 LuckTab:CreateToggle({
     Name = "تفعيل ال MAX LUCK",
@@ -2841,47 +2855,74 @@ LuckTab:CreateToggle({
     Flag = "FreezeAFKBar",
     Callback = function(value)
     
-      local RunService = game:GetService("RunService")
+local RunService = game:GetService("RunService")
 
-local afkContainer = workspace.SpawnMachines.Default.Main.Billboard.BillboardGui.Frame.Brainrots.AFKLuckContainer
-local fillBar = afkContainer.BarBackground.FillBar
-local uiGradient = fillBar.UIGradient
+local function deepFind(parent, name)
+	for _, v in pairs(parent:GetDescendants()) do
+		if v.Name == name then
+			return v
+		end
+	end
+	return nil
+end
 
+local fillBar =
+	workspace.GameObjects
+	and workspace.GameObjects:FindFirstChild("PlaceSpecific")
+	and workspace.GameObjects.PlaceSpecific:FindFirstChild("root")
+	and workspace.GameObjects.PlaceSpecific.root:FindFirstChild("SpawnMachines")
+	and workspace.GameObjects.PlaceSpecific.root.SpawnMachines:FindFirstChild("Default")
+	and workspace.GameObjects.PlaceSpecific.root.SpawnMachines.Default:FindFirstChild("Main")
+	and workspace.GameObjects.PlaceSpecific.root.SpawnMachines.Default.Main:FindFirstChild("Billboard")
+	and workspace.GameObjects.PlaceSpecific.root.SpawnMachines.Default.Main.Billboard:FindFirstChild("BillboardGui")
+	and workspace.GameObjects.PlaceSpecific.root.SpawnMachines.Default.Main.Billboard.BillboardGui:FindFirstChild("Frame")
+	and workspace.GameObjects.PlaceSpecific.root.SpawnMachines.Default.Main.Billboard.BillboardGui.Frame:FindFirstChild("Brainrots")
+	and workspace.GameObjects.PlaceSpecific.root.SpawnMachines.Default.Main.Billboard.BillboardGui.Frame.Brainrots:FindFirstChild("AFKLuckContainer")
+	and workspace.GameObjects.PlaceSpecific.root.SpawnMachines.Default.Main.Billboard.BillboardGui.Frame.Brainrots.AFKLuckContainer:FindFirstChild("BarBackground")
+	and workspace.GameObjects.PlaceSpecific.root.SpawnMachines.Default.Main.Billboard.BillboardGui.Frame.Brainrots.AFKLuckContainer.BarBackground:FindFirstChild("FillBar")
+
+if not fillBar then
+	fillBar = deepFind(workspace, "FillBar")
+end
+
+local uiGradient = fillBar and fillBar:FindFirstChild("UIGradient") or deepFind(workspace, "UIGradient")
 
 local function freezeBar()
-    fillBar.Size = UDim2.new(1, 0, 1, 0)
-    if uiGradient then
-        fillBar.BackgroundColor3 = uiGradient.Color.Keypoints[1].Value
-    end
-    for _, child in pairs(fillBar:GetChildren()) do
-        if child:IsA("TextLabel") then
-            child.Text = "50:00"
-        end
-    end
+	if not fillBar then return end
+
+	fillBar.Size = UDim2.new(1, 0, 1, 0)
+
+	if uiGradient then
+		fillBar.BackgroundColor3 = uiGradient.Color.Keypoints[1].Value
+	end
+
+	for _, child in pairs(fillBar:GetChildren()) do
+		if child:IsA("TextLabel") then
+			child.Text = "50:00"
+		end
+	end
 end
 
 RunService.RenderStepped:Connect(freezeBar)
 
+if fillBar then
+	fillBar:GetPropertyChangedSignal("Size"):Connect(function()
+		fillBar.Size = UDim2.new(1, 0, 1, 0)
+	end)
 
- 
-fillBar:GetPropertyChangedSignal("Size"):Connect(function()
-    fillBar.Size = UDim2.new(1, 0, 1, 0)
-end)
+	fillBar:GetPropertyChangedSignal("BackgroundColor3"):Connect(function()
+		if uiGradient then
+			fillBar.BackgroundColor3 = uiGradient.Color.Keypoints[1].Value
+		end
+	end)
 
-fillBar:GetPropertyChangedSignal("BackgroundColor3"):Connect(function()
-    if uiGradient then
-        fillBar.BackgroundColor3 = uiGradient.Color.Keypoints[1].Value
-    end
-end)
-
-
-
-for _, child in pairs(fillBar:GetChildren()) do
-    if child:IsA("TextLabel") then
-        child:GetPropertyChangedSignal("Text"):Connect(function()
-            child.Text = "50:00"
-        end)
-    end
+	for _, child in pairs(fillBar:GetChildren()) do
+		if child:IsA("TextLabel") then
+			child:GetPropertyChangedSignal("Text"):Connect(function()
+				child.Text = "50:00"
+			end)
+		end
+	end
 end
         
     end
@@ -6829,9 +6870,9 @@ MiscTab:CreateSlider({
 
     
     InfoTab:CreateSection("معلومات السكربت")
-    InfoTab:CreateParagraph({Title = "نسخة السكربت", Content = "هذا الاصدار .27.3v .\n تم تحسين بعض المشاكلوويعمل  بكفاءه اقوي و تمت اضافة VIP مجاناو تم اضافة Max Luck   و تم اضافة ESP لاكي بلوكس و تم اضافة مضاد الضرب  و تمت اضافة تجميع عملات حدث ال Arcade  و تمت  اضافة الانتقال الى اخر الماب مع شرح  و تم اضافة كشف اماكن التيكتات و تم اضافه تسونامي مرئي  و تم اضافه انك تقدر تاخذ الشخصيات تلقائي  و تم حل مشكله التنقل في سكربت Gaps و تم تطوير ميزة الانتقال الى اخر الماب و تم اضافة تجميع الشخصيات تلقائي  يمكنك تجميع فوق 30 clesteal و تم اصلاح و اضافة الانتقالبدون جهد منك و تمت اضافه  تخطي الباركور و تم اضافة مميزات  و اضافة سكربتات جديدة و قوية و اضافة auto collect و العديد من المميزات اكتشفها بنفسك (اذا اكتشفت اي مشاكل في السكربت تواصل معي في التيك توك علي الخاص  ._.f.o_  ) و تمت اضافة مميزات حصرية و  تم اضافة تجميع عملات حدث ال Money و تمت اضافه عدم الموت من تسونامي و تمت اضافة التنقل عبر جدار Vip و تم اصلاح تفادي التسونامي و تطويرة و تمت اضافة  جمع العملات UFO الجديدة و و عدم الموت تمت اضافته و تم اضافة التنقل الى اخر الماب التجريبي و تم اصلاح الثغرة و سكربتات رائعه و تم تحسين بعض المشاكل في الاداءو تم اضافة سكربت يحسن الاداء  وواضافه misc.\nالسكربت هذا تم تطويره من FARES."})
+    InfoTab:CreateParagraph({Title = "نسخة السكربت", Content = "هذا الاصدار .v28.3 .\n تم تحسين بعض المشاكلوويعمل  بكفاءه اقوي و تمت اضافة VIP مجاناو تم اضافة Max Luck   و تم اضافة ESP لاكي بلوكس و تم اضافة مضاد الضرب  و تمت اضافة تجميع عملات حدث ال Arcade  و تمت  اضافة الانتقال الى اخر الماب مع شرح  و تم اضافة كشف اماكن التيكتات و تم اضافه تسونامي مرئي  و تم اضافه انك تقدر تاخذ الشخصيات تلقائي  و تم حل مشكله التنقل في سكربت Gaps و تم تطوير ميزة الانتقال الى اخر الماب و تم اضافة تجميع الشخصيات تلقائي  يمكنك تجميع فوق 30 clesteal و تم اصلاح و اضافة الانتقالبدون جهد منك و تمت اضافه  تخطي الباركور و تم اضافة مميزات  و اضافة سكربتات جديدة و قوية و اضافة auto collect و العديد من المميزات اكتشفها بنفسك (اذا اكتشفت اي مشاكل في السكربت تواصل معي في التيك توك علي الخاص  ._.f.o_  ) و تمت اضافة مميزات حصرية و  تم اضافة تجميع عملات حدث ال Money و تمت اضافه عدم الموت من تسونامي و تمت اضافة التنقل عبر جدار Vip و تم اصلاح تفادي التسونامي و تطويرة و تمت اضافة  جمع العملات UFO الجديدة و و عدم الموت تمت اضافته و تم اضافة التنقل الى اخر الماب التجريبي و تم اصلاح الثغرة و سكربتات رائعه و تم تحسين بعض المشاكل في الاداءو تم اضافة سكربت يحسن الاداء  وواضافه misc.\nالسكربت هذا تم تطويره من FARES."})
     
-    InfoTab:CreateParagraph({Title = "Script Version", Content = "This is the release V27.3.\n Problems have been improved, new features have been added,god mod has been added and script Fix Lag Has been added, and anti hit has been added, and new protection from Tsunami  has been added,And collect ArcadeCoins has been added, and Free Vip has been added  and ESP LUCKYBLOCKS has been added and Tp in Vip walls has been added UPDATED Script Misc has been added,and MAX LUCK has been added, and AutoSteal/AutoGrab has been added, and ESP TICKETS has been added, and Tsunami visual has been added, and fixed Gaps Script  problem, and auto collect has been added, and SKIP PARKOUR has been added, and auto collect coins event Money has been added,  and collect  UFO coins has been added and teleport to end of map has been added  and fixed the Teleporter and script exclusive features has been added  and Auto collect brainrots has been added so u can get 30 clesteal and fixed  some problems and exclusive features has been added and protection from tsunami has been added and  fixed the teleport to end of map fixed some glitchs and problems  if you had any problems dm me in tiktok (._.f.o_)  and added more taps more scripts take a LOOK by yourself, and the script  works more efficiently on phones.\nThis script has been developed by FARES."})
+    InfoTab:CreateParagraph({Title = "Script Version", Content = "This is the release v28.3.\n Problems have been improved, new features have been added,god mod has been added and script Fix Lag Has been added, and anti hit has been added, and new protection from Tsunami  has been added,And collect ArcadeCoins has been added, and Free Vip has been added  and ESP LUCKYBLOCKS has been added and Tp in Vip walls has been added UPDATED Script Misc has been added,and MAX LUCK has been added, and AutoSteal/AutoGrab has been added, and ESP TICKETS has been added, and Tsunami visual has been added, and fixed Gaps Script  problem, and auto collect has been added, and SKIP PARKOUR has been added, and auto collect coins event Money has been added,  and collect  UFO coins has been added and teleport to end of map has been added  and fixed the Teleporter and script exclusive features has been added  and Auto collect brainrots has been added so u can get 30 clesteal and fixed  some problems and exclusive features has been added and protection from tsunami has been added and  fixed the teleport to end of map fixed some glitchs and problems  if you had any problems dm me in tiktok (._.f.o_)  and added more taps more scripts take a LOOK by yourself, and the script  works more efficiently on phones.\nThis script has been developed by FARES."})
     
     InfoTab:CreateParagraph({Title = "المطور / Developer", Content = "FARES (egyptiandeveloper)"})
 
