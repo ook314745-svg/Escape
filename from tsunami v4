@@ -173,7 +173,7 @@ local function ExecuteHub()
 local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
 
 local Window = Rayfield:CreateWindow({
-    Name = "Escape Tsunami for brainrot | سكربت فارس V28.3",
+    Name = "Escape Tsunami for brainrot | سكربت فارس V28.5",
     LoadingTitle = "سكربت فارس",
     LoadingSubtitle = "Fares Script",
     ConfigurationSaving = { Enabled = false },
@@ -6870,17 +6870,46 @@ MiscTab:CreateSlider({
 
     
     InfoTab:CreateSection("معلومات السكربت")
-    InfoTab:CreateParagraph({Title = "نسخة السكربت", Content = "هذا الاصدار .v28.3 .\n تم تحسين بعض المشاكلوويعمل  بكفاءه اقوي و تمت اضافة VIP مجاناو تم اضافة Max Luck   و تم اضافة ESP لاكي بلوكس و تم اضافة مضاد الضرب  و تمت اضافة تجميع عملات حدث ال Arcade  و تمت  اضافة الانتقال الى اخر الماب مع شرح  و تم اضافة كشف اماكن التيكتات و تم اضافه تسونامي مرئي  و تم اضافه انك تقدر تاخذ الشخصيات تلقائي  و تم حل مشكله التنقل في سكربت Gaps و تم تطوير ميزة الانتقال الى اخر الماب و تم اضافة تجميع الشخصيات تلقائي  يمكنك تجميع فوق 30 clesteal و تم اصلاح و اضافة الانتقالبدون جهد منك و تمت اضافه  تخطي الباركور و تم اضافة مميزات  و اضافة سكربتات جديدة و قوية و اضافة auto collect و العديد من المميزات اكتشفها بنفسك (اذا اكتشفت اي مشاكل في السكربت تواصل معي في التيك توك علي الخاص  ._.f.o_  ) و تمت اضافة مميزات حصرية و  تم اضافة تجميع عملات حدث ال Money و تمت اضافه عدم الموت من تسونامي و تمت اضافة التنقل عبر جدار Vip و تم اصلاح تفادي التسونامي و تطويرة و تمت اضافة  جمع العملات UFO الجديدة و و عدم الموت تمت اضافته و تم اضافة التنقل الى اخر الماب التجريبي و تم اصلاح الثغرة و سكربتات رائعه و تم تحسين بعض المشاكل في الاداءو تم اضافة سكربت يحسن الاداء  وواضافه misc.\nالسكربت هذا تم تطويره من FARES."})
+    InfoTab:CreateParagraph({Title = "نسخة السكربت", Content = "هذا الاصدار .v28.5 .\n تم تحسين بعض المشاكلوويعمل  بكفاءه اقوي و تمت اضافة VIP مجاناو تم اضافة Max Luck   و تم اضافة ESP لاكي بلوكس و تم اضافة مضاد الضرب  و تمت اضافة تجميع عملات حدث ال Arcade  و تمت  اضافة الانتقال الى اخر الماب مع شرح  و تم اضافة كشف اماكن التيكتات و تم اضافه تسونامي مرئي  و تم اضافه انك تقدر تاخذ الشخصيات تلقائي  و تم حل مشكله التنقل في سكربت Gaps و تم تطوير ميزة الانتقال الى اخر الماب و تم اضافة تجميع الشخصيات تلقائي  يمكنك تجميع فوق 30 clesteal و تم اصلاح و اضافة الانتقالبدون جهد منك و تمت اضافه  تخطي الباركور و تم اضافة مميزات  و اضافة سكربتات جديدة و قوية و اضافة auto collect و العديد من المميزات اكتشفها بنفسك (اذا اكتشفت اي مشاكل في السكربت تواصل معي في التيك توك علي الخاص  ._.f.o_  ) و تمت اضافة مميزات حصرية و  تم اضافة تجميع عملات حدث ال Money و تمت اضافه عدم الموت من تسونامي و تمت اضافة التنقل عبر جدار Vip و تم اصلاح تفادي التسونامي و تطويرة و تمت اضافة  جمع العملات UFO الجديدة و و عدم الموت تمت اضافته و تم اضافة التنقل الى اخر الماب التجريبي و تم اصلاح الثغرة و سكربتات رائعه و تم تحسين بعض المشاكل في الاداءو تم اضافة سكربت يحسن الاداء  وواضافه misc.\nالسكربت هذا تم تطويره من FARES."})
     
-    InfoTab:CreateParagraph({Title = "Script Version", Content = "This is the release v28.3.\n Problems have been improved, new features have been added,god mod has been added and script Fix Lag Has been added, and anti hit has been added, and new protection from Tsunami  has been added,And collect ArcadeCoins has been added, and Free Vip has been added  and ESP LUCKYBLOCKS has been added and Tp in Vip walls has been added UPDATED Script Misc has been added,and MAX LUCK has been added, and AutoSteal/AutoGrab has been added, and ESP TICKETS has been added, and Tsunami visual has been added, and fixed Gaps Script  problem, and auto collect has been added, and SKIP PARKOUR has been added, and auto collect coins event Money has been added,  and collect  UFO coins has been added and teleport to end of map has been added  and fixed the Teleporter and script exclusive features has been added  and Auto collect brainrots has been added so u can get 30 clesteal and fixed  some problems and exclusive features has been added and protection from tsunami has been added and  fixed the teleport to end of map fixed some glitchs and problems  if you had any problems dm me in tiktok (._.f.o_)  and added more taps more scripts take a LOOK by yourself, and the script  works more efficiently on phones.\nThis script has been developed by FARES."})
+    InfoTab:CreateParagraph({Title = "Script Version", Content = "This is the release v28.5.\n Problems have been improved, new features have been added,god mod has been added and script Fix Lag Has been added, and anti hit has been added, and new protection from Tsunami  has been added,And collect ArcadeCoins has been added, and Free Vip has been added  and ESP LUCKYBLOCKS has been added and Tp in Vip walls has been added UPDATED Script Misc has been added,and MAX LUCK has been added, and AutoSteal/AutoGrab has been added, and ESP TICKETS has been added, and Tsunami visual has been added, and fixed Gaps Script  problem, and auto collect has been added, and SKIP PARKOUR has been added, and auto collect coins event Money has been added,  and collect  UFO coins has been added and teleport to end of map has been added  and fixed the Teleporter and script exclusive features has been added  and Auto collect brainrots has been added so u can get 30 clesteal and fixed  some problems and exclusive features has been added and protection from tsunami has been added and  fixed the teleport to end of map fixed some glitchs and problems  if you had any problems dm me in tiktok (._.f.o_)  and added more taps more scripts take a LOOK by yourself, and the script  works more efficiently on phones.\nThis script has been developed by FARES."})
     
     InfoTab:CreateParagraph({Title = "المطور / Developer", Content = "FARES (egyptiandeveloper)"})
 
     InfoTab:CreateParagraph({Title = "ملاحظات / Notes", Content = "السكربت هذا تم تطويره من FARES.\nBESTCHEAT Like and Follow للعلم السكربت لا يعمل جيدا علي PC يرجى استخدام هاتف."})
     InfoTab:CreateSection("© Copyright by FARES")
     MainTab:CreateSection(" المميزات")
-    MainTab:CreateToggle({Name = "تطوير السرعة تلقائي", CurrentValue = false, Callback = function(v) getgenv().Aus = v end})
-    MainTab:CreateToggle({Name = "تطوير ال carry تلقائي ", CurrentValue = false, Callback = function(v) getgenv().Auc = v end})
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local UpgradeCarryRemote = ReplicatedStorage.RemoteFunctions.UpgradeCarry
+local AutoCarry = false
+
+
+MainTab:CreateToggle({
+    Name = "تطوير ال Carry تلقتءي V2",
+    CurrentValue = false,
+    Flag = "AutoUpgradeCarry",
+    Callback = function(Value)
+        AutoCarry = Value
+
+        if AutoCarry then
+            task.spawn(function()
+                while AutoCarry do
+                    local success, err = pcall(function()
+                        UpgradeCarryRemote:InvokeServer()
+                    end)
+                    if not success then
+                        warn("Carry Error:", err)
+                    end
+                    task.wait(1)
+                end
+            end)
+        end
+    end,
+})
+
+  MainTab:CreateToggle({Name = "تطوير السرعة تلقائي", CurrentValue = false, Callback = function(v) getgenv().Aus = v end})
+    MainTab:CreateToggle({Name = "لا تشغلة", CurrentValue = false, Callback = function(v) getgenv().Auc = v end})
     MainTab:CreateToggle({Name = "اوتو ريبيرث", CurrentValue = false, Callback = function(v) getgenv().Ar = v end})
     MainTab:CreateToggle({Name = "تغيير السرعة", CurrentValue = false, Callback = function(v) getgenv().Sc = v end})
     MainTab:CreateSlider({Name = "قيمة السرعة", Range = {16, 1000}, Increment = 1, CurrentValue = 16, Callback = function(v) getgenv().Scv = v end})
@@ -6888,6 +6917,10 @@ MiscTab:CreateSlider({
 
     -- لوبات القايمه رايسيه
     
+
+  
+
+  
     RunService.Stepped:Connect(function() if isCollectingCoins then local char = LocalPlayer.Character; if char then for _, part in pairs(char:GetDescendants()) do if part:IsA("BasePart") then part.CanCollide = false end end end end end)
     task.spawn(function() while task.wait(0.5) do if getgenv().Sc then pcall(speedchanger) end end end)
     task.spawn(function() while task.wait(1) do if getgenv().Aus then pcall(upgradespeed) end; if getgenv().Auc then pcall(upgradecarry) end; if getgenv().Ar then pcall(rebirth) end end end)
