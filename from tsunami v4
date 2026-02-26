@@ -1949,12 +1949,19 @@ HideShowButton.MouseButton1Click:Connect(function()
             end
         end
 
-        rgbThread = RunService.RenderStepped:Connect(function(dt)
-            if not isHidden then rgbThread:Disconnect() return end
-            local t = tick() % 1
-            local color = Color3.fromHSV(t, 1, 1)
-            for _, floor in pairs(floorParts) do floor.Color = color end
-        end)
+local speed = 0.1
+
+rgbThread = RunService.Heartbeat:Connect(function()
+    if not isHidden then rgbThread:Disconnect() return end
+    
+    task.wait(0.1) 
+    local t = (tick() * speed) % 1
+    local color = Color3.fromHSV(t, 1, 1)
+
+    for _, floor in ipairs(floorParts) do
+        floor.Color = color
+    end
+end)
 
     else
         HideShowButton.Text = "Hide Walls"
