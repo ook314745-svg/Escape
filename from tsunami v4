@@ -173,7 +173,7 @@ local function ExecuteHub()
 local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
 
 local Window = Rayfield:CreateWindow({
-    Name = "Escape Tsunami for brainrot | سكربت فارس V31",
+    Name = "Escape Tsunami for brainrot | سكربت فارس V31.1",
     LoadingTitle = "سكربت فارس",
     LoadingSubtitle = "Fares Script",
     ConfigurationSaving = { Enabled = false },
@@ -806,6 +806,254 @@ OtherScriptsTab:CreateSection("© Copyright by FARES")
 
 
 local boxTab = Window:CreateTab("اضافات التحديث الجديد! V5", 4483362458)
+
+
+boxTab:CreateButton({
+Name =  "  تجميع برج Tower trial تلقائي(Fمناسب للنت الضعيف)V2 ",
+Callback = function()
+
+
+local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+local player = Players.LocalPlayer
+
+local running = false
+
+
+
+local startPos = Vector3.new(4326.83, 6.17, -3.41)
+local undergroundOffset = Vector3.new(0, -10, 0)
+local aboveOffset = Vector3.new(0, 3, 0)
+local speed = 700
+
+local rarities = {
+    "Legendary", "Mythical", "Common", "Uncommon",
+    "Epic", "Rare", "Cosmic", "Secret", "Celestial"
+}
+
+
+local gui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
+gui.Name = "FARES_IMMORTAL_GUI"
+gui.ResetOnSpawn = false
+
+local frame = Instance.new("Frame", gui)
+frame.Size = UDim2.fromScale(0.25,0.18)
+frame.Position = UDim2.fromScale(0.37,0.4)
+frame.BackgroundColor3 = Color3.fromRGB(10,10,10)
+frame.Active = true
+frame.Draggable = true
+local stroke = Instance.new("UIStroke", frame)
+stroke.Color = Color3.fromRGB(177, 18, 37)
+stroke.Thickness = 2
+
+local title = Instance.new("TextLabel", frame)
+title.Size = UDim2.fromScale(1,0.3)
+title.BackgroundTransparency = 1
+title.Text = "TRIAL TOWER BY FARESV2"
+title.TextScaled = true
+title.TextColor3 = Color3.fromRGB(177, 18, 37)
+
+local button = Instance.new("TextButton", frame)
+button.Size = UDim2.fromScale(0.8,0.4)
+button.Position = UDim2.fromScale(0.1,0.45)
+button.Text = "START"
+button.TextScaled = true
+button.BackgroundColor3 = Color3.fromRGB(0,200,0)
+
+
+local function getHRP()
+    local char = player.Character
+    if char then
+        local hrp = char:FindFirstChild("HumanoidRootPart")
+        if hrp then
+            return hrp
+        end
+    end
+    return nil
+end
+
+local function tweenTo(pos)
+    local hrp = getHRP()
+    if not hrp or not running then return false end 
+    
+    local distance = (hrp.Position - pos).Magnitude
+    local time = distance / speed
+    local tween = TweenService:Create(
+        hrp,
+        TweenInfo.new(time, Enum.EasingStyle.Linear, Enum.EasingDirection.Out),
+        {CFrame = CFrame.new(pos)}
+    )
+    tween:Play()
+    tween.Completed:Wait()
+    return true
+end
+
+local function firePrompt(prompt)
+    if prompt and prompt:IsA("ProximityPrompt") then
+        fireproximityprompt(prompt)
+    end
+end
+
+local function getTrialBar()
+    local trialHUD = player.PlayerGui:FindFirstChild("TowerTrialHUD", true)
+    return trialHUD and trialHUD:FindFirstChild("TrialBar")
+end
+
+local function isTrialActive()
+    local trialBar = getTrialBar()
+    return trialBar and trialBar.Visible
+end
+
+local function getRarity()
+    local trialBar = getTrialBar()
+    if not trialBar then return nil end
+
+    local requirementLabel = trialBar:FindFirstChild("Requirement")
+    if requirementLabel and requirementLabel:IsA("TextLabel") and requirementLabel.Visible then
+        for _, r in ipairs(rarities) do
+            if string.find(requirementLabel.Text, r) then
+                return r
+            end
+        end
+    end
+    return nil
+end
+
+local function getProgress()
+    local trialBar = getTrialBar()
+    if not trialBar then return 0, 10 end
+
+    local depositsLabel = trialBar:FindFirstChild("Deposits")
+    if depositsLabel and depositsLabel:IsA("TextLabel") and depositsLabel.Visible then
+        local current, total = string.match(depositsLabel.Text, "(%d+)/(%d+)")
+        if current and total then
+            return tonumber(current), tonumber(total)
+        end
+    end
+    return 0, 10
+end
+
+local function getBrainrot(folder)
+    local timeout = 0
+    while timeout < 5 and running do
+        for _, v in pairs(folder:GetChildren()) do
+            if v.Name == "RenderedBrainrot" then
+                local prompt = v:FindFirstChildWhichIsA("ProximityPrompt", true)
+                if prompt then
+                    return v
+                end
+            end
+        end
+        task.wait(0.5)
+        timeout = timeout + 0.5
+    end
+    return nil
+end
+
+local function goToTowerAndFire()
+    local hrp = getHRP()
+    if not hrp then return false end 
+    
+    if not tweenTo(hrp.Position + undergroundOffset) then return false end
+    if not tweenTo(startPos + undergroundOffset) then return false end
+    if not tweenTo(startPos + aboveOffset) then return false end
+ local prompt = workspace.GameObjects.PlaceSpecific.root.Tower.Main.Prompt.ProximityPrompt
+if prompt then
+    for i = 1, 3 do
+        firePrompt(prompt)
+        task.wait(0.3) 
+    end
+end
+    return true
+end
+
+
+
+task.spawn(function()
+    while true do
+        if running then
+            local hrp = getHRP()
+            if not hrp then
+                title.Text = "اهدا كدة شكلك ميت"
+                player.CharacterAdded:Wait()
+                task.wait(0.1) 
+                title.Text = "TRIAL TOWER BY FARES"
+                continue 
+            end
+
+            if not isTrialActive() then
+                if not goToTowerAndFire() then continue end
+                task.wait(2)
+            end
+            
+            if isTrialActive() then
+                local current, total = getProgress()
+                if current >= total then
+                    title.Text = "في البوابه مستنين يبدا..."
+                    task.wait(2)
+                    title.Text = "TRIAL TOWER by fares"
+                    if not goToTowerAndFire() then continue end
+                    task.wait(5)
+                    continue
+                end
+
+                local rarity = getRarity()
+                if rarity then
+                    local folder = workspace.ActiveBrainrots:FindFirstChild(rarity)
+                    if folder then
+                        local brainrot = getBrainrot(folder)
+                        if brainrot and brainrot.Parent and brainrot.PrimaryPart then
+ 
+
+    
+    if not tweenTo(hrp.Position + undergroundOffset) then continue end
+    if not (brainrot and brainrot.Parent and brainrot.PrimaryPart) then continue end
+    if not tweenTo(brainrot.PrimaryPart.Position + undergroundOffset) then continue end
+    if not (brainrot and brainrot.Parent and brainrot.PrimaryPart) then continue end
+    if not tweenTo(brainrot.PrimaryPart.Position + aboveOffset) then continue end
+
+    for i = 1, 3 do
+        if not running then break end
+        if not (brainrot and brainrot.Parent and brainrot.PrimaryPart) then break end
+        local prompt = brainrot:FindFirstChildWhichIsA("ProximityPrompt", true)
+        if prompt then
+            firePrompt(prompt)
+            task.wait(0.1)
+        else
+            break
+        end
+    end
+                        else
+                            task.wait(0.2)
+                        end
+                    end
+                else
+                    task.wait(0.3)
+                end
+
+                if running then
+                    if not goToTowerAndFire() then continue end
+                    task.wait(5)
+                end
+            end
+        else
+            task.wait(1)
+        end
+    end
+end)
+
+
+button.MouseButton1Click:Connect(function()
+    running = not running
+    if running then
+        button.Text = "STOP"
+        button.BackgroundColor3 = Color3.fromRGB(200,0,0)
+    else
+        button.Text = "START"
+        button.BackgroundColor3 = Color3.fromRGB(0,200,0)
+    end
+end)
+end})
 
 
 boxTab:CreateButton({
@@ -7490,9 +7738,9 @@ MiscTab:CreateSlider({
 
     
     InfoTab:CreateSection("معلومات السكربت")
-    InfoTab:CreateParagraph({Title = "نسخة السكربت", Content = "هذا الاصدار .v31.\n تم تحسين بعض المشاكلوويعمل  بكفاءه اقوي و تمت اضافة VIP مجاناو تم اضافة Max Luck   و تم اضافة ESP لاكي بلوكس و تم اضافة مضاد الضرب  و تمت اضافة تجميع عملات حدث ال Arcade  و تمت  اضافة الانتقال الى اخر الماب مع شرح  و تم اضافة كشف اماكن التيكتات و تم اضافه تسونامي مرئي  و تم اضافه انك تقدر تاخذ الشخصيات تلقائي  و تم حل مشكله التنقل في سكربت Gaps و تم تطوير ميزة الانتقال الى اخر الماب و تم اضافة تجميع الشخصيات تلقائي  يمكنك تجميع فوق 30 clesteal و تم اصلاح و اضافة الانتقالبدون جهد منك و تمت اضافه  تخطي الباركور و تم اضافة مميزات  و اضافة سكربتات جديدة و قوية و اضافة auto collect و العديد من المميزات اكتشفها بنفسك (اذا اكتشفت اي مشاكل في السكربت تواصل معي في التيك توك علي الخاص  ._.f.o_  ) و تمت اضافة مميزات حصرية و  تم اضافة تجميع عملات حدث ال Money و تمت اضافه عدم الموت من تسونامي و تمت اضافة التنقل عبر جدار Vip و تم اصلاح تفادي التسونامي و تطويرة و تمت اضافة  جمع العملات UFO الجديدة و و عدم الموت تمت اضافته و تم اضافة التنقل الى اخر الماب التجريبي و  تم   اضافه تجميع عملات حدث DOOM و تم اضافه تجميع Trial Tower  و اصلاح الثغرة و سكربتات رائعه و تم تحسين بعض المشاكل في الاداءو تم اضافة سكربت يحسن الاداء  وواضافه misc.\nالسكربت هذا تم تطويره من FARES."})
+    InfoTab:CreateParagraph({Title = "نسخة السكربت", Content = "هذا الاصدار .v31.1.\n تم تحسين بعض المشاكلوويعمل  بكفاءه اقوي و تمت اضافة VIP مجاناو تم اضافة Max Luck   و تم اضافة ESP لاكي بلوكس و تم اضافة مضاد الضرب  و تمت اضافة تجميع عملات حدث ال Arcade  و تمت  اضافة الانتقال الى اخر الماب مع شرح  و تم اضافة كشف اماكن التيكتات و تم اضافه تسونامي مرئي  و تم اضافه انك تقدر تاخذ الشخصيات تلقائي  و تم حل مشكله التنقل في سكربت Gaps و تم تطوير ميزة الانتقال الى اخر الماب و تم اضافة تجميع الشخصيات تلقائي  يمكنك تجميع فوق 30 clesteal و تم اصلاح و اضافة الانتقالبدون جهد منك و تمت اضافه  تخطي الباركور و تم اضافة مميزات  و اضافة سكربتات جديدة و قوية و اضافة auto collect و العديد من المميزات اكتشفها بنفسك (اذا اكتشفت اي مشاكل في السكربت تواصل معي في التيك توك علي الخاص  ._.f.o_  ) و تمت اضافة مميزات حصرية و  تم اضافة تجميع عملات حدث ال Money و تمت اضافه عدم الموت من تسونامي و تمت اضافة التنقل عبر جدار Vip و تم اصلاح تفادي التسونامي و تطويرة و تمت اضافة  جمع العملات UFO الجديدة و و عدم الموت تمت اضافته و تم اضافة التنقل الى اخر الماب التجريبي و  تم   اضافه تجميع عملات حدث DOOM و تم اضافه تجميع Trial Tower  و اصلاح الثغرة و سكربتات رائعه و تم تحسين بعض المشاكل في الاداءو تم اضافة سكربت يحسن الاداء  وواضافه misc.\nالسكربت هذا تم تطويره من FARES."})
     
-    InfoTab:CreateParagraph({Title = "Script Version", Content = "This is the release v31\n Problems have been improved, new features have been added,god mod has been added and script Fix Lag Has been added, and anti hit has been added, and new protection from Tsunami  has been added,And collect ArcadeCoins has been added, and Free Vip has been added and auto collect DOOM coins has been added and Auto Collect TRIALTOWER has been added  and ESP LUCKYBLOCKS has been added and Tp in Vip walls has been added UPDATED Script Misc has been added,and MAX LUCK has been added, and AutoSteal/AutoGrab has been added, and ESP TICKETS has been added, and Tsunami visual has been added, and fixed Gaps Script  problem, and auto collect has been added, and SKIP PARKOUR has been added, and auto collect coins event Money has been added,  and collect  UFO coins has been added and teleport to end of map has been added  and fixed the Teleporter and script exclusive features has been added  and Auto collect brainrots has been added so u can get 30 clesteal and fixed  some problems and exclusive features has been added and protection from tsunami has been added and  fixed the teleport to end of map fixed some glitchs and problems  if you had any problems dm me in tiktok (._.f.o_)  and added more taps more scripts take a LOOK by yourself, and the script  works more efficiently on phones.\nThis script has been developed by FARES."})
+    InfoTab:CreateParagraph({Title = "Script Version", Content = "This is the release v31.1\n Problems have been improved, new features have been added,god mod has been added and script Fix Lag Has been added, and anti hit has been added, and new protection from Tsunami  has been added,And collect ArcadeCoins has been added, and Free Vip has been added and auto collect DOOM coins has been added and Auto Collect TRIALTOWER has been added  and ESP LUCKYBLOCKS has been added and Tp in Vip walls has been added UPDATED Script Misc has been added,and MAX LUCK has been added, and AutoSteal/AutoGrab has been added, and ESP TICKETS has been added, and Tsunami visual has been added, and fixed Gaps Script  problem, and auto collect has been added, and SKIP PARKOUR has been added, and auto collect coins event Money has been added,  and collect  UFO coins has been added and teleport to end of map has been added  and fixed the Teleporter and script exclusive features has been added  and Auto collect brainrots has been added so u can get 30 clesteal and fixed  some problems and exclusive features has been added and protection from tsunami has been added and  fixed the teleport to end of map fixed some glitchs and problems  if you had any problems dm me in tiktok (._.f.o_)  and added more taps more scripts take a LOOK by yourself, and the script  works more efficiently on phones.\nThis script has been developed by FARES."})
     
     InfoTab:CreateParagraph({Title = "المطور / Developer", Content = "FARES (egyptiandeveloper)"})
 
