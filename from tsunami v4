@@ -173,7 +173,7 @@ local function ExecuteHub()
 local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
 
 local Window = Rayfield:CreateWindow({
-    Name = "Escape Tsunami for brainrot | سكربت فارس V31.1",
+    Name = "Escape Tsunami for brainrot | سكربت فارس V33.1",
     LoadingTitle = "سكربت فارس",
     LoadingSubtitle = "Fares Script",
     ConfigurationSaving = { Enabled = false },
@@ -805,7 +805,444 @@ end)
 OtherScriptsTab:CreateSection("© Copyright by FARES")
 
 
-local boxTab = Window:CreateTab("اضافات التحديث الجديد! V5", 4483362458)
+local boxTab = Window:CreateTab("اضافات التحديث الجديد! V7", 4483362458)
+
+boxTab:CreateButton({
+Name =  " سكربت ينقلك سيرفر خاص من صنع فارس",
+Callback = function()
+
+
+
+
+if _G.CosmicLeapAutoRun then
+    _G.CosmicLeapAutoRun = false 
+    wait(7) 
+end
+
+local HttpService = game:GetService("HttpService")
+local TeleportService = game:GetService("TeleportService")
+local Players = game:GetService("Players")
+local CoreGui = game:GetService("CoreGui")
+
+local player = Players.LocalPlayer
+local placeId = game.PlaceId
+local servers = {}
+
+
+local gui = Instance.new("ScreenGui", CoreGui)
+gui.Name = "BlackHoleGUI"
+gui.ResetOnSpawn = false
+
+local frame = Instance.new("Frame", gui)
+frame.Size = UDim2.new(0, 320, 0, 120)
+frame.Position = UDim2.new(0.5, -160, 0.5, -60)
+frame.BackgroundColor3 = Color3.fromRGB(10, 10, 15)
+frame.Active = true
+frame.Draggable = true
+local corner = Instance.new("UICorner", frame); corner.CornerRadius = UDim.new(0, 8)
+local stroke = Instance.new("UIStroke", frame); stroke.Color = Color3.fromRGB(150, 0, 255); stroke.Thickness = 2
+
+local title = Instance.new("TextLabel", frame)
+title.Size = UDim2.new(1, 0, 0, 30)
+title.BackgroundTransparency = 1
+title.Font = Enum.Font.GothamBold
+title.Text = "PRIVATE SERVER  - BY FARES"
+title.TextColor3 = Color3.fromRGB(180, 80, 255)
+title.TextSize = 18
+
+local statusLabel = Instance.new("TextLabel", frame)
+statusLabel.Size = UDim2.new(1, -20, 0, 20)
+statusLabel.Position = UDim2.new(0, 10, 0, 35)
+statusLabel.BackgroundTransparency = 1
+statusLabel.Font = Enum.Font.Gotham
+statusLabel.Text = "جاهزين يباشا ."
+statusLabel.TextColor3 = Color3.new(1, 1, 1)
+statusLabel.TextSize = 14
+statusLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+local jumpButton = Instance.new("TextButton", frame)
+jumpButton.Size = UDim2.new(1, -20, 0, 40)
+jumpButton.Position = UDim2.new(0, 10, 0, 70)
+jumpButton.BackgroundColor3 = Color3.fromRGB(120, 0, 180)
+jumpButton.Font = Enum.Font.GothamBold
+jumpButton.Text = "دوس عشان تخش سيرفر فاضي "
+jumpButton.TextColor3 = Color3.new(1, 1, 1)
+jumpButton.TextSize = 16
+local btnCorner = Instance.new("UICorner", jumpButton); btnCorner.CornerRadius = UDim.new(0, 6)
+
+
+
+local function fetchServers(cursor)
+    local requestUrl = "https://games.roblox.com/v1/games/" .. placeId .. "/servers/Public?sortOrder=Asc&limit=100&cursor=" .. (cursor or "")
+    local success, response = pcall(function()
+        return HttpService:JSONDecode(game:HttpGet(requestUrl))
+    end)
+    if success and response and response.data then
+        return response.data, response.nextPageCursor
+    end
+    return {}, nil
+end
+
+local function getServerData(jobId)
+
+
+    
+    return nil
+end
+
+
+
+jumpButton.MouseButton1Click:Connect(function()
+    jumpButton.Text = "بندور...."
+    jumpButton.BackgroundColor3 = Color3.fromRGB(200, 150, 0)
+    jumpButton.Active = false
+
+    task.spawn(function()
+        local foundStableServer = false
+        local cursor = ""
+
+        while not foundStableServer and cursor ~= nil do
+            statusLabel.Text = "حاليا بندور اصبر يا متسرع... "
+            local serverList, nextCursor = fetchServers(cursor)
+            cursor = nextCursor
+
+
+
+            table.sort(serverList, function(a, b)
+
+
+                local aIsRare = a.playing == 1 and a.ping > 300
+                local bIsRare = b.playing == 1 and b.ping > 300
+                if aIsRare ~= bIsRare then return aIsRare end
+                
+
+
+                if a.playing ~= b.playing then return a.playing < b.playing end
+                
+
+                
+                return a.ping > b.ping
+            end)
+
+            for _, server in ipairs(serverList) do
+                if server.playing <= 1 then
+                    statusLabel.Text = "  لقينا سيرفر! ثواني نتاكد انه شغال...."
+                    
+           
+
+
+                    task.wait(5)
+                    
+
+                    local newList, _ = fetchServers()
+                    local isStable = true
+                    for _, updatedServer in ipairs(newList) do
+                        if updatedServer.id == server.id then
+                            if updatedServer.playing > 1 then
+                                isStable = false
+                                statusLabel.Text = "السيرفرر! مش شغال. (" .. updatedServer.playing .. " لاعبين). يلا ندور تاني..."
+                                break
+                            end
+                        end
+                    end
+
+                    if isStable then
+                        statusLabel.Text = "احا السيرفر شغال يلا بينا نروح... "
+                        jumpButton.Text = "رايحين للسيرفر..."
+                        jumpButton.BackgroundColor3 = Color3.fromRGB(0, 200, 80)
+                        
+                        _G.CosmicLeapAutoRun = true 
+                        TeleportService:TeleportToPlaceInstance(placeId, server.id, player)
+                        foundStableServer = true
+                        break
+                    end
+                end
+            end
+            if foundStableServer then break end
+        end
+
+        if not foundStableServer then
+            statusLabel.Text = "حظك نحس مفيش سيرفر حاول تاني"
+            jumpButton.Text = "دوس عشان تدخل سيرفر فاضي"
+            jumpButton.BackgroundColor3 = Color3.fromRGB(120, 0, 180)
+            jumpButton.Active = true
+        end
+    end)
+end)
+
+
+if _G.CosmicLeapAutoRunAfterLoad then
+    _G.CosmicLeapAutoRunAfterLoad = false
+    jumpButton.MouseButton1Click:Fire()
+end
+
+
+if _G.CosmicLeapFirstRun == nil then
+    _G.CosmicLeapFirstRun = false
+    _G.CosmicLeapAutoRunAfterLoad = true
+end
+end})
+
+
+boxTab:CreateButton({
+Name =  " ركوب صاروخ 🚀",
+Callback = function()
+
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
+local player = Players.LocalPlayer
+
+
+local controlModule = require(player.PlayerScripts:WaitForChild("PlayerModule"):WaitForChild("ControlModule"))
+
+
+local tool = Instance.new("Tool")
+tool.Name = "ROCKET BY FARES"
+tool.RequiresHandle = true
+tool.Parent = player.Backpack
+
+
+local handle = Instance.new("Part")
+handle.Name = "Handle"
+handle.Size = Vector3.new(10, 0.3, 14)
+handle.CanCollide = false
+handle.Anchored = false
+handle.Parent = tool
+
+
+local mesh = Instance.new("SpecialMesh", handle)
+mesh.MeshType = Enum.MeshType.FileMesh
+mesh.MeshId = "rbxassetid://2251534"
+mesh.TextureId = "rbxassetid://2251539"
+mesh.Scale = Vector3.new(1.3, 1.3, 1.3)
+
+
+local seat = Instance.new("Seat")
+seat.Name = "MagicSeat"
+seat.Size = Vector3.new(3, 1, 3)
+seat.Transparency = 1
+seat.CanCollide = false
+seat.Parent = workspace
+
+local weldSeat = Instance.new("Weld")
+weldSeat.Part0 = handle
+weldSeat.Part1 = seat
+weldSeat.C0 = CFrame.new(0, 1.5, 0)
+weldSeat.Parent = handle
+
+
+local light = Instance.new("PointLight", handle)
+light.Color = Color3.fromRGB(200, 200, 255)
+light.Brightness = 1.5
+light.Range = 25
+
+local particles = Instance.new("ParticleEmitter", handle)
+particles.Color = ColorSequence.new(Color3.fromRGB(220, 220, 255))
+particles.LightEmission = 0.7
+particles.Size = NumberSequence.new(0.1, 0)
+particles.Lifetime = NumberRange.new(0.8, 1.5)
+particles.Rate = 50
+particles.Speed = NumberRange.new(2, 4)
+particles.SpreadAngle = Vector2.new(360, 360)
+particles.Transparency = NumberSequence.new({NumberSequenceKeypoint.new(0, 0.6), NumberSequenceKeypoint.new(1, 1)})
+
+
+local gui = Instance.new("ScreenGui", player.PlayerGui)
+gui.Name = "CarpetControl_Fares"
+gui.ResetOnSpawn = false
+gui.Enabled = false
+
+local frame = Instance.new("Frame", gui)
+frame.Size = UDim2.new(0, 280, 0, 130)
+frame.Position = UDim2.new(0.5, -140, 0.5, -65)
+frame.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
+frame.BackgroundTransparency = 0.1
+frame.Active = true
+frame.Draggable = true
+local corner = Instance.new("UICorner", frame); corner.CornerRadius = UDim.new(0, 8)
+local stroke = Instance.new("UIStroke", frame); stroke.Color = Color3.fromRGB(200, 200, 220); stroke.Thickness = 1.5
+
+local titleBar = Instance.new("Frame", frame)
+titleBar.Size = UDim2.new(1, 0, 0, 30)
+titleBar.BackgroundColor3 = Color3.fromRGB(40, 40, 50)
+titleBar.BackgroundTransparency = 0.2
+local titleCorner = Instance.new("UICorner", titleBar); titleCorner.CornerRadius = UDim.new(0, 8)
+
+local titleLabel = Instance.new("TextLabel", titleBar)
+titleLabel.Size = UDim2.new(1, 0, 1, 0)
+titleLabel.BackgroundTransparency = 1
+titleLabel.Font = Enum.Font.GothamBold
+titleLabel.Text = "سكربت الصاروخ من صنع فارس"
+titleLabel.TextColor3 = Color3.new(1, 1, 1)
+titleLabel.TextSize = 18
+
+local speed = 150
+local yVel = 0
+
+
+local speedLabel = Instance.new("TextLabel", frame)
+speedLabel.Size = UDim2.new(1, -20, 0, 20)
+speedLabel.Position = UDim2.new(0, 10, 0, 35)
+speedLabel.BackgroundTransparency = 1
+speedLabel.Font = Enum.Font.Gotham
+speedLabel.Text = "Speed: " .. speed
+speedLabel.TextColor3 = Color3.new(1, 1, 1)
+speedLabel.TextSize = 16
+speedLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+local slider = Instance.new("Frame", frame)
+slider.Size = UDim2.new(1, -20, 0, 10)
+slider.Position = UDim2.new(0, 10, 0, 60)
+slider.BackgroundColor3 = Color3.fromRGB(10, 10, 15)
+local sliderCorner = Instance.new("UICorner", slider); sliderCorner.CornerRadius = UDim.new(1, 0)
+
+local fill = Instance.new("Frame", slider)
+fill.BackgroundColor3 = Color3.fromRGB(200, 200, 220)
+local fillCorner = Instance.new("UICorner", fill); fillCorner.CornerRadius = UDim.new(1, 0)
+
+local handleSlider = Instance.new("TextButton", slider)
+handleSlider.Size = UDim2.new(0, 14, 0, 14)
+handleSlider.Position = UDim2.new(0, -7, 0.5, -5)
+handleSlider.BackgroundColor3 = Color3.new(1, 1, 1)
+handleSlider.BorderSizePixel = 0
+local handleCorner = Instance.new("UICorner", handleSlider); handleCorner.CornerRadius = UDim.new(1, 0)
+
+local function updateSpeed(inputPos)
+    local relativeX = math.clamp((inputPos.X - slider.AbsolutePosition.X) / slider.AbsoluteSize.X, 0, 1)
+    speed = math.floor(1 + (499 * relativeX))
+    fill.Size = UDim2.new(relativeX, 0, 1, 0)
+    handleSlider.Position = UDim2.new(relativeX, -7, 0.5, -5)
+    speedLabel.Text = "Speed: " .. speed
+end
+
+handleSlider.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        updateSpeed(input.Position)
+        local moveConn, endConn
+        moveConn = UserInputService.InputChanged:Connect(function(moveInput)
+            if moveInput.UserInputType == Enum.UserInputType.MouseMovement or moveInput.UserInputType == Enum.UserInputType.Touch then
+                updateSpeed(moveInput.Position)
+            end
+        end)
+        endConn = UserInputService.InputEnded:Connect(function(endInput)
+            if endInput.UserInputType == Enum.UserInputType.MouseButton1 or endInput.UserInputType == Enum.UserInputType.Touch then
+                moveConn:Disconnect(); endConn:Disconnect()
+            end
+        end)
+    end
+end)
+updateSpeed({X = slider.AbsolutePosition.X + (slider.AbsoluteSize.X * ((speed - 1) / 499))})
+
+
+local up = Instance.new("TextButton", frame)
+up.Size = UDim2.new(0.45, -10, 0, 35)
+up.Position = UDim2.new(0.05, 0, 0, 85)
+up.Text = "▲ UP"
+up.TextScaled = true
+up.BackgroundColor3 = Color3.fromRGB(50, 50, 60)
+up.TextColor3 = Color3.new(1,1,1)
+local upCorner = Instance.new("UICorner", up); upCorner.CornerRadius = UDim.new(0, 6)
+
+local down = Instance.new("TextButton", frame)
+down.Size = UDim2.new(0.45, -10, 0, 35)
+down.Position = UDim2.new(0.5, 5, 0, 85)
+down.Text = "▼ DOWN"
+down.TextScaled = true
+down.BackgroundColor3 = Color3.fromRGB(50, 50, 60)
+down.TextColor3 = Color3.new(1,1,1)
+local downCorner = Instance.new("UICorner", down); downCorner.CornerRadius = UDim.new(0, 6)
+
+up.MouseButton1Down:Connect(function() yVel = 30 end)
+up.MouseButton1Up:Connect(function() yVel = 0 end)
+down.MouseButton1Down:Connect(function() yVel = -30 end)
+down.MouseButton1Up:Connect(function() yVel = 0 end)
+
+
+local flying = false
+local bv, bg
+local flightConnection, weld
+
+tool.Activated:Connect(function()
+    local char = player.Character
+    if not char then return end
+    local hrp = char:FindFirstChild("HumanoidRootPart")
+    local hum = char:FindFirstChildOfClass("Humanoid")
+    if not hrp or not hum then return end
+
+    flying = not flying    
+
+    if flying then    
+        gui.Enabled = true    
+
+        
+        weld = Instance.new("Weld")
+        weld.Part0 = hrp
+        weld.Part1 = handle
+        weld.C0 = CFrame.new(0, -2.5, 0)
+        weld.Parent = handle
+
+        
+        if not hum.Sit then
+            hum.Sit = true
+        end
+        seat:Sit(hum)
+
+        bv = Instance.new("BodyVelocity", hrp)
+        bv.MaxForce = Vector3.new(1e9, 1e9, 1e9)
+
+        bg = Instance.new("BodyGyro", hrp)
+        bg.MaxTorque = Vector3.new(1e9, 1e9, 1e9)
+        bg.P = 50000
+
+
+        flightConnection = RunService.RenderStepped:Connect(function()
+            if flying then
+                local char = player.Character
+                if not char then return end
+                local humanoid = char:FindFirstChildOfClass("Humanoid")
+                local hrp = char:FindFirstChild("HumanoidRootPart")
+                local camera = workspace.CurrentCamera
+                if not (humanoid and hrp and camera) then return end
+
+                local moveVector = controlModule:GetMoveVector()
+                local direction = Vector3.new(moveVector.X, moveVector.Y, moveVector.Z)
+                bv.Velocity = camera.CFrame:VectorToWorldSpace(direction) * speed + Vector3.new(0, yVel, 0)
+
+                bg.CFrame = CFrame.new(hrp.Position, hrp.Position + camera.CFrame.LookVector)
+            end
+        end)
+    else    
+        gui.Enabled = false
+        if hum.Sit then hum.Jump = true end
+        if flightConnection then flightConnection:Disconnect(); flightConnection = nil end
+        if bv then bv:Destroy() end
+        if bg then bg:Destroy() end
+        if weld then weld:Destroy() end
+    end
+end)
+
+tool.Unequipped:Connect(function()
+    if flying then
+        flying = false
+        gui.Enabled = false
+        local char = player.Character
+        if char then
+            local hum = char:FindFirstChildOfClass("Humanoid")
+            if hum and hum.Sit then hum.Jump = true end
+        end
+        if flightConnection then flightConnection:Disconnect(); flightConnection = nil end
+        if bv then bv:Destroy() end
+        if bg then bg:Destroy() end
+        if weld then weld:Destroy() end
+    end
+end)
+end})
+
+boxTab:CreateParagraph({
+        Title = "  ملاحظه مهمة بخصوص الصاروخ",
+        Content = "الصاروخ مش هيظهر للناس ولا هيظهرلهم انك بتطير او بتطير بيها و كمان لو روحت لاخر الماب و شيلت الصاروخ الماب هيقتلك و مش هتقدر تاخد اي برينروت طول مانتا راكب الصاروخ السكربت ده مناسب جدا للايفات بصراحه شايف انه افضل من السجاده و لو عايز تركب الصاروخ هتفتح الشنطه هتلاقي اسمه ROCKET مع البرينروتس بتوعك "
+    })
 
 
 boxTab:CreateButton({
@@ -7745,9 +8182,9 @@ MiscTab:CreateSlider({
 
     
     InfoTab:CreateSection("معلومات السكربت")
-    InfoTab:CreateParagraph({Title = "نسخة السكربت", Content = "هذا الاصدار .v31.1.\n تم تحسين بعض المشاكلوويعمل  بكفاءه اقوي و تمت اضافة VIP مجاناو تم اضافة Max Luck   و تم اضافة ESP لاكي بلوكس و تم اضافة مضاد الضرب  و تمت اضافة تجميع عملات حدث ال Arcade  و تمت  اضافة الانتقال الى اخر الماب مع شرح  و تم اضافة كشف اماكن التيكتات و تم اضافه تسونامي مرئي  و تم اضافه انك تقدر تاخذ الشخصيات تلقائي  و تم حل مشكله التنقل في سكربت Gaps و تم تطوير ميزة الانتقال الى اخر الماب و تم اضافة تجميع الشخصيات تلقائي  يمكنك تجميع فوق 30 clesteal و تم اصلاح و اضافة الانتقالبدون جهد منك و تمت اضافه  تخطي الباركور و تم اضافة مميزات  و اضافة سكربتات جديدة و قوية و اضافة auto collect و العديد من المميزات اكتشفها بنفسك (اذا اكتشفت اي مشاكل في السكربت تواصل معي في التيك توك علي الخاص  ._.f.o_  ) و تمت اضافة مميزات حصرية و  تم اضافة تجميع عملات حدث ال Money و تمت اضافه عدم الموت من تسونامي و تمت اضافة التنقل عبر جدار Vip و تم اصلاح تفادي التسونامي و تطويرة و تمت اضافة  جمع العملات UFO الجديدة و و عدم الموت تمت اضافته و تم اضافة التنقل الى اخر الماب التجريبي و  تم   اضافه تجميع عملات حدث DOOM و تم اضافه تجميع Trial Tower  و اصلاح الثغرة و سكربتات رائعه و تم تحسين بعض المشاكل في الاداءو تم اضافة سكربت يحسن الاداء  وواضافه misc.\nالسكربت هذا تم تطويره من FARES."})
+    InfoTab:CreateParagraph({Title = "نسخة السكربت", Content = "هذا الاصدار .v33.1.\n تم تحسين بعض المشاكلوويعمل  بكفاءه اقوي و تمت اضافة VIP مجاناو تم اضافة Max Luck   و تم اضافة ESP لاكي بلوكس و تم اضافة مضاد الضرب  و تمت اضافة تجميع عملات حدث ال Arcade  و تمت  اضافة الانتقال الى اخر الماب مع شرح  و تم اضافة كشف اماكن التيكتات و تم اضافه تسونامي مرئي  و تم اضافه انك تقدر تاخذ الشخصيات تلقائي  و تم حل مشكله التنقل في سكربت Gaps و تم تطوير ميزة الانتقال الى اخر الماب و تم اضافة تجميع الشخصيات تلقائي  يمكنك تجميع فوق 30 clesteal و تم اصلاح و اضافة الانتقالبدون جهد منك و تمت اضافه  تخطي الباركور و تم اضافة مميزات  و اضافة سكربتات جديدة و قوية و اضافة auto collect و العديد من المميزات اكتشفها بنفسك (اذا اكتشفت اي مشاكل في السكربت تواصل معي في التيك توك علي الخاص  ._.f.o_  ) و تمت اضافة مميزات حصرية و  تم اضافة تجميع عملات حدث ال Money و تمت اضافه عدم الموت من تسونامي و تمت اضافة التنقل عبر جدار Vip و تم اصلاح تفادي التسونامي و تطويرة و تمت اضافة  جمع العملات UFO الجديدة و و عدم الموت تمت اضافته و تم اضافة التنقل الى اخر الماب التجريبي و  تم   اضافه تجميع عملات حدث DOOM و تم اضافه تجميع Trial Tower  و اصلاح الثغرة و سكربتات رائعه و تم تحسين بعض المشاكل في الاداءو تم اضافة سكربت يحسن الاداء  وواضافه misc.\nالسكربت هذا تم تطويره من FARES."})
     
-    InfoTab:CreateParagraph({Title = "Script Version", Content = "This is the release v31.1\n Problems have been improved, new features have been added,god mod has been added and script Fix Lag Has been added, and anti hit has been added, and new protection from Tsunami  has been added,And collect ArcadeCoins has been added, and Free Vip has been added and auto collect DOOM coins has been added and Auto Collect TRIALTOWER has been added  and ESP LUCKYBLOCKS has been added and Tp in Vip walls has been added UPDATED Script Misc has been added,and MAX LUCK has been added, and AutoSteal/AutoGrab has been added, and ESP TICKETS has been added, and Tsunami visual has been added, and fixed Gaps Script  problem, and auto collect has been added, and SKIP PARKOUR has been added, and auto collect coins event Money has been added,  and collect  UFO coins has been added and teleport to end of map has been added  and fixed the Teleporter and script exclusive features has been added  and Auto collect brainrots has been added so u can get 30 clesteal and fixed  some problems and exclusive features has been added and protection from tsunami has been added and  fixed the teleport to end of map fixed some glitchs and problems  if you had any problems dm me in tiktok (._.f.o_)  and added more taps more scripts take a LOOK by yourself, and the script  works more efficiently on phones.\nThis script has been developed by FARES."})
+    InfoTab:CreateParagraph({Title = "Script Version", Content = "This is the release v33.1\n Problems have been improved, new features have been added,god mod has been added and script Fix Lag Has been added, and anti hit has been added, and new protection from Tsunami  has been added,And collect ArcadeCoins has been added, and Free Vip has been added and auto collect DOOM coins has been added and Auto Collect TRIALTOWER has been added  and ESP LUCKYBLOCKS has been added and Tp in Vip walls has been added UPDATED Script Misc has been added,and MAX LUCK has been added, and AutoSteal/AutoGrab has been added, and ESP TICKETS has been added, and Tsunami visual has been added, and fixed Gaps Script  problem, and auto collect has been added, and SKIP PARKOUR has been added, and auto collect coins event Money has been added,  and collect  UFO coins has been added and teleport to end of map has been added  and fixed the Teleporter and script exclusive features has been added  and Auto collect brainrots has been added so u can get 30 clesteal and fixed  some problems and exclusive features has been added and protection from tsunami has been added and  fixed the teleport to end of map fixed some glitchs and problems  if you had any problems dm me in tiktok (._.f.o_)  and added more taps more scripts take a LOOK by yourself, and the script  works more efficiently on phones.\nThis script has been developed by FARES."})
     
     InfoTab:CreateParagraph({Title = "المطور / Developer", Content = "FARES (egyptiandeveloper)"})
 
