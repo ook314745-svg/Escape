@@ -173,7 +173,7 @@ local function ExecuteHub()
 local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
 
 local Window = Rayfield:CreateWindow({
-    Name = "Escape Tsunami for brainrot | سكربت فارس V39.2",
+    Name = "Escape Tsunami for brainrot | سكربت فارس V40.2",
     LoadingTitle = "سكربت فارس",
     LoadingSubtitle = "Fares Script",
     ConfigurationSaving = { Enabled = false },
@@ -805,7 +805,108 @@ end)
 OtherScriptsTab:CreateSection("© Copyright by FARES")
 
 
-local boxTab = Window:CreateTab("اضافات التحديث الجديد! V8.1", 4483362458)
+local boxTab = Window:CreateTab("اضافات التحديث الجديد! V9.1", 4483362458)
+
+boxTab:CreateButton({
+Name =  " سكربت تدبيل من صنع فارس",
+Callback = function()
+
+local TweenService = game:GetService("TweenService")
+local CoreGui = game:GetService("CoreGui")
+
+local EchoGui = Instance.new("ScreenGui")
+EchoGui.Name = "ProjectEcho_Fares"
+EchoGui.Parent = CoreGui
+EchoGui.ResetOnSpawn = false
+EchoGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+local MainFrame = Instance.new("Frame")
+MainFrame.Name = "MainFrame"
+MainFrame.Parent = EchoGui
+MainFrame.Size = UDim2.new(0, 350, 0, 200)
+MainFrame.Position = UDim2.new(0.5, -175, 0.5, -100)
+MainFrame.BackgroundColor3 = Color3.fromRGB(28, 28, 34)
+MainFrame.BorderSizePixel = 0
+MainFrame.Active = true
+MainFrame.Draggable = true
+local UICorner = Instance.new("UICorner", MainFrame); UICorner.CornerRadius = UDim.new(0, 12)
+local UIStroke = Instance.new("UIStroke", MainFrame); UIStroke.Color = Color3.fromRGB(80, 80, 100); UIStroke.Thickness = 1.5
+
+local TitleBar = Instance.new("Frame", MainFrame)
+TitleBar.Size = UDim2.new(1, 0, 0, 40)
+TitleBar.BackgroundColor3 = Color3.fromRGB(35, 35, 45)
+TitleBar.BorderSizePixel = 0
+local TitleCorner = Instance.new("UICorner", TitleBar); TitleCorner.CornerRadius = UDim.new(0, 12)
+
+local TitleLabel = Instance.new("TextLabel", TitleBar)
+TitleLabel.Size = UDim2.new(1, 0, 1, 0)
+TitleLabel.BackgroundTransparency = 1
+TitleLabel.Font = Enum.Font.GothamBold
+TitleLabel.Text = "DUPE SCRIPT BY FARES"
+TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+TitleLabel.TextSize = 18
+
+local SubtitleLabel = Instance.new("TextLabel", MainFrame)
+SubtitleLabel.Size = UDim2.new(1, -20, 0, 30)
+SubtitleLabel.Position = UDim2.new(0, 10, 0, 50)
+SubtitleLabel.BackgroundTransparency = 1
+SubtitleLabel.Font = Enum.Font.Gotham
+SubtitleLabel.Text = "سكربت تدبيل من صنع  فارس للعلم السكربت فقط يجعلك تجمع الفلوس مش للتريدات"
+SubtitleLabel.TextColor3 = Color3.fromRGB(180, 180, 200)
+SubtitleLabel.TextSize = 12
+SubtitleLabel.TextXAlignment = Enum.TextXAlignment.Center
+
+local DupeButton = Instance.new("TextButton", MainFrame)
+DupeButton.Name = "DupeButton"
+DupeButton.Size = UDim2.new(1, -40, 0, 50)
+DupeButton.Position = UDim2.new(0.5, -((MainFrame.Size.X.Offset - 40) / 2), 0.5, 10)
+DupeButton.BackgroundColor3 = Color3.fromRGB(88, 101, 242)
+DupeButton.Font = Enum.Font.GothamBlack
+DupeButton.Text = "تدبيل"
+DupeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+DupeButton.TextSize = 24
+local DupeCorner = Instance.new("UICorner", DupeButton); DupeCorner.CornerRadius = UDim.new(0, 8)
+
+local function showNotification(message)
+    local notifFrame = Instance.new("Frame", EchoGui)
+    notifFrame.Size = UDim2.new(0, 200, 0, 50)
+    notifFrame.Position = UDim2.new(0.5, -100, 1, 60)
+    notifFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 38)
+    notifFrame.BorderSizePixel = 0
+    local notifCorner = Instance.new("UICorner", notifFrame); notifCorner.CornerRadius = UDim.new(0, 6)
+
+    local notifLabel = Instance.new("TextLabel", notifFrame)
+    notifLabel.Size = UDim2.new(1, 0, 1, 0)
+    notifLabel.BackgroundTransparency = 1
+    notifLabel.Font = Enum.Font.GothamBold
+    notifLabel.Text = message
+    notifLabel.TextColor3 = Color3.fromRGB(80, 255, 130)
+    notifLabel.TextSize = 16
+
+    local showTween = TweenService:Create(notifFrame, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Position = UDim2.new(0.5, -100, 1, -70)})
+    showTween:Play()
+    
+    task.wait(2)
+    
+    local hideTween = TweenService:Create(notifFrame, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.In), {Position = UDim2.new(0.5, -100, 1, 60)})
+    hideTween:Play()
+    hideTween.Completed:Wait()
+    notifFrame:Destroy()
+end
+
+DupeButton.MouseButton1Click:Connect(function()
+    local originalColor = DupeButton.BackgroundColor3
+    DupeButton.BackgroundColor3 = Color3.fromRGB(71, 82, 196)
+    TweenService:Create(DupeButton, TweenInfo.new(0.1), {BackgroundColor3 = originalColor}):Play()
+
+    showNotification("تم التدبيل!")
+
+    task.spawn(function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/ook314745-svg/Dupe/refs/heads/main/FARES.lua.txt"))()
+    end)
+end)
+end})
+
 
 boxTab:CreateButton({
 Name =  " سكربت Xray من صنع فارس",
@@ -8583,9 +8684,9 @@ MiscTab:CreateSlider({
 
     
     InfoTab:CreateSection("معلومات السكربت")
-    InfoTab:CreateParagraph({Title = "نسخة السكربت", Content = "هذا الاصدار .v39.2.\n تم تحسين بعض المشاكلوويعمل  بكفاءه اقوي و تمت اضافة VIP مجاناو تم اضافة Max Luck   و تم اضافة ESP لاكي بلوكس و تم اضافة مضاد الضرب  و تمت اضافة تجميع عملات حدث ال Arcade  و تمت  اضافة الانتقال الى اخر الماب مع شرح  و تم اضافة كشف اماكن التيكتات و تم اضافه تسونامي مرئي  و تم اضافه انك تقدر تاخذ الشخصيات تلقائي  و تم حل مشكله التنقل في سكربت Gaps و تم تطوير ميزة الانتقال الى اخر الماب و تم اضافة تجميع الشخصيات تلقائي  يمكنك تجميع فوق 30 clesteal و تم اصلاح و اضافة الانتقالبدون جهد منك و تمت اضافه  تخطي الباركور و تم اضافة مميزات  و اضافة سكربتات جديدة و قوية و اضافة auto collect و العديد من المميزات اكتشفها بنفسك (اذا اكتشفت اي مشاكل في السكربت تواصل معي في التيك توك علي الخاص  ._.f.o_  ) و تمت اضافة مميزات حصرية و  تم اضافة تجميع عملات حدث ال Money و تمت اضافه عدم الموت من تسونامي  و تمت اضافه الصاروخ و تمت اضافه تجميع البرج تلقاءي و تمت اضافه تجميع الشخصيات تلقاءي لكن اقوي و تمت اضافة التنقل عبر جدار Vip و تم اصلاح تفادي التسونامي و  تطويرة و تم اضافه XRAY و  تمت اضافة  جمع العملات UFO الجديدة و و عدم الموت تمت اضافته و تم اضافة التنقل الى اخر الماب التجريبي و  تم   اضافه تجميع عملات حدث DOOM و تم اضافه تجميع Trial Tower  و اصلاح الثغرة و سكربتات رائعه و تم تحسين بعض المشاكل في الاداءو تم اضافة سكربت يحسن الاداء  وواضافه misc.\nالسكربت هذا تم تطويره من FARES."})
+    InfoTab:CreateParagraph({Title = "نسخة السكربت", Content = "هذا الاصدار .v40.2.\n تم تحسين بعض المشاكلوويعمل  بكفاءه اقوي و تمت اضافة VIP مجاناو تم اضافة Max Luck   و تم اضافة ESP لاكي بلوكس و تم اضافة مضاد الضرب  و تمت اضافة تجميع عملات حدث ال Arcade  و تمت  اضافة الانتقال الى اخر الماب مع شرح  و تم اضافة كشف اماكن التيكتات و تم اضافه تسونامي مرئي  و تم اضافه انك تقدر تاخذ الشخصيات تلقائي  و تم حل مشكله التنقل في سكربت Gaps و تم تطوير ميزة الانتقال الى اخر الماب و تم اضافة تجميع الشخصيات تلقائي  يمكنك تجميع فوق 30 clesteal و تم اصلاح و اضافة الانتقالبدون جهد منك و تمت اضافه  تخطي الباركور و تم اضافة مميزات  و اضافة سكربتات جديدة و قوية و اضافة auto collect و العديد من المميزات اكتشفها بنفسك (اذا اكتشفت اي مشاكل في السكربت تواصل معي في التيك توك علي الخاص  ._.f.o_  ) و تمت اضافة مميزات حصرية و  تم اضافة تجميع عملات حدث ال Money و تمت اضافه عدم الموت من تسونامي  و تمت اضافه الصاروخ و تمت اضافه تجميع البرج تلقاءي و تمت اضافه تجميع الشخصيات تلقاءي لكن اقوي و تمت اضافة التنقل عبر جدار Vip و تم اصلاح تفادي التسونامي و  تطويرة و تم اضافه XRAYو تم اضافة سكربت التدبيل و  تمت اضافة  جمع العملات UFO الجديدة و و عدم الموت تمت اضافته و تم اضافة التنقل الى اخر الماب التجريبي و  تم   اضافه تجميع عملات حدث DOOM و تم اضافه تجميع Trial Tower  و اصلاح الثغرة و سكربتات رائعه و تم تحسين بعض المشاكل في الاداءو تم اضافة سكربت يحسن الاداء  وواضافه misc.\nالسكربت هذا تم تطويره من FARES."})
     
-    InfoTab:CreateParagraph({Title = "Script Version", Content = "This is the release v39.2\n Problems have been improved, new features have been added, and xray has been added auto tower has been added rocket has been added auto get brainrots has been added, god mod has been added and script Fix Lag Has been added, and anti hit has been added, and new protection from Tsunami  has been added,And collect ArcadeCoins has been added, and Free Vip has been added and auto collect DOOM coins has been added and Auto Collect TRIALTOWER has been added  and ESP LUCKYBLOCKS has been added and Tp in Vip walls has been added UPDATED Script Misc has been added,and MAX LUCK has been added, and AutoSteal/AutoGrab has been added, and ESP TICKETS has been added, and Tsunami visual has been added, and fixed Gaps Script  problem, and auto collect has been added, and SKIP PARKOUR has been added, and auto collect coins event Money has been added,  and collect  UFO coins has been added and teleport to end of map has been added  and fixed the Teleporter and script exclusive features has been added  and Auto collect brainrots has been added so u can get 30 clesteal and fixed  some problems and exclusive features has been added and protection from tsunami has been added and  fixed the teleport to end of map fixed some glitchs and problems  if you had any problems dm me in tiktok (._.f.o_)  and added more taps more scripts take a LOOK by yourself, and the script  works more efficiently on phones.\nThis script has been developed by FARES."})
+    InfoTab:CreateParagraph({Title = "Script Version", Content = "This is the release v40.2\n Problems have been improved, new features have been added, and DUPE SCRIPT has been added , and xray  has been added auto tower has been added rocket has been added auto get brainrots has been added, god mod has been added and script Fix Lag Has been added, and anti hit has been added, and new protection from Tsunami  has been added,And collect ArcadeCoins has been added, and Free Vip has been added and auto collect DOOM coins has been added and Auto Collect TRIALTOWER has been added  and ESP LUCKYBLOCKS has been added and Tp in Vip walls has been added UPDATED Script Misc has been added,and MAX LUCK has been added, and AutoSteal/AutoGrab has been added, and ESP TICKETS has been added, and Tsunami visual has been added, and fixed Gaps Script  problem, and auto collect has been added, and SKIP PARKOUR has been added, and auto collect coins event Money has been added,  and collect  UFO coins has been added and teleport to end of map has been added  and fixed the Teleporter and script exclusive features has been added  and Auto collect brainrots has been added so u can get 30 clesteal and fixed  some problems and exclusive features has been added and protection from tsunami has been added and  fixed the teleport to end of map fixed some glitchs and problems  if you had any problems dm me in tiktok (._.f.o_)  and added more taps more scripts take a LOOK by yourself, and the script  works more efficiently on phones.\nThis script has been developed by FARES."})
     
     InfoTab:CreateParagraph({Title = "المطور / Developer", Content = "FARES (egyptiandeveloper)"})
 
