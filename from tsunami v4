@@ -173,7 +173,7 @@ local function ExecuteHub()
 local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
 
 local Window = Rayfield:CreateWindow({
-    Name = "Escape Tsunami for brainrot | سكربت فارس V42.2 (متوقف/offline) ",
+    Name = "Escape Tsunami for brainrot | سكربت فارس V44.2 (متوقف/offline) ",
     LoadingTitle = "سكربت فارس",
     LoadingSubtitle = "Fares Script",
     ConfigurationSaving = { Enabled = false },
@@ -7116,6 +7116,212 @@ FaresTab:CreateSection("© Copyright by FARES")
     MiscTab:CreateSection("مميزات جديدة! ")
     
     MiscTab:CreateButton({
+    Name = "تجميع عملات حدث PHANTOM",
+    Callback = function()
+    
+    
+
+local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+
+local player = Players.LocalPlayer
+local char = player.Character or player.CharacterAdded:Wait()
+local hrp = char:WaitForChild("HumanoidRootPart")
+
+player.CharacterAdded:Connect(function(c)
+	char = c
+	hrp = c:WaitForChild("HumanoidRootPart")
+end)
+
+
+
+local gui = Instance.new("ScreenGui", game.CoreGui)
+gui.Name = "PhantomCollector"
+
+local frame = Instance.new("Frame", gui)
+frame.Size = UDim2.new(0,260,0,150)
+frame.Position = UDim2.new(0.5,-130,0.2,0)
+frame.BackgroundColor3 = Color3.fromRGB(30,30,40)
+frame.Active = true
+frame.Draggable = true
+Instance.new("UICorner",frame)
+
+local title = Instance.new("TextLabel",frame)
+title.Size = UDim2.new(1,0,0,30)
+title.BackgroundTransparency = 1
+title.Text = "تجميع عملات حدث Phantom من صنع فارس"
+title.TextColor3 = Color3.new(1,1,1)
+title.Font = Enum.Font.GothamBold
+title.TextSize = 10
+
+local startBtn = Instance.new("TextButton",frame)
+startBtn.Size = UDim2.new(1,-20,0,35)
+startBtn.Position = UDim2.new(0,10,0,40)
+startBtn.Text = "ابدأ التجميع"
+startBtn.BackgroundColor3 = Color3.fromRGB(120,40,40)
+startBtn.TextColor3 = Color3.new(1,1,1)
+startBtn.Font = Enum.Font.GothamBold
+Instance.new("UICorner",startBtn)
+
+local undergroundBtn = Instance.new("TextButton",frame)
+undergroundBtn.Size = UDim2.new(1,-20,0,30)
+undergroundBtn.Position = UDim2.new(0,10,0,80)
+undergroundBtn.Text = "المشي تحت الأرض: OFF"
+undergroundBtn.BackgroundColor3 = Color3.fromRGB(60,60,90)
+undergroundBtn.TextColor3 = Color3.new(1,1,1)
+Instance.new("UICorner",undergroundBtn)
+
+local status = Instance.new("TextLabel",frame)
+status.Size = UDim2.new(1,-20,0,20)
+status.Position = UDim2.new(0,10,1,-25)
+status.BackgroundTransparency = 1
+status.Text = "الحالة: واقف"
+status.TextColor3 = Color3.new(1,1,1)
+status.Font = Enum.Font.Code
+status.TextXAlignment = Enum.TextXAlignment.Left
+status.TextSize = 12
+
+
+
+local SPEED = 1000
+local STEP = 0.02
+local UNDERGROUND_OFFSET = -40
+
+local running = false
+local underground = false
+
+
+
+local function getTargets()
+
+	local targets = {}
+
+	local coinFolder = workspace:FindFirstChild("PhantomCoinParts")
+	if coinFolder then
+		for _,obj in ipairs(coinFolder:GetChildren()) do
+			local part = obj:IsA("BasePart") and obj or obj:FindFirstChildWhichIsA("BasePart")
+			if part then
+				table.insert(targets,part)
+			end
+		end
+	end
+
+	local orbFolder = workspace:FindFirstChild("PhantomOrbParts")
+	if orbFolder then
+		for _,obj in ipairs(orbFolder:GetChildren()) do
+			local part = obj:IsA("BasePart") and obj or obj:FindFirstChildWhichIsA("BasePart")
+			if part then
+				table.insert(targets,part)
+			end
+		end
+	end
+
+	return targets
+end
+
+
+
+local function moveTo(pos)
+
+	local dist = (hrp.Position - pos).Magnitude
+	local time = dist / SPEED
+
+	local tween = TweenService:Create(
+		hrp,
+		TweenInfo.new(time,Enum.EasingStyle.Linear),
+		{CFrame = CFrame.new(pos)}
+	)
+
+	tween:Play()
+	tween.Completed:Wait()
+
+end
+
+
+
+local function collect(part)
+
+	if not part or not part.Parent then return end
+
+	local pos = part.Position
+
+	if underground then
+		moveTo(Vector3.new(pos.X,pos.Y + UNDERGROUND_OFFSET,pos.Z))
+	end
+
+	moveTo(Vector3.new(pos.X,pos.Y + 3,pos.Z))
+
+	pcall(function()
+		firetouchinterest(hrp,part,0)
+		firetouchinterest(hrp,part,1)
+	end)
+
+	task.wait(0.2)
+
+end
+
+
+
+task.spawn(function()
+
+	while true do
+
+		if running then
+
+			local targets = getTargets()
+
+			if #targets == 0 then
+				status.Text = "مفيش Coins أو Orbs لسه"
+			else
+				for _,v in ipairs(targets) do
+					if running then
+						collect(v)
+						task.wait(STEP)
+					end
+				end
+			end
+
+		end
+
+		task.wait(0.5)
+
+	end
+
+end)
+
+
+
+startBtn.MouseButton1Click:Connect(function()
+
+	running = not running
+
+	if running then
+		startBtn.Text = "إيقاف التجميع"
+		startBtn.BackgroundColor3 = Color3.fromRGB(40,120,40)
+		status.Text = "بيجمع دلوقتي..."
+	else
+		startBtn.Text = "ابدأ التجميع"
+		startBtn.BackgroundColor3 = Color3.fromRGB(120,40,40)
+		status.Text = "وقف التجميع"
+	end
+
+end)
+
+undergroundBtn.MouseButton1Click:Connect(function()
+
+	underground = not underground
+
+	if underground then
+		undergroundBtn.Text = "المشي تحت الأرض: ON"
+	else
+		undergroundBtn.Text = "المشي تحت الأرض: OFF"
+	end
+
+end)
+end})
+    
+    
+    MiscTab:CreateButton({
     Name = "تجميع عملات حدث FIRE VS ICE",
     Callback = function()
     
@@ -8773,9 +8979,9 @@ MiscTab:CreateSlider({
 
     
     InfoTab:CreateSection("معلومات السكربت")
-    InfoTab:CreateParagraph({Title = "نسخة السكربت", Content = "هذا الاصدار .v42.2.\n تم تحسين بعض المشاكلوويعمل  بكفاءه اقوي و تمت اضافة VIP مجاناو تم اضافة Max Luck   و تم اضافة ESP لاكي بلوكس و تم اضافة مضاد الضرب  و تمت اضافة تجميع عملات حدث ال Arcade  و تمت  اضافة الانتقال الى اخر الماب مع شرح  و تم اضافة كشف اماكن التيكتات و تم اضافه تسونامي مرئي  و تم اضافه انك تقدر تاخذ الشخصيات تلقائي  و تم حل مشكله التنقل في سكربت Gaps و تم تطوير ميزة الانتقال الى اخر الماب و تم اضافة تجميع الشخصيات تلقائي  يمكنك تجميع فوق 30 clesteal و تم اصلاح و اضافة الانتقالبدون جهد منك و تمت اضافه  تخطي الباركور و تم اضافة مميزات  و اضافة سكربتات جديدة و قوية و اضافة auto collect و العديد من المميزات اكتشفها بنفسك (اذا اكتشفت اي مشاكل في السكربت تواصل معي في التيك توك علي الخاص  ._.f.o_  ) و تمت اضافة مميزات حصرية و  تم اضافة تجميع عملات حدث ال Money و تمت اضافه عدم الموت من تسونامي  و تمت اضافه الصاروخ و تمت اضافه تجميع البرج تلقاءي و تمت اضافه تجميع الشخصيات تلقاءي لكن اقوي و تمت اضافة التنقل عبر جدار Vip و تم اصلاح تفادي التسونامي و  تطويرة و تم اضافه XRAYو تم اضافة سكربت التدبيل و  تمت اضافة  جمع العملات UFO الجديدة و و عدم الموت تمت اضافته و تم اضافة التنقل الى اخر الماب التجريبي و  تم   اضافه تجميع عملات حدث DOOM و تم اضافه تجميع Trial Tower  و اصلاح الثغرة و سكربتات رائعه و تم تحسين بعض المشاكل في الاداءو تم اضافة سكربت يحسن الاداء  وواضافه misc.\nالسكربت هذا تم تطويره من FARES."})
+    InfoTab:CreateParagraph({Title = "نسخة السكربت", Content = "هذا الاصدار .v44.2.\n تم تحسين بعض المشاكلوويعمل  بكفاءه اقوي و تمت اضافة VIP مجاناو تم اضافة Max Luck   و تم اضافة ESP لاكي بلوكس و تم اضافة مضاد الضرب  و تمت اضافة تجميع عملات حدث ال Arcade  و تمت  اضافة الانتقال الى اخر الماب مع شرح  و تم اضافة كشف اماكن التيكتات و تم اضافه تسونامي مرئي  و تم اضافه انك تقدر تاخذ الشخصيات تلقائي  و تم حل مشكله التنقل في سكربت Gaps و تم تطوير ميزة الانتقال الى اخر الماب و تم اضافة تجميع الشخصيات تلقائي  يمكنك تجميع فوق 30 clesteal و تم اصلاح و اضافة الانتقالبدون جهد منك و تمت اضافه  تخطي الباركور و تم اضافة مميزات  و اضافة سكربتات جديدة و قوية و اضافة auto collect و العديد من المميزات اكتشفها بنفسك (اذا اكتشفت اي مشاكل في السكربت تواصل معي في التيك توك علي الخاص  ._.f.o_  ) و تمت اضافة مميزات حصرية و  تم اضافة تجميع عملات حدث ال Money و تمت اضافه عدم الموت من تسونامي  و تمت اضافه الصاروخ و تمت اضافه تجميع البرج تلقاءي و تمت اضافه تجميع الشخصيات تلقاءي لكن اقوي و تمت اضافة التنقل عبر جدار Vip و تم اصلاح تفادي التسونامي و  تطويرة و تم اضافه XRAYو تم اضافة سكربت التدبيل و  تمت اضافة  جمع العملات UFO الجديدة و و عدم الموت تمت اضافته و تم اضافة التنقل الى اخر الماب التجريبي و تم اضافه تجميع عملات حدي phantom  و  تم   اضافه تجميع عملات حدث DOOM و تم اضافه تجميع Trial Tower  و اصلاح الثغرة و سكربتات رائعه و تم تحسين بعض المشاكل في الاداءو تم اضافة سكربت يحسن الاداء  وواضافه misc.\nالسكربت هذا تم تطويره من FARES."})
     
-    InfoTab:CreateParagraph({Title = "Script Version", Content = "This is the release v42.2\n Problems have been improved, new features have been added, and DUPE SCRIPT has been added , and xray  has been added auto tower has been added rocket has been added auto get brainrots has been added, god mod has been added and script Fix Lag Has been added, and anti hit has been added, and new protection from Tsunami  has been added,And collect ArcadeCoins has been added, and Free Vip has been added and auto collect DOOM coins has been added and Auto Collect TRIALTOWER has been added  and ESP LUCKYBLOCKS has been added and Tp in Vip walls has been added UPDATED Script Misc has been added,and MAX LUCK has been added, and AutoSteal/AutoGrab has been added, and ESP TICKETS has been added, and Tsunami visual has been added, and fixed Gaps Script  problem, and auto collect has been added, and SKIP PARKOUR has been added, and auto collect coins event Money has been added,  and collect  UFO coins has been added and teleport to end of map has been added  and fixed the Teleporter and script exclusive features has been added  and Auto collect brainrots has been added so u can get 30 clesteal and fixed  some problems and exclusive features has been added and protection from tsunami has been added and  fixed the teleport to end of map fixed some glitchs and problems  if you had any problems dm me in tiktok (._.f.o_)  and added more taps more scripts take a LOOK by yourself, and the script  works more efficiently on phones.\nThis script has been developed by FARES."})
+    InfoTab:CreateParagraph({Title = "Script Version", Content = "This is the release v44.2\n Problems have been improved, new features have been added,  phantom collector has been added, and DUPE SCRIPT has been added , and xray  has been added auto tower has been added rocket has been added auto get brainrots has been added, god mod has been added and script Fix Lag Has been added, and anti hit has been added, and new protection from Tsunami  has been added,And collect ArcadeCoins has been added, and Free Vip has been added and auto collect DOOM coins has been added and Auto Collect TRIALTOWER has been added  and ESP LUCKYBLOCKS has been added and Tp in Vip walls has been added UPDATED Script Misc has been added,and MAX LUCK has been added, and AutoSteal/AutoGrab has been added, and ESP TICKETS has been added, and Tsunami visual has been added, and fixed Gaps Script  problem, and auto collect has been added, and SKIP PARKOUR has been added, and auto collect coins event Money has been added,  and collect  UFO coins has been added and teleport to end of map has been added  and fixed the Teleporter and script exclusive features has been added  and Auto collect brainrots has been added so u can get 30 clesteal and fixed  some problems and exclusive features has been added and protection from tsunami has been added and  fixed the teleport to end of map fixed some glitchs and problems  if you had any problems dm me in tiktok (._.f.o_)  and added more taps more scripts take a LOOK by yourself, and the script  works more efficiently on phones.\nThis script has been developed by FARES."})
     
     InfoTab:CreateParagraph({Title = "المطور / Developer", Content = "FARES (egyptiandeveloper)"})
 
