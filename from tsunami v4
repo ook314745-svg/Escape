@@ -173,7 +173,7 @@ local function ExecuteHub()
 local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
 
 local Window = Rayfield:CreateWindow({
-    Name = "Escape Tsunami for brainrot | سكربت فارس V47 (يعمل في السر) ",
+    Name = "Escape Tsunami for brainrot | سكربت فارس V48 (يعمل في السر) ",
     LoadingTitle = "سكربت فارس",
     LoadingSubtitle = "Fares Script",
     ConfigurationSaving = { Enabled = false },
@@ -1710,7 +1710,7 @@ end})
 
 boxTab:CreateParagraph({
         Title = "  ملاحظه مهمة بخصوص Trial Tower",
-        Content = " تم حل مشكلة القتل نهائيا للابد V7.4 جديد! "
+        Content = " تم حل مشكلة القتل نهائيا للابد. 4.V7  جديد! "
     })
 
 
@@ -9119,9 +9119,9 @@ MiscTab:CreateSlider({
 
     
     InfoTab:CreateSection("معلومات السكربت")
-    InfoTab:CreateParagraph({Title = "نسخة السكربت", Content = "هذا الاصدار .v47.\n تم تحسين بعض المشاكلوويعمل  بكفاءه اقوي و تمت اضافة VIP مجاناو تم اضافة Max Luck   و تم اضافة ESP لاكي بلوكس و تم اضافة مضاد الضرب  و تمت اضافة تجميع عملات حدث ال Arcade  و تمت  اضافة الانتقال الى اخر الماب مع شرح  و تم اضافة كشف اماكن التيكتات و تم اضافه تسونامي مرئي  و تم اضافه انك تقدر تاخذ الشخصيات تلقائي  و تم حل مشكله التنقل في سكربت Gaps و تم تطوير ميزة الانتقال الى اخر الماب و تم اضافة تجميع الشخصيات تلقائي  يمكنك تجميع فوق 30 clesteal و تم اصلاح و اضافة الانتقالبدون جهد منك و تمت اضافه  تخطي الباركور و تم اضافة مميزات  و اضافة سكربتات جديدة و قوية و اضافة auto collect و العديد من المميزات اكتشفها بنفسك (اذا اكتشفت اي مشاكل في السكربت تواصل معي في التيك توك علي الخاص  ._.f.o_  ) و تمت اضافة مميزات حصرية و  تم اضافة تجميع عملات حدث ال Money و تمت اضافه عدم الموت من تسونامي  و تمت اضافه الصاروخ و تمت اضافه تجميع البرج تلقاءي و تمت اضافه تجميع الشخصيات تلقاءي لكن اقوي و تمت اضافة التنقل عبر جدار Vip و تم اصلاح تفادي التسونامي و  تطويرة و تم اضافه XRAYو تم اضافة سكربت التدبيل و  تمت اضافة  جمع العملات UFO الجديدة و و عدم الموت تمت اضافته و تم اضافة التنقل الى اخر الماب التجريبي و تم اضافه تجميع عملات حدي phantom  و  تم   اضافه تجميع عملات حدث DOOM و تم اضافه تجميع Trial Tower  و اصلاح الثغرة و سكربتات رائعه و تم تحسين بعض المشاكل في الاداءو تم اضافة سكربت يحسن الاداء  وواضافه misc.\nالسكربت هذا تم تطويره من FARES."})
+    InfoTab:CreateParagraph({Title = "نسخة السكربت", Content = "هذا الاصدار .v48.\n تم تحسين بعض المشاكلوويعمل  بكفاءه اقوي و تمت اضافة VIP مجاناو تم اضافة Max Luck   و تم اضافة ESP لاكي بلوكس و تم اضافة مضاد الضرب  و تمت اضافة تجميع عملات حدث ال Arcade  و تمت  اضافة الانتقال الى اخر الماب مع شرح  و تم اضافة كشف اماكن التيكتات و تم اضافه تسونامي مرئي  و تم اضافه انك تقدر تاخذ الشخصيات تلقائي  و تم حل مشكله التنقل في سكربت Gaps و تم تطوير ميزة الانتقال الى اخر الماب و تم اضافة تجميع الشخصيات تلقائي  يمكنك تجميع فوق 30 clesteal و تم اصلاح و اضافة الانتقالبدون جهد منك و تمت اضافه  تخطي الباركور و تم اضافة مميزات  و اضافة سكربتات جديدة و قوية و اضافة auto collect و العديد من المميزات اكتشفها بنفسك (اذا اكتشفت اي مشاكل في السكربت تواصل معي في التيك توك علي الخاص  ._.f.o_  ) و تمت اضافة مميزات حصرية و  تم اضافة تجميع عملات حدث ال Money و تمت اضافه عدم الموت من تسونامي  و تمت اضافه الصاروخ و تمت اضافه تجميع البرج تلقاءي و تمت اضافه تجميع الشخصيات تلقاءي لكن اقوي و تمت اضافة التنقل عبر جدار Vip و تم اصلاح تفادي التسونامي و  تطويرة و تم اضافه XRAYو تم اضافة سكربت التدبيل و  تمت اضافة  جمع العملات UFO الجديدة و و عدم الموت تمت اضافته و تم اضافة التنقل الى اخر الماب التجريبي و تم اضافه تجميع عملات حدي phantom  و  تم   اضافه تجميع عملات حدث DOOM و تم اضافه تجميع Trial Tower  و اصلاح الثغرة و سكربتات رائعه و تم تحسين بعض المشاكل في الاداءو تم اضافة سكربت يحسن الاداء  وواضافه misc.\nالسكربت هذا تم تطويره من FARES."})
     
-    InfoTab:CreateParagraph({Title = "Script Version", Content = "This is the release v47\n Problems have been improved, new features have been added,  phantom collector has been added, and DUPE SCRIPT has been added , and xray  has been added auto tower has been added rocket has been added auto get brainrots has been added, god mod has been added and script Fix Lag Has been added, and anti hit has been added, and new protection from Tsunami  has been added,And collect ArcadeCoins has been added, and Free Vip has been added and auto collect DOOM coins has been added and Auto Collect TRIALTOWER has been added  and ESP LUCKYBLOCKS has been added and Tp in Vip walls has been added UPDATED Script Misc has been added,and MAX LUCK has been added, and AutoSteal/AutoGrab has been added, and ESP TICKETS has been added, and Tsunami visual has been added, and fixed Gaps Script  problem, and auto collect has been added, and SKIP PARKOUR has been added, and auto collect coins event Money has been added,  and collect  UFO coins has been added and teleport to end of map has been added  and fixed the Teleporter and script exclusive features has been added  and Auto collect brainrots has been added so u can get 30 clesteal and fixed  some problems and exclusive features has been added and protection from tsunami has been added and  fixed the teleport to end of map fixed some glitchs and problems  if you had any problems dm me in tiktok (._.f.o_)  and added more taps more scripts take a LOOK by yourself, and the script  works more efficiently on phones.\nThis script has been developed by FARES."})
+    InfoTab:CreateParagraph({Title = "Script Version", Content = "This is the release v48\n Problems have been improved, new features have been added,  phantom collector has been added, and DUPE SCRIPT has been added , and xray  has been added auto tower has been added rocket has been added auto get brainrots has been added, god mod has been added and script Fix Lag Has been added, and anti hit has been added, and new protection from Tsunami  has been added,And collect ArcadeCoins has been added, and Free Vip has been added and auto collect DOOM coins has been added and Auto Collect TRIALTOWER has been added  and ESP LUCKYBLOCKS has been added and Tp in Vip walls has been added UPDATED Script Misc has been added,and MAX LUCK has been added, and AutoSteal/AutoGrab has been added, and ESP TICKETS has been added, and Tsunami visual has been added, and fixed Gaps Script  problem, and auto collect has been added, and SKIP PARKOUR has been added, and auto collect coins event Money has been added,  and collect  UFO coins has been added and teleport to end of map has been added  and fixed the Teleporter and script exclusive features has been added  and Auto collect brainrots has been added so u can get 30 clesteal and fixed  some problems and exclusive features has been added and protection from tsunami has been added and  fixed the teleport to end of map fixed some glitchs and problems  if you had any problems dm me in tiktok (._.f.o_)  and added more taps more scripts take a LOOK by yourself, and the script  works more efficiently on phones.\nThis script has been developed by FARES."})
     
     InfoTab:CreateParagraph({Title = "المطور / Developer", Content = "FARES (egyptiandeveloper)"})
 
@@ -9414,7 +9414,7 @@ local TweenService = game:GetService("TweenService")
 local Players = game:GetService("Players")
 
 
-local NOTIFICATION_MESSAGE = "تحديثات السكربت الجديد v47: تم تحسين سكربت TOWER TRIAL للتخلص من مشكلة الموت إلى الأبد! انتظروا التحديثات القادمة، وأي تحديث سيحدث سوف ترونه في هذا الإشعار الذي أمامكم."
+local NOTIFICATION_MESSAGE = "تحديثات السكربت الجديد v48: تم اضافة سكربت اختراق الحمايه  ،  تم حل معظم مشاكل تجميع misc،  التجميع تحت الارض في صفحه misc لا يعمل اهم ميزه tower trial  اصبح يعمل و تمت اضافة infinitejump  في الخلفيه امن و مش بيرجعك لورا و مش بيقتلك بس استعمله با ذكاء لان فيه احتماليه قتل و الفضل كله يرجع لسكربت اختراق الحمايه اي تحديث سيظهر في الإشعار الذي أمامكم."
 
 
 local TITLE_TEXT = "📢 تحديث جديد للسكربت"
@@ -9610,3 +9610,230 @@ okButton.MouseButton1Click:Connect(hideNotification)
 
 
 showNotification()
+
+
+
+
+
+local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+
+local LocalPlayer = Players.LocalPlayer
+local Humanoid = nil
+
+local isEnabled = true
+local originalNamecall = nil
+
+local stateConnection = nil
+
+
+local function hookedNamecall(target, ...)
+    if not isEnabled or target ~= Humanoid then
+        return originalNamecall(target, ...)
+    end
+
+    local method = getnamecallmethod()
+
+    if method == "ChangeState" then
+        local args = {...}
+
+        if args[1] == Enum.HumanoidStateType.Jumping then
+            
+            target.Jump = true
+        end
+    end
+
+    return originalNamecall(target, ...)
+end
+
+
+local function initialize(character)
+
+    Humanoid = character:WaitForChild("Humanoid")
+
+    if stateConnection then
+        stateConnection:Disconnect()
+        stateConnection = nil
+    end
+
+    
+    stateConnection = Humanoid.StateChanged:Connect(function()
+    end)
+
+end
+
+
+
+UserInputService.JumpRequest:Connect(function()
+
+    if isEnabled and Humanoid then
+        Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+    end
+
+end)
+
+
+
+if LocalPlayer.Character then
+    initialize(LocalPlayer.Character)
+end
+
+
+LocalPlayer.CharacterAdded:Connect(function(char)
+    task.wait(0.2)
+    initialize(char)
+end)
+
+
+if hookmetamethod and getnamecallmethod then
+    originalNamecall = hookmetamethod(game, "__namecall", hookedNamecall)
+    print("لو فاكر اني، Ai فا يكسمك انت مال كسمك ليه تفتح CONSOLE يعني يبن احبه بختبر دين ام الحمايه انت مال كسمك")
+else
+    warn(" كونسول") 
+end
+
+
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local TweenService = game:GetService("TweenService")
+local player = Players.LocalPlayer
+
+local isSpoofing = false
+local spoofedCFrame = nil
+local fakePart = nil
+
+
+local gui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
+gui.Name = "FARES_SPOOF_SYSTEM"
+gui.ResetOnSpawn = false
+
+local mainFrame = Instance.new("Frame", gui)
+mainFrame.Size = UDim2.fromOffset(250, 150)
+mainFrame.Position = UDim2.fromScale(0.4, 0.4)
+mainFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+mainFrame.BorderSizePixel = 0
+mainFrame.Active = true
+mainFrame.Draggable = true
+
+local corner = Instance.new("UICorner", mainFrame)
+corner.CornerRadius = UDim.new(0, 10)
+
+local shadow = Instance.new("UIStroke", mainFrame)
+shadow.Color = Color3.fromRGB(0, 170, 255)
+shadow.Thickness = 2
+shadow.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+
+local title = Instance.new("TextLabel", mainFrame)
+title.Size = UDim2.fromScale(1, 0.3)
+title.BackgroundTransparency = 1
+title.Text = "اختراق حمايه الماب v1 من صنع فارس"
+title.TextColor3 = Color3.fromRGB(0, 170, 255)
+title.Font = Enum.Font.GothamBold
+title.TextSize = 11
+
+local statusLabel = Instance.new("TextLabel", mainFrame)
+statusLabel.Size = UDim2.fromScale(1, 0.2)
+statusLabel.Position = UDim2.fromScale(0, 0.3)
+statusLabel.BackgroundTransparency = 1
+statusLabel.Text = "STATUS: INACTIVE"
+statusLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+statusLabel.Font = Enum.Font.Gotham
+statusLabel.TextSize = 12
+
+local toggleBtn = Instance.new("TextButton", mainFrame)
+toggleBtn.Size = UDim2.fromScale(0.8, 0.3)
+toggleBtn.Position = UDim2.fromScale(0.1, 0.55)
+toggleBtn.Text = "ACTIVATE SPOOF"
+toggleBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+toggleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+toggleBtn.Font = Enum.Font.GothamBold
+toggleBtn.TextSize = 14
+
+local btnCorner = Instance.new("UICorner", toggleBtn)
+btnCorner.CornerRadius = UDim.new(0, 6)
+
+local btnStroke = Instance.new("UIStroke", toggleBtn)
+btnStroke.Color = Color3.fromRGB(0, 170, 255)
+btnStroke.Thickness = 1
+
+
+
+local function getHRP()
+    return player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+end
+
+local function toggleSpoof()
+    local hrp = getHRP()
+    if not hrp then return end
+
+    isSpoofing = not isSpoofing
+    
+    if isSpoofing then
+        
+        spoofedCFrame = hrp.CFrame
+        
+
+        
+        fakePart = Instance.new("Part")
+        fakePart.Name = "SpoofAnchor"
+        fakePart.Size = Vector3.new(1, 1, 1)
+        fakePart.CFrame = spoofedCFrame
+        fakePart.Anchored = true
+        fakePart.Transparency = 1
+        fakePart.CanCollide = false
+        fakePart.Parent = workspace
+        
+       
+        toggleBtn.Text = "DEACTIVATE SPOOF"
+        toggleBtn.BackgroundColor3 = Color3.fromRGB(0, 80, 120)
+        statusLabel.Text = "STATUS: تم اختراق الحمايه ( اياك تقفله) "
+        statusLabel.TextColor3 = Color3.fromRGB(0, 255, 0)
+        
+
+    else
+        if fakePart then fakePart:Destroy() end
+        fakePart = nil
+        spoofedCFrame = nil
+        
+     
+        toggleBtn.Text = "ACTIVATE SPOOF"
+        toggleBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+        statusLabel.Text = "STATUS: INACTIVE"
+        statusLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+        
+        
+    end
+end
+
+
+
+RunService.Heartbeat:Connect(function()
+    if isSpoofing and spoofedCFrame then
+        local hrp = getHRP()
+        if hrp then
+
+            
+  
+            
+            local oldVelocity = hrp.Velocity
+            hrp.Velocity = Vector3.new(0, 0, 0)
+            RunService.RenderStepped:Wait()
+            hrp.Velocity = oldVelocity
+        end
+    end
+end)
+
+toggleBtn.MouseButton1Click:Connect(toggleSpoof)
+toggleSpoof()
+
+
+toggleBtn.MouseEnter:Connect(function()
+    TweenService:Create(toggleBtn, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(60, 60, 60)}):Play()
+end)
+toggleBtn.MouseLeave:Connect(function()
+    if isSpoofing then
+        TweenService:Create(toggleBtn, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(0, 80, 120)}):Play()
+    else
+        TweenService:Create(toggleBtn, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(40, 40, 40)}):Play()
+    end
+end)
