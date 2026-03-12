@@ -173,7 +173,7 @@ local function ExecuteHub()
 local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
 
 local Window = Rayfield:CreateWindow({
-    Name = "Escape Tsunami for brainrot | سكربت فارس V46.2 (يعمل في السر) ",
+    Name = "Escape Tsunami for brainrot | سكربت فارس V47 (يعمل في السر) ",
     LoadingTitle = "سكربت فارس",
     LoadingSubtitle = "Fares Script",
     ConfigurationSaving = { Enabled = false },
@@ -1455,8 +1455,9 @@ boxTab:CreateParagraph({
 
 
 boxTab:CreateButton({
-Name =  "TRIAL TOWER V7 اقوي نسخة",
+Name =  "TRIAL TOWER V7.4 اقوي نسخة",
 Callback = function()
+
 
 
 local Players = game:GetService("Players")
@@ -1465,7 +1466,7 @@ local RunService = game:GetService("RunService")
 local player = Players.LocalPlayer
 
 local running = false
-local speed = 1203 
+local speed = 1150
 local skyY = 300 
 local aboveOffset = Vector3.new(0, 3, 0)
 local towerPos = Vector3.new(4326.83, 6.17, -3.41)
@@ -1494,7 +1495,7 @@ stroke.Thickness = 2
 local title = Instance.new("TextLabel", frame)
 title.Size = UDim2.fromScale(1, 0.2)
 title.BackgroundTransparency = 1
-title.Text = "TOWER TRIAL BY FARES V7"
+title.Text = "TOWER TRIAL BY FARES V7.4"
 title.TextScaled = true
 title.TextColor3 = Color3.fromRGB(255, 255, 255)
 
@@ -1576,6 +1577,13 @@ local function disableFlightAndNoclip()
     if humanoid then humanoid.PlatformStand = false end
 end
 
+player.CharacterAdded:Connect(function(character)
+    if running then
+        task.wait(0.5)
+        enableFlightAndNoclip()
+    end
+end)
+
 local function tweenTo(pos, duration)
     local hrp = getHRP()
     if not hrp or not running then return false end
@@ -1590,12 +1598,9 @@ local function flyTo(targetPos)
     local hrp = getHRP()
     if not hrp or not running then return false end
     
-    
-
     local skyPos = Vector3.new(hrp.Position.X, skyY, hrp.Position.Z)
     tweenTo(skyPos, 1.0) 
 
-    
     local targetSkyPos = Vector3.new(targetPos.X, skyY, targetPos.Z)
     while running and (hrp.Position - targetSkyPos).Magnitude > 5 do
         local dir = (targetSkyPos - hrp.Position).Unit
@@ -1604,7 +1609,6 @@ local function flyTo(targetPos)
     end
     tweenTo(targetSkyPos, 0.1)
 
-    
     return tweenTo(targetPos + aboveOffset, 0.2)
 end
 
@@ -1635,56 +1639,56 @@ end
 
 task.spawn(function()
     while true do
+        local waitDuration = 0.1 -- The default, short wait time for fast loops
+        
         if running then
             local humanoid = getHumanoid()
-            if not humanoid or humanoid.Health <= 0 then task.wait(1) continue end end
+            if not humanoid or humanoid.Health <= 0 then
+                task.wait(1) -- Wait for respawn
+                continue 
+            end
 
             if not isTrialActive() then
                 handleTower()
-                task.wait(1)
+                waitDuration = 3 -- Wait 3 seconds ONLY after handling the tower
             else
                 local current, total = getProgress()
                 if current >= total then
                     handleTower()
-                    task.wait(1)
-                    continue
-                end
+                    waitDuration = 3 -- Wait 3 seconds ONLY after handling the tower
+                else
+                    local rarity = getRarity()
+                    if rarity then
+                        local folder = workspace.ActiveBrainrots:FindFirstChild(rarity)
+                        if folder then
+                            local brainrot = getFirstBrainrot(folder)
+                            if brainrot then
+                                local prompt = brainrot:FindFirstChildWhichIsA("ProximityPrompt", true)
+                                local part = brainrot.PrimaryPart or brainrot:FindFirstChildWhichIsA("BasePart")
 
-                local rarity = getRarity()
-                if rarity then
-                    local folder = workspace.ActiveBrainrots:FindFirstChild(rarity)
-                    if folder then
-local brainrot = getFirstBrainrot(folder)
-
-if brainrot then
-    local prompt = brainrot:FindFirstChildWhichIsA("ProximityPrompt", true)
-    local part = brainrot.PrimaryPart or brainrot:FindFirstChildWhichIsA("BasePart")
-
-    if prompt and part then
-        if flyTo(part.Position) then
-
-          
-            if brainrot.Parent then
-
-                for i = 1,5 do
-                    firePrompt(prompt)
-                    task.wait(0.15)
-                end
-
-                
-                handleTower()
-
-            end
-        end
-    end
-end
+                                if prompt and part then
+                                    if flyTo(part.Position) then
+                                        if brainrot.Parent then
+                                            for i = 1,5 do
+                                                firePrompt(prompt)
+                                                task.wait(0.15)
+                                            end
+                                            handleTower()
+                                            waitDuration = 3 
+                                        end
+                                    end
+                                end
+                            end
+                        end
+                    end
                 end
             end
         end
-        task.wait(3)
+        
+        task.wait(waitDuration) 
     end
-
 end) 
+
 button.MouseButton1Click:Connect(function()
     running = not running
     if running then
@@ -1701,11 +1705,12 @@ end)
 
 
 
+
 end})
 
 boxTab:CreateParagraph({
         Title = "  ملاحظه مهمة بخصوص Trial Tower",
-        Content = " تم حل مشكلة القتل نهائيا للابد V7 جديد! "
+        Content = " تم حل مشكلة القتل نهائيا للابد V7.4 جديد! "
     })
 
 
@@ -9114,9 +9119,9 @@ MiscTab:CreateSlider({
 
     
     InfoTab:CreateSection("معلومات السكربت")
-    InfoTab:CreateParagraph({Title = "نسخة السكربت", Content = "هذا الاصدار .v46.2.\n تم تحسين بعض المشاكلوويعمل  بكفاءه اقوي و تمت اضافة VIP مجاناو تم اضافة Max Luck   و تم اضافة ESP لاكي بلوكس و تم اضافة مضاد الضرب  و تمت اضافة تجميع عملات حدث ال Arcade  و تمت  اضافة الانتقال الى اخر الماب مع شرح  و تم اضافة كشف اماكن التيكتات و تم اضافه تسونامي مرئي  و تم اضافه انك تقدر تاخذ الشخصيات تلقائي  و تم حل مشكله التنقل في سكربت Gaps و تم تطوير ميزة الانتقال الى اخر الماب و تم اضافة تجميع الشخصيات تلقائي  يمكنك تجميع فوق 30 clesteal و تم اصلاح و اضافة الانتقالبدون جهد منك و تمت اضافه  تخطي الباركور و تم اضافة مميزات  و اضافة سكربتات جديدة و قوية و اضافة auto collect و العديد من المميزات اكتشفها بنفسك (اذا اكتشفت اي مشاكل في السكربت تواصل معي في التيك توك علي الخاص  ._.f.o_  ) و تمت اضافة مميزات حصرية و  تم اضافة تجميع عملات حدث ال Money و تمت اضافه عدم الموت من تسونامي  و تمت اضافه الصاروخ و تمت اضافه تجميع البرج تلقاءي و تمت اضافه تجميع الشخصيات تلقاءي لكن اقوي و تمت اضافة التنقل عبر جدار Vip و تم اصلاح تفادي التسونامي و  تطويرة و تم اضافه XRAYو تم اضافة سكربت التدبيل و  تمت اضافة  جمع العملات UFO الجديدة و و عدم الموت تمت اضافته و تم اضافة التنقل الى اخر الماب التجريبي و تم اضافه تجميع عملات حدي phantom  و  تم   اضافه تجميع عملات حدث DOOM و تم اضافه تجميع Trial Tower  و اصلاح الثغرة و سكربتات رائعه و تم تحسين بعض المشاكل في الاداءو تم اضافة سكربت يحسن الاداء  وواضافه misc.\nالسكربت هذا تم تطويره من FARES."})
+    InfoTab:CreateParagraph({Title = "نسخة السكربت", Content = "هذا الاصدار .v47.\n تم تحسين بعض المشاكلوويعمل  بكفاءه اقوي و تمت اضافة VIP مجاناو تم اضافة Max Luck   و تم اضافة ESP لاكي بلوكس و تم اضافة مضاد الضرب  و تمت اضافة تجميع عملات حدث ال Arcade  و تمت  اضافة الانتقال الى اخر الماب مع شرح  و تم اضافة كشف اماكن التيكتات و تم اضافه تسونامي مرئي  و تم اضافه انك تقدر تاخذ الشخصيات تلقائي  و تم حل مشكله التنقل في سكربت Gaps و تم تطوير ميزة الانتقال الى اخر الماب و تم اضافة تجميع الشخصيات تلقائي  يمكنك تجميع فوق 30 clesteal و تم اصلاح و اضافة الانتقالبدون جهد منك و تمت اضافه  تخطي الباركور و تم اضافة مميزات  و اضافة سكربتات جديدة و قوية و اضافة auto collect و العديد من المميزات اكتشفها بنفسك (اذا اكتشفت اي مشاكل في السكربت تواصل معي في التيك توك علي الخاص  ._.f.o_  ) و تمت اضافة مميزات حصرية و  تم اضافة تجميع عملات حدث ال Money و تمت اضافه عدم الموت من تسونامي  و تمت اضافه الصاروخ و تمت اضافه تجميع البرج تلقاءي و تمت اضافه تجميع الشخصيات تلقاءي لكن اقوي و تمت اضافة التنقل عبر جدار Vip و تم اصلاح تفادي التسونامي و  تطويرة و تم اضافه XRAYو تم اضافة سكربت التدبيل و  تمت اضافة  جمع العملات UFO الجديدة و و عدم الموت تمت اضافته و تم اضافة التنقل الى اخر الماب التجريبي و تم اضافه تجميع عملات حدي phantom  و  تم   اضافه تجميع عملات حدث DOOM و تم اضافه تجميع Trial Tower  و اصلاح الثغرة و سكربتات رائعه و تم تحسين بعض المشاكل في الاداءو تم اضافة سكربت يحسن الاداء  وواضافه misc.\nالسكربت هذا تم تطويره من FARES."})
     
-    InfoTab:CreateParagraph({Title = "Script Version", Content = "This is the release v46.2\n Problems have been improved, new features have been added,  phantom collector has been added, and DUPE SCRIPT has been added , and xray  has been added auto tower has been added rocket has been added auto get brainrots has been added, god mod has been added and script Fix Lag Has been added, and anti hit has been added, and new protection from Tsunami  has been added,And collect ArcadeCoins has been added, and Free Vip has been added and auto collect DOOM coins has been added and Auto Collect TRIALTOWER has been added  and ESP LUCKYBLOCKS has been added and Tp in Vip walls has been added UPDATED Script Misc has been added,and MAX LUCK has been added, and AutoSteal/AutoGrab has been added, and ESP TICKETS has been added, and Tsunami visual has been added, and fixed Gaps Script  problem, and auto collect has been added, and SKIP PARKOUR has been added, and auto collect coins event Money has been added,  and collect  UFO coins has been added and teleport to end of map has been added  and fixed the Teleporter and script exclusive features has been added  and Auto collect brainrots has been added so u can get 30 clesteal and fixed  some problems and exclusive features has been added and protection from tsunami has been added and  fixed the teleport to end of map fixed some glitchs and problems  if you had any problems dm me in tiktok (._.f.o_)  and added more taps more scripts take a LOOK by yourself, and the script  works more efficiently on phones.\nThis script has been developed by FARES."})
+    InfoTab:CreateParagraph({Title = "Script Version", Content = "This is the release v47\n Problems have been improved, new features have been added,  phantom collector has been added, and DUPE SCRIPT has been added , and xray  has been added auto tower has been added rocket has been added auto get brainrots has been added, god mod has been added and script Fix Lag Has been added, and anti hit has been added, and new protection from Tsunami  has been added,And collect ArcadeCoins has been added, and Free Vip has been added and auto collect DOOM coins has been added and Auto Collect TRIALTOWER has been added  and ESP LUCKYBLOCKS has been added and Tp in Vip walls has been added UPDATED Script Misc has been added,and MAX LUCK has been added, and AutoSteal/AutoGrab has been added, and ESP TICKETS has been added, and Tsunami visual has been added, and fixed Gaps Script  problem, and auto collect has been added, and SKIP PARKOUR has been added, and auto collect coins event Money has been added,  and collect  UFO coins has been added and teleport to end of map has been added  and fixed the Teleporter and script exclusive features has been added  and Auto collect brainrots has been added so u can get 30 clesteal and fixed  some problems and exclusive features has been added and protection from tsunami has been added and  fixed the teleport to end of map fixed some glitchs and problems  if you had any problems dm me in tiktok (._.f.o_)  and added more taps more scripts take a LOOK by yourself, and the script  works more efficiently on phones.\nThis script has been developed by FARES."})
     
     InfoTab:CreateParagraph({Title = "المطور / Developer", Content = "FARES (egyptiandeveloper)"})
 
@@ -9402,3 +9407,206 @@ end
 player.CharacterAdded:Connect(onCharacterAdded)
  
 
+
+
+
+local TweenService = game:GetService("TweenService")
+local Players = game:GetService("Players")
+
+
+local NOTIFICATION_MESSAGE = "تحديثات السكربت الجديد v47: تم تحسين سكربت TOWER TRIAL للتخلص من مشكلة الموت إلى الأبد! انتظروا التحديثات القادمة، وأي تحديث سيحدث سوف ترونه في هذا الإشعار الذي أمامكم."
+
+
+local TITLE_TEXT = "📢 تحديث جديد للسكربت"
+local BUTTON_TEXT = "حسنًا"
+local TYPEWRITER_SPEED = 0.001 
+
+
+
+local playerGui = Players.LocalPlayer:WaitForChild("PlayerGui")
+
+
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "ManusModernUI"
+screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+screenGui.ResetOnSpawn = false
+screenGui.Parent = playerGui
+
+
+local blur = Instance.new("BlurEffect")
+blur.Size = 12
+blur.Enabled = false 
+blur.Parent = game.Lighting
+
+
+local container = Instance.new("Frame")
+container.Name = "Container"
+container.AnchorPoint = Vector2.new(0.5, 0)
+container.Position = UDim2.new(0.5, 0, -0.5, 0) -- Start off-screen
+container.Size = UDim2.new(0, 450, 0, 200)
+container.BackgroundTransparency = 1
+container.Parent = screenGui
+
+
+local mainFrame = Instance.new("Frame")
+mainFrame.Name = "MainFrame"
+mainFrame.BackgroundColor3 = Color3.fromRGB(30, 32, 40)
+mainFrame.BackgroundTransparency = 0.2 
+mainFrame.BorderSizePixel = 0
+mainFrame.Size = UDim2.new(1, 0, 1, 0)
+mainFrame.Parent = container
+
+local corner = Instance.new("UICorner")
+corner.CornerRadius = UDim.new(0, 12)
+corner.Parent = mainFrame
+
+local stroke = Instance.new("UIStroke")
+stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+stroke.Color = Color3.fromRGB(100, 100, 120)
+stroke.Transparency = 0.5
+stroke.Thickness = 1
+stroke.Parent = mainFrame
+
+
+local snowContainer = Instance.new("Frame")
+snowContainer.Name = "SnowContainer"
+snowContainer.BackgroundTransparency = 1
+snowContainer.Size = UDim2.new(1, 0, 1, 0)
+snowContainer.ClipsDescendants = true
+snowContainer.ZIndex = 0 
+snowContainer.Parent = mainFrame 
+
+for i = 1, 70 do 
+	local flake = Instance.new("Frame")
+	flake.Name = "Snowflake"
+	flake.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	flake.BorderSizePixel = 0
+	
+	local size = math.random(2, 5) 
+	flake.Size = UDim2.fromOffset(size, size)
+	
+	local corner = Instance.new("UICorner", flake)
+	corner.CornerRadius = UDim.new(1, 0) 
+	
+	flake.Position = UDim2.new(math.random(), 0, -0.1, 0) 
+	flake.Parent = snowContainer
+	
+	task.spawn(function()
+		local speed = math.random(50, 100) / 1000 
+		local sway = math.random(-20, 20) / 100 
+		
+		while flake.Parent do
+			flake.Position += UDim2.fromOffset(sway, speed * 100)
+			flake.Rotation += sway * 2
+			
+			if flake.AbsolutePosition.Y > container.AbsolutePosition.Y + container.AbsoluteSize.Y then
+				flake.Position = UDim2.new(math.random(), 0, -0.1, 0)
+			end
+			
+			task.wait()
+		end
+	end)
+end
+
+
+
+local titleLabel = Instance.new("TextLabel")
+titleLabel.Name = "TitleLabel"
+titleLabel.Font = Enum.Font.GothamBold
+titleLabel.Text = TITLE_TEXT
+titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+titleLabel.TextSize = 18
+titleLabel.BackgroundTransparency = 1
+titleLabel.Size = UDim2.new(1, -20, 0, 45)
+titleLabel.Position = UDim2.new(0, 10, 0, 0)
+titleLabel.TextXAlignment = Enum.TextXAlignment.Left
+titleLabel.ZIndex = 2
+titleLabel.Parent = mainFrame
+
+
+local textGradient = Instance.new("UIGradient")
+textGradient.Color = ColorSequence.new({
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(120, 180, 255)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(180, 220, 255))
+})
+textGradient.Parent = titleLabel
+
+
+local divider = Instance.new("Frame")
+divider.BackgroundColor3 = Color3.fromRGB(100, 100, 120)
+divider.BackgroundTransparency = 0.5
+divider.BorderSizePixel = 0
+divider.Position = UDim2.new(0.05, 0, 0, 45)
+divider.Size = UDim2.new(0.9, 0, 0, 1)
+divider.Parent = mainFrame
+
+
+local messageLabel = Instance.new("TextLabel")
+messageLabel.Name = "MessageLabel"
+messageLabel.Font = Enum.Font.Gotham
+messageLabel.Text = "" 
+messageLabel.TextColor3 = Color3.fromRGB(220, 220, 230)
+messageLabel.TextSize = 16
+messageLabel.TextWrapped = true
+messageLabel.TextXAlignment = Enum.TextXAlignment.Right
+messageLabel.TextYAlignment = Enum.TextYAlignment.Top
+messageLabel.LineHeight = 1.2
+messageLabel.BackgroundTransparency = 1
+messageLabel.Size = UDim2.new(1, -30, 0, 90)
+messageLabel.Position = UDim2.new(0, 15, 0, 55)
+messageLabel.ZIndex = 2
+messageLabel.Parent = mainFrame
+
+
+local okButton = Instance.new("TextButton")
+okButton.Name = "OkButton"
+okButton.BackgroundColor3 = Color3.fromRGB(80, 130, 255)
+okButton.Font = Enum.Font.GothamBold
+okButton.Text = BUTTON_TEXT
+okButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+okButton.TextSize = 16
+okButton.AnchorPoint = Vector2.new(0.5, 1)
+okButton.Position = UDim2.new(0.5, 0, 1, -15)
+okButton.Size = UDim2.new(0.8, 0, 0, 40)
+okButton.Visible = false -- Show after text is written
+okButton.ZIndex = 3
+okButton.Parent = mainFrame
+
+local buttonCorner = Instance.new("UICorner")
+buttonCorner.CornerRadius = UDim.new(0, 8)
+buttonCorner.Parent = okButton
+
+
+local function fastTypewriter()
+	messageLabel.Text = NOTIFICATION_MESSAGE
+	task.wait() 
+end
+
+
+local function showNotification()
+	blur.Enabled = true
+	local entryTween = TweenService:Create(container, TweenInfo.new(0.5, Enum.EasingStyle.Cubic, Enum.EasingDirection.Out), {Position = UDim2.new(0.5, 0, 0.15, 0)})
+	entryTween:Play()
+	entryTween.Completed:Wait()
+
+	fastTypewriter()
+
+	okButton.Visible = true
+end
+
+
+local function hideNotification()
+	blur.Enabled = false
+	local exitTween = TweenService:Create(container, TweenInfo.new(0.3, Enum.EasingStyle.Cubic, Enum.EasingDirection.In), {Position = UDim2.new(0.5, 0, -0.5, 0)})
+	exitTween:Play()
+	
+	exitTween.Completed:Connect(function()
+		screenGui:Destroy()
+	end)
+end
+
+
+okButton.MouseButton1Click:Connect(hideNotification)
+
+
+showNotification()
